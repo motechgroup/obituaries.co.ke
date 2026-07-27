@@ -4,229 +4,203 @@
 
 @section('content')
 
-<!-- Hero Section with Deep Navy Background -->
-<section class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 text-white relative overflow-hidden py-16 sm:py-24">
-    <!-- Subtle Ambient Pattern -->
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#F59E0B_1px,transparent_1px)] [background-size:24px_24px]"></div>
-    
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <!-- Badge -->
-        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-6">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <span>Dignified & Verified Digital Tributes</span>
-        </div>
+<!-- Immersive Hero Section from Stitch Design -->
+<section class="relative w-full h-[650px] min-h-[500px] flex items-center overflow-hidden">
+    <!-- Cover Image with Gradient Scrim -->
+    <div class="absolute inset-0 z-0">
+        <div class="w-full h-full bg-cover bg-center animate-ken-burns" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAX9PfmGNd6COO34ia8jh6uRhqSKwIofOR8rZW8cgAnNwMH3tP1UF3CZoFM6J5iZJE5_RiTeLT8EdFGNX5813RF5aH8e_9Qh-j_Aa6PlHJ_CU5GhXpiWL3iIkjCNBE5tS_CAh8IUke7mq1LARZhVFHiHiONDoNvPG6WlbGSaF6F0dUARP99swDYvlmJF_GBO_MKQTXW0S4AD0qBEADEnppuKEEfg4E3WSxqHE-jdby2Xue9MuZu9BC8LimsaHd81IVXuLEaP8y6jFfw')"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/85 to-transparent"></div>
+    </div>
 
-        <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
-            Remembering Lives.<br class="hidden sm:inline"> Sharing Memories.
-        </h1>
-        
-        <p class="text-slate-300 text-base sm:text-lg md:text-xl font-normal max-w-2xl mx-auto mb-10 leading-relaxed">
-            Create and preserve a lasting tribute for your loved ones. Simple, verified, and accessible across Kenya.
-        </p>
+    <div class="relative z-10 max-w-[1200px] mx-auto px-6 w-full">
+        <div class="max-w-2xl">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="h-[1px] w-12 bg-secondary"></div>
+                <span class="text-xs font-semibold text-secondary tracking-widest uppercase">Honoring Every Journey</span>
+            </div>
+            
+            <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
+                Remembering Lives.<br/>
+                <span class="italic font-normal">Sharing Memories.</span>
+            </h1>
 
-        <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="{{ route('obituaries.submit') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 rounded-xl text-base font-semibold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/25 transition-all duration-200">
-                <svg class="w-5 h-5 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Submit Obituary
-            </a>
+            <p class="text-base sm:text-lg text-on-surface-variant mb-10 max-w-lg leading-relaxed">
+                A dignified space to create and preserve a lasting digital sanctuary for your loved ones. We help you tell their story with the grace it deserves.
+            </p>
 
-            <a href="#search-section" class="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 rounded-xl text-base font-medium bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 border border-slate-700/80 transition-all duration-200">
-                <svg class="w-5 h-5 mr-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                Search Obituaries
-            </a>
+            <div class="flex flex-wrap gap-4">
+                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-8 py-4 rounded-xl text-xs font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    <span>Submit Obituary</span>
+                </a>
+                <a href="#search-archives" class="border border-outline text-primary px-8 py-4 rounded-xl text-xs font-semibold hover:bg-surface-container transition-all duration-300 flex items-center space-x-2">
+                    <span class="material-symbols-outlined text-[18px]">search</span>
+                    <span>Search Archives</span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Search Section -->
-<section id="search-section" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-    <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200/80">
-        <form action="{{ route('obituaries.search') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
-            <!-- Name Input -->
-            <div class="sm:col-span-5">
-                <label for="search-name" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Deceased Name</label>
-                <div class="relative">
-                    <input type="text" name="name" id="search-name" placeholder="Search by full name..." class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors">
-                    <svg class="w-5 h-5 text-slate-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                </div>
+<!-- Latest Obituaries (Editorial Grid matching Stitch Design) -->
+<section class="w-full py-20 bg-surface">
+    <div class="max-w-[1200px] mx-auto px-6">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <h2 class="font-serif text-3xl font-bold text-primary mb-2">Recent Tributes</h2>
+                <p class="text-sm text-on-surface-variant">Honoring those who recently joined the ancestors.</p>
             </div>
-
-            <!-- County Select -->
-            <div class="sm:col-span-4">
-                <label for="search-county" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">County</label>
-                <select name="county" id="search-county" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors">
-                    <option value="">All Counties</option>
-                    @foreach($counties as $county)
-                        <option value="{{ $county }}">{{ $county }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- Year Select -->
-            <div class="sm:col-span-3">
-                <label for="search-year" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Year</label>
-                <select name="year" id="search-year" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors">
-                    <option value="">All Years</option>
-                    @for($y = date('Y'); $y >= 2000; $y--)
-                        <option value="{{ $y }}">{{ $y }}</option>
-                    @endfor
-                </select>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="sm:col-span-12 mt-2">
-                <button type="submit" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition-all shadow-md flex items-center justify-center space-x-2">
-                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <span>Search Obituary Directory</span>
-                </button>
-            </div>
-        </form>
-    </div>
-</section>
-
-<!-- Latest Obituaries Section -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-slate-200 pb-6">
-        <div>
-            <span class="text-xs uppercase tracking-widest font-semibold text-amber-600 block mb-1">Recent Notices</span>
-            <h2 class="font-serif text-3xl font-bold text-slate-900">Latest Verified Obituaries</h2>
-        </div>
-        <a href="{{ route('obituaries.search') }}" class="mt-4 md:mt-0 text-sm font-semibold text-amber-700 hover:text-amber-800 inline-flex items-center group">
-            <span>View All Directory Notices</span>
-            <svg class="w-4 h-4 ml-1.5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-            </svg>
-        </a>
-    </div>
-
-    @if($latestObituaries->isEmpty())
-        <div class="bg-white rounded-2xl p-12 text-center border border-slate-200 max-w-xl mx-auto">
-            <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14"/>
-                </svg>
-            </div>
-            <h3 class="font-serif text-xl font-bold text-slate-900 mb-2">No Published Obituaries Yet</h3>
-            <p class="text-slate-500 text-sm mb-6">Be the first to publish a verified tribute for your loved one.</p>
-            <a href="{{ route('obituaries.submit') }}" class="inline-flex items-center px-5 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-500 transition-colors">
-                Submit an Obituary
+            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-2 text-xs font-bold text-primary hover:text-secondary transition-colors">
+                <span>View All Archives</span>
+                <span class="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-1">arrow_forward</span>
             </a>
         </div>
-    @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach($latestObituaries as $obituary)
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group">
-                    <!-- Photo Header -->
-                    <div class="relative h-64 bg-slate-100 overflow-hidden">
-                        @if($obituary->photo)
-                            <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @else
-                            <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center p-6 text-center text-slate-300">
-                                <div class="w-16 h-16 rounded-full bg-slate-700/60 border border-slate-600/50 flex items-center justify-center text-amber-400 mb-2">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                </div>
-                                <span class="font-serif text-slate-400 italic text-sm">In Loving Memory</span>
-                            </div>
-                        @endif
 
-                        <!-- Badge -->
-                        <div class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs px-3 py-1 rounded-full font-medium border border-slate-700/50 flex items-center space-x-1">
-                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Verified</span>
-                        </div>
-                    </div>
-
-                    <!-- Card Body -->
-                    <div class="p-6 flex-grow flex flex-col justify-between">
+        @if($latestObituaries->isEmpty())
+            <div class="bg-surface-container-lowest rounded-2xl p-12 text-center border border-outline-variant/30 max-w-xl mx-auto">
+                <span class="material-symbols-outlined text-[48px] text-on-surface-variant/40 mb-3">auto_stories</span>
+                <h3 class="font-serif text-xl font-bold text-primary mb-2">No Published Obituaries Yet</h3>
+                <p class="text-xs text-on-surface-variant mb-6">Be the first to publish a verified tribute for your loved one.</p>
+                <a href="{{ route('obituaries.submit') }}" class="inline-flex items-center px-6 py-3 bg-primary text-on-primary rounded-xl text-xs font-semibold">
+                    Submit an Obituary
+                </a>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach($latestObituaries as $obituary)
+                    <div class="group relative bg-surface-container-lowest p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between border border-outline-variant/20">
                         <div>
-                            <h3 class="font-serif text-xl font-bold text-slate-900 group-hover:text-amber-700 transition-colors mb-2 leading-snug">
-                                {{ $obituary->full_name }}
-                            </h3>
-
-                            <!-- Dates -->
-                            <div class="flex items-center text-xs font-semibold text-amber-700 uppercase tracking-wider mb-4 space-x-2">
-                                <span>{{ $obituary->date_of_birth->format('M d, Y') }}</span>
-                                <span>&mdash;</span>
-                                <span>{{ $obituary->date_of_death->format('M d, Y') }}</span>
-                                @if($obituary->age)
-                                    <span class="text-slate-400 font-normal">({{ $obituary->age }} Yrs)</span>
+                            <!-- Aspect 4/5 Image -->
+                            <div class="relative aspect-4/5 mb-6 overflow-hidden rounded-xl bg-surface-container">
+                                @if($obituary->photo)
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-b from-primary-container to-primary flex flex-col items-center justify-center p-6 text-center text-on-primary">
+                                        <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-secondary-fixed mb-2">
+                                            <span class="material-symbols-outlined text-[32px]">church</span>
+                                        </div>
+                                        <span class="font-serif text-sm italic">In Loving Memory</span>
+                                    </div>
                                 @endif
+
+                                <div class="absolute top-3 right-3 bg-primary/80 backdrop-blur-md text-secondary-fixed text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider border border-white/10 flex items-center space-x-1">
+                                    <span class="material-symbols-outlined text-[12px]">verified</span>
+                                    <span>Verified</span>
+                                </div>
                             </div>
 
-                            <!-- Location -->
-                            <div class="flex items-center text-xs text-slate-500 mb-4">
-                                <svg class="w-4 h-4 mr-1.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                <span>{{ $obituary->town }}, {{ $obituary->county }} County</span>
+                            <div class="text-center">
+                                <span class="text-[11px] font-semibold text-secondary tracking-widest uppercase mb-2 block">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-xl font-bold text-primary mb-1 group-hover:text-secondary transition-colors">{{ $obituary->full_name }}</h3>
+                                <p class="text-xs text-on-surface-variant/70 mb-4 italic">
+                                    {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
+                                    @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
+                                </p>
+                                <p class="text-xs text-on-surface-variant line-clamp-3 mb-6 leading-relaxed">
+                                    {{ $obituary->biography }}
+                                </p>
                             </div>
-
-                            <!-- Bio snippet -->
-                            <p class="text-slate-600 text-sm line-clamp-3 leading-relaxed mb-6">
-                                {{ $obituary->biography }}
-                            </p>
                         </div>
 
-                        <!-- Action Button -->
-                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="w-full py-2.5 px-4 bg-slate-50 hover:bg-amber-50 text-slate-800 hover:text-amber-900 border border-slate-200 hover:border-amber-200 rounded-xl text-sm font-semibold text-center transition-all duration-200 flex items-center justify-center space-x-2">
-                            <span>View Full Obituary & Tribute</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="w-full py-3 border border-outline-variant rounded-xl text-xs font-semibold text-primary hover:bg-primary hover:text-on-primary transition-colors text-center block">
+                            Read Tribute & Service
                         </a>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
+                @endforeach
+            </div>
+        @endif
+    </div>
 </section>
 
-<!-- Values & Assurance Banner -->
-<section class="bg-slate-900 text-slate-300 py-16 border-t border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div class="p-6 rounded-2xl bg-slate-800/40 border border-slate-800">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
+<!-- Search & Filter Section matching Stitch Design -->
+<section class="w-full py-20 bg-primary text-on-primary overflow-hidden relative" id="search-archives">
+    <!-- Background Accents -->
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-[100px]"></div>
+
+    <div class="max-w-[1200px] mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-4">Search the Archives</h2>
+            <p class="text-sm text-primary-fixed/70">Find and honor the legacies of those who have passed across Kenya.</p>
+        </div>
+
+        <div class="bg-surface-container-lowest/10 backdrop-blur-md p-3 rounded-[2rem] shadow-2xl border border-white/10">
+            <form action="{{ route('obituaries.search') }}" method="GET" class="flex flex-col md:flex-row gap-3">
+                <!-- Name Search -->
+                <div class="flex-1 relative flex items-center px-5 py-3.5 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
+                    <span class="material-symbols-outlined text-primary-fixed/40 mr-3">search</span>
+                    <input type="text" name="name" value="{{ request('name') }}" placeholder="Search by name..." class="bg-transparent border-none outline-none w-full text-sm text-on-primary placeholder-primary-fixed/40">
                 </div>
-                <h3 class="font-serif text-lg font-bold text-white mb-2">Verified Submissions</h3>
-                <p class="text-sm text-slate-400">Every obituary is reviewed by our administration team to confirm authenticity and respect.</p>
+
+                <!-- County Select -->
+                <div class="flex-1 relative flex items-center px-5 py-3.5 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
+                    <span class="material-symbols-outlined text-primary-fixed/40 mr-3">location_on</span>
+                    <select name="county" class="bg-transparent border-none outline-none w-full text-sm text-on-primary appearance-none cursor-pointer">
+                        <option value="" class="bg-slate-900 text-white">All Counties</option>
+                        @foreach($counties as $c)
+                            <option value="{{ $c }}" class="bg-slate-900 text-white" {{ request('county') == $c ? 'selected' : '' }}>{{ $c }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Year Select -->
+                <div class="flex-1 relative flex items-center px-5 py-3.5 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
+                    <span class="material-symbols-outlined text-primary-fixed/40 mr-3">calendar_month</span>
+                    <select name="year" class="bg-transparent border-none outline-none w-full text-sm text-on-primary appearance-none cursor-pointer">
+                        <option value="" class="bg-slate-900 text-white">All Years</option>
+                        @for($y = date('Y'); $y >= 2000; $y--)
+                            <option value="{{ $y }}" class="bg-slate-900 text-white" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <!-- Submit Search -->
+                <button type="submit" class="bg-secondary-fixed text-on-secondary-fixed px-8 py-3.5 rounded-xl md:rounded-2xl font-bold text-xs hover:bg-secondary hover:text-white transition-all flex items-center justify-center space-x-2">
+                    <span class="material-symbols-outlined text-[18px]">search</span>
+                    <span>Search Now</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Memorial Quote Section from Stitch Design -->
+<section class="w-full py-20 flex flex-col items-center justify-center text-center px-6">
+    <div class="w-16 h-16 mb-6 text-secondary/40 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[48px]">format_quote</span>
+    </div>
+    <blockquote class="font-serif text-2xl sm:text-3xl text-primary max-w-2xl mb-6 italic leading-relaxed">
+        "The song is ended, but the melody lingers on."
+    </blockquote>
+    <cite class="text-xs font-bold text-secondary uppercase tracking-[0.2em]">&mdash; Irving Berlin</cite>
+</section>
+
+<!-- Features / Pillars Section -->
+<section class="w-full bg-surface-container-low py-20 border-y border-outline-variant/10">
+    <div class="max-w-[1200px] mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 text-primary">
+                    <span class="material-symbols-outlined text-[28px]">auto_stories</span>
+                </div>
+                <h4 class="font-serif text-xl font-bold mb-3">Digital Sanctuaries</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Create a permanent digital home for photos, stories, and family trees that will last for generations.</p>
             </div>
 
-            <div class="p-6 rounded-2xl bg-slate-800/40 border border-slate-800">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
+            <div class="flex flex-col items-center text-center">
+                <div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 text-primary">
+                    <span class="material-symbols-outlined text-[28px]">favorite</span>
                 </div>
-                <h3 class="font-serif text-lg font-bold text-white mb-2">Instant M-Pesa Checkout</h3>
-                <p class="text-sm text-slate-400">Convenient KES 500 fixed fee via Safaricom M-Pesa STK push direct to your mobile phone.</p>
+                <h4 class="font-serif text-xl font-bold mb-3">Community Tributes</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Allow friends and family from around the world to light virtual candles and leave messages of comfort.</p>
             </div>
 
-            <div class="p-6 rounded-2xl bg-slate-800/40 border border-slate-800">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                    </svg>
+            <div class="flex flex-col items-center text-center">
+                <div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 text-primary">
+                    <span class="material-symbols-outlined text-[28px]">verified</span>
                 </div>
-                <h3 class="font-serif text-lg font-bold text-white mb-2">Easy Family Sharing</h3>
-                <p class="text-sm text-slate-400">One-click sharing via WhatsApp and Facebook so friends and family near and far can honor the memory.</p>
+                <h4 class="font-serif text-xl font-bold mb-3">Verified & Dignified</h4>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Every submission is carefully reviewed to ensure it meets our standards of respect and authenticity.</p>
             </div>
         </div>
     </div>

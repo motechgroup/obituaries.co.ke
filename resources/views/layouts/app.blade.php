@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en" class="h-full bg-background">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,146 +15,92 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet"/>
+
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <style>
-        .gold-border {
-            border-bottom: 2px solid #D97706;
-        }
-    </style>
 </head>
-<body class="flex flex-col min-h-screen text-slate-800 antialiased selection:bg-amber-100 selection:text-amber-900">
+<body class="bg-background font-sans text-on-surface flex flex-col min-h-screen antialiased selection:bg-secondary-container selection:text-on-secondary-container">
 
-    <!-- Header Navigation -->
-    <header class="bg-slate-900 text-white sticky top-0 z-50 border-b border-slate-800 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <!-- Brand Logo -->
-                <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
-                    <div class="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-all duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m7.5-7.5h-15"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-white block">Obituaries<span class="text-amber-500">.co.ke</span></span>
-                        <span class="text-[10px] text-slate-400 uppercase tracking-widest block font-sans font-medium">Kenya's Tribute Platform</span>
-                    </div>
-                </a>
-
-                <!-- Desktop Nav -->
-                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
-                    <a href="{{ route('home') }}" class="text-slate-300 hover:text-white transition-colors">Home</a>
-                    <a href="{{ route('obituaries.search') }}" class="text-slate-300 hover:text-white transition-colors">Search Obituaries</a>
-                    <a href="{{ route('pages.about') }}" class="text-slate-300 hover:text-white transition-colors">About Us</a>
-                    <a href="{{ route('pages.contact') }}" class="text-slate-300 hover:text-white transition-colors">Contact</a>
-                </nav>
-
-                <!-- Action Button & Mobile Menu Toggle -->
-                <div class="flex items-center space-x-4" x-data="{ open: false }">
-                    <a href="{{ route('obituaries.submit') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium bg-amber-600 text-white hover:bg-amber-500 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-900">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Submit Obituary
-                    </a>
-
-                    <!-- Mobile Menu Button -->
-                    <button @click="open = !open" type="button" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle menu">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                            <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" x-cloak/>
-                        </svg>
-                    </button>
-
-                    <!-- Mobile Dropdown -->
-                    <div x-show="open" @click.away="open = false" class="absolute top-20 right-4 left-4 bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-2xl md:hidden text-base space-y-3 z-50" x-cloak>
-                        <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800">Home</a>
-                        <a href="{{ route('obituaries.search') }}" class="block px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800">Search Obituaries</a>
-                        <a href="{{ route('pages.about') }}" class="block px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800">About Us</a>
-                        <a href="{{ route('pages.contact') }}" class="block px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800">Contact</a>
-                        <div class="pt-2 border-t border-slate-800">
-                            <a href="{{ route('admin.login') }}" class="block px-3 py-2 text-xs text-slate-400 hover:text-slate-200">Admin Portal</a>
-                        </div>
-                    </div>
+    <!-- Fixed Header matching Stitch Design -->
+    <header class="fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-outline-variant/30">
+        <div class="h-20 max-w-[1200px] mx-auto px-6 flex items-center justify-between gap-6">
+            <!-- Logo & Brand -->
+            <a href="{{ route('home') }}" class="flex items-center gap-3 flex-shrink-0 group">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
+                    <span class="material-symbols-outlined text-[20px]">church</span>
                 </div>
-            </div>
+                <span class="font-serif text-2xl font-bold tracking-tight text-primary">Obituaries<span class="text-secondary">.co.ke</span></span>
+            </a>
+
+            <!-- Quick Header Search -->
+            <form action="{{ route('obituaries.search') }}" method="GET" class="hidden md:flex flex-1 max-w-md mx-4">
+                <div class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-outline-variant focus-within:border-primary w-full transition-all">
+                    <span class="material-symbols-outlined text-on-surface-variant mr-2 text-[20px]">search</span>
+                    <input type="text" name="name" placeholder="Search obituary by name..." value="{{ request('name') }}" class="bg-transparent border-none outline-none w-full text-sm text-on-surface placeholder-on-surface-variant/60">
+                </div>
+            </form>
+
+            <!-- Nav Links -->
+            <nav class="flex items-center gap-4 sm:gap-6">
+                <a href="{{ route('obituaries.search') }}" class="hidden sm:inline-block text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Directory</a>
+                <a href="{{ route('pages.about') }}" class="hidden lg:inline-block text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">About</a>
+                <a href="{{ route('admin.login') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Admin Portal</a>
+                
+                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-container transition-all shadow-sm flex items-center space-x-1.5">
+                    <span class="material-symbols-outlined text-[16px]">add</span>
+                    <span>Submit Obituary</span>
+                </a>
+            </nav>
         </div>
     </header>
 
     <!-- Global Flash Notification Banner -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div class="pt-24 max-w-[1200px] w-full mx-auto px-6">
         @if (session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3.5 rounded-xl text-sm flex items-center justify-between shadow-xs mb-4">
+            <div class="bg-emerald-50 border border-emerald-200 text-emerald-900 px-4 py-3.5 rounded-xl text-sm flex items-center justify-between shadow-xs mb-4">
                 <div class="flex items-center space-x-3">
-                    <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-emerald-600">check_circle</span>
                     <span>{{ session('success') }}</span>
                 </div>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3.5 rounded-xl text-sm flex items-center justify-between shadow-xs mb-4">
+            <div class="bg-rose-50 border border-rose-200 text-rose-900 px-4 py-3.5 rounded-xl text-sm flex items-center justify-between shadow-xs mb-4">
                 <div class="flex items-center space-x-3">
-                    <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                    <span class="material-symbols-outlined text-rose-600">error</span>
                     <span>{{ session('error') }}</span>
                 </div>
             </div>
         @endif
     </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow">
+    <!-- Main Content Slot -->
+    <main class="flex-grow w-full">
         @yield('content')
     </main>
 
-    <!-- Peaceful & Trustworthy Footer -->
-    <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                <!-- Column 1: Info -->
-                <div class="md:col-span-2 space-y-4">
-                    <a href="{{ route('home') }}" class="font-serif text-xl font-bold text-white block">Obituaries<span class="text-amber-500">.co.ke</span></a>
-                    <p class="text-slate-400 text-sm leading-relaxed max-w-md">
-                        A dignified digital space dedicated to honoring the memories of loved ones across Kenya. Every life deserves to be remembered.
-                    </p>
-                    <div class="text-xs text-amber-500/90 font-medium tracking-wide">
-                        KES 500 Basic Package • Fast M-Pesa STK Push • Verified Notices
-                    </div>
-                </div>
-
-                <!-- Column 2: Navigation -->
-                <div>
-                    <h3 class="text-white font-medium mb-4 text-xs uppercase tracking-wider">Quick Links</h3>
-                    <ul class="space-y-2.5 text-sm">
-                        <li><a href="{{ route('home') }}" class="hover:text-amber-400 transition-colors">Home</a></li>
-                        <li><a href="{{ route('obituaries.submit') }}" class="hover:text-amber-400 transition-colors">Submit Obituary</a></li>
-                        <li><a href="{{ route('obituaries.search') }}" class="hover:text-amber-400 transition-colors">Search Directory</a></li>
-                        <li><a href="{{ route('admin.login') }}" class="hover:text-amber-400 transition-colors">Admin Login</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Legal & Support -->
-                <div>
-                    <h3 class="text-white font-medium mb-4 text-xs uppercase tracking-wider">Support & Legal</h3>
-                    <ul class="space-y-2.5 text-sm">
-                        <li><a href="{{ route('pages.about') }}" class="hover:text-amber-400 transition-colors">About Us</a></li>
-                        <li><a href="{{ route('pages.contact') }}" class="hover:text-amber-400 transition-colors">Contact Support</a></li>
-                        <li><a href="{{ route('pages.terms') }}" class="hover:text-amber-400 transition-colors">Terms of Service</a></li>
-                        <li><a href="{{ route('pages.privacy') }}" class="hover:text-amber-400 transition-colors">Privacy Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="pt-8 border-t border-slate-800/80 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-                <p>&copy; {{ date('Y') }} Obituaries.co.ke. All rights reserved.</p>
-                <p class="mt-2 md:mt-0 font-serif italic text-slate-400">"Remembering Lives. Sharing Memories."</p>
-            </div>
+    <!-- Footer matching Stitch Design -->
+    <footer class="w-full bg-surface-container-low mt-20 border-t border-surface-container-high">
+        <div class="max-w-[1200px] mx-auto px-6 py-12 flex flex-col items-center text-center">
+            <div class="w-10 h-[1px] bg-secondary mb-8 mx-auto"></div>
+            <p class="font-serif text-2xl font-bold text-on-surface mb-2">Remembering Lives. Sharing Memories.</p>
+            <p class="text-xs text-on-surface-variant mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
+            
+            <nav class="flex flex-wrap justify-center gap-8 mb-10 text-xs font-semibold">
+                <a href="{{ route('home') }}" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
+                <a href="{{ route('obituaries.search') }}" class="text-on-surface-variant hover:text-primary transition-colors">Search Directory</a>
+                <a href="{{ route('pages.about') }}" class="text-on-surface-variant hover:text-primary transition-colors">About</a>
+                <a href="{{ route('pages.contact') }}" class="text-on-surface-variant hover:text-primary transition-colors">Contact</a>
+                <a href="{{ route('pages.privacy') }}" class="text-on-surface-variant hover:text-primary transition-colors">Privacy</a>
+                <a href="{{ route('pages.terms') }}" class="text-on-surface-variant hover:text-primary transition-colors">Terms</a>
+                <a href="{{ route('obituaries.submit') }}" class="text-on-surface-variant hover:text-primary transition-colors">Submit Obituary</a>
+            </nav>
+            
+            <p class="text-[11px] text-on-tertiary-container">&copy; {{ date('Y') }} Obituaries.co.ke. A dignified space for remembrance.</p>
         </div>
     </footer>
 
