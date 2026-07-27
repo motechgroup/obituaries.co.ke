@@ -287,22 +287,22 @@
         </div>
 
         @if($todayCandlesObituaries->isEmpty())
-            <div class="bg-slate-900/60 rounded-2xl p-8 text-center border border-slate-800 text-slate-400 text-xs italic">
+            <div class="text-slate-400 text-xs py-4 italic text-center">
                 No virtual candles lit yet today. Be the first to light a candle on an obituary memorial.
             </div>
         @else
-            <div class="bg-slate-900/70 rounded-2xl sm:rounded-3xl border border-amber-900/30 overflow-hidden divide-y divide-slate-800/80 shadow-2xl">
+            <div class="divide-y divide-slate-800/80">
                 @foreach($todayCandlesObituaries as $obituary)
-                    <a href="{{ route('obituaries.show', $obituary->slug) }}#candles" class="group flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 hover:bg-slate-800/60 transition-all duration-300 gap-4">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}#candles" class="group flex flex-col sm:flex-row sm:items-center justify-between py-4 sm:py-5 hover:bg-slate-900/50 px-2 rounded-xl transition-all duration-300 gap-4">
                         <!-- Left Avatar & Details -->
                         <div class="flex items-center space-x-3.5 sm:space-x-4 min-w-0">
                             <!-- Thumbnail Avatar -->
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-amber-500/30 shadow-md">
+                            <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
                                 @if($obituary->photo)
                                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-amber-950 to-slate-900 flex items-center justify-center text-amber-300">
-                                        <span class="text-xl animate-pulse">🕯️</span>
+                                        <span class="text-lg animate-pulse">🕯️</span>
                                     </div>
                                 @endif
                             </div>
@@ -321,7 +321,7 @@
 
                         <!-- Right: Candle Count Badge & CTA -->
                         <div class="flex items-center justify-between sm:justify-end space-x-4 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/50">
-                            <div class="bg-amber-500/15 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-500/30 flex items-center space-x-1.5 shadow-xs">
+                            <div class="bg-amber-500/10 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center space-x-1.5 shadow-xs">
                                 <span class="animate-pulse text-amber-400 text-sm">🕯️</span>
                                 <span>{{ $obituary->candles_count }} {{ Str::plural('Candle', $obituary->candles_count) }} Lit</span>
                             </div>
