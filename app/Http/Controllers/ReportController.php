@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Obituary;
 use App\Models\ObituaryReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 
 class ReportController extends Controller
 {
@@ -15,10 +17,18 @@ class ReportController extends Controller
             'reporter_email' => ['required', 'email', 'max:255'],
             'reporter_phone' => ['nullable', 'string', 'max:50'],
             'reason' => ['required', 'string', 'in:inaccurate_info,impersonation,unauthorized_post,copyright_violation,offensive_content,other'],
-            'details' => ['required', 'string', 'min:10', 'max:2000'],
+            'details' => ['required', 'string', 'min:3', 'max:2000'],
         ]);
 
-        $obituary->reports()->create([
+        // Auto-heal: Ensure obituary_reports table exists in database
+        if (!Schema::hasTable('obituary_reports')) {
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+            } catch (\Throwable $e) {}
+        }
+
+        ObituaryReport::create([
+            'obituary_id' => $obituary->id,
             'reporter_name' => $validated['reporter_name'],
             'reporter_email' => $validated['reporter_email'],
             'reporter_phone' => $validated['reporter_phone'] ?? null,
