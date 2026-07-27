@@ -42,14 +42,14 @@
     </div>
 </section>
 
-<!-- Dark Obituaries Directory Horizontal Strip (Matching User Screenshot) -->
-<section class="w-full bg-[#0B101D] border-y border-slate-800/80 py-5 sm:py-6 overflow-hidden">
+<!-- Dark Obituaries Directory Section (2 Rows, Clean Layout, Truncated Text) -->
+<section class="w-full bg-[#0B101D] border-y border-slate-800/80 py-6 sm:py-8 overflow-hidden">
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
-        <div class="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth py-1">
+        <div class="grid grid-rows-2 grid-flow-col auto-cols-max gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-5 overflow-x-auto no-scrollbar scroll-smooth py-1">
             @forelse($latestObituaries as $obituary)
-                <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex-shrink-0 flex items-center space-x-3.5 bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800/80 hover:border-amber-500/40 p-2.5 px-4 rounded-2xl transition-all duration-300 group shadow-md hover:-translate-y-0.5">
+                <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3.5 group transition-opacity hover:opacity-90">
                     <!-- Thumbnail Avatar -->
-                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/80">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
                         @if($obituary->photo)
                             <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
@@ -60,11 +60,11 @@
                     </div>
                     
                     <!-- Deceased Name & Date of Death -->
-                    <div class="text-left whitespace-nowrap">
-                        <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight">
+                    <div class="text-left min-w-0">
+                        <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight truncate max-w-[130px] sm:max-w-[170px]">
                             {{ $obituary->full_name }}
                         </h4>
-                        <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium">
+                        <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium truncate max-w-[130px] sm:max-w-[170px]">
                             {{ $obituary->date_of_death->format('M d, Y') }}
                         </span>
                     </div>
