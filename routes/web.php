@@ -53,10 +53,18 @@ Route::get('/payment/{obituary}/success', [PaymentController::class, 'success'])
 
 // Admin Panel Authentication & Routes
 Route::prefix('admin')->name('admin.')->group(function () {
+    // Guest Auth Routes
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Password Reset Routes
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+    // Authenticated Admin Routes
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
@@ -76,11 +84,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Admin Payment Audit Logs
         Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
 
-        // Admin Staff & Roles Management (Super Admin)
+        // Admin Staff & Roles Management
         Route::resource('/users', AdminUserController::class)->except(['create', 'edit', 'show']);
 
-        // Admin General Settings & Gateways (Super Admin)
+        // Admin General Settings & Gateways
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+        Route::post('/settings/test-mail', [AdminSettingController::class, 'sendTestMail'])->name('settings.test-mail');
+        Route::post('/settings/test-sms', [AdminSettingController::class, 'sendTestSms'])->name('settings.test-sms');
     });
 });

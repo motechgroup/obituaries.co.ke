@@ -3,7 +3,7 @@
 @section('title', 'Platform Settings & Gateways | Admin')
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{ activeTab: '{{ session('active_tab', 'branding') }}' }">
+<div class="max-w-5xl mx-auto space-y-6" x-data="{ activeTab: '{{ session('active_tab', 'branding') }}', testMailModal: false, testSmsModal: false }">
     <div>
         <h1 class="font-serif text-3xl font-bold text-slate-900">Platform Settings & Gateways</h1>
         <p class="text-slate-500 text-sm mt-1">Manage branding, footer contacts, payment gateway credentials, SMTP mail templates, and SMS settings.</p>
@@ -15,6 +15,15 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
             <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl font-bold flex items-center space-x-2">
+            <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>{{ session('error') }}</span>
         </div>
     @endif
 
@@ -139,7 +148,12 @@
 
         <!-- TAB 3: SMTP MAIL & TEMPLATES -->
         <div x-show="activeTab === 'smtp'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">SMTP Email Server & Mail Templates</h3>
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h3 class="font-serif text-xl font-bold text-slate-900">SMTP Email Server & Mail Templates</h3>
+                <button type="button" @click="testMailModal = true" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5">
+                    <span>📧 Send Test Email</span>
+                </button>
+            </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
@@ -173,16 +187,27 @@
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Verification & Approval Email Template</label>
-                    <textarea name="mail_template_verification" rows="5" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_verification', $settings['mail_template_verification']) }}</textarea>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Approval & Verification Email Template</label>
+                    <textarea name="mail_template_verification" rows="4" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_verification', $settings['mail_template_verification']) }}</textarea>
                     <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {NAME}, {DECEASED_NAME}, {LINK}</span>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Rejection Email Template</label>
+                    <textarea name="mail_template_rejection" rows="4" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_rejection', $settings['mail_template_rejection']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {NAME}, {DECEASED_NAME}, {REASON}</span>
                 </div>
             </div>
         </div>
 
         <!-- TAB 4: SMS GATEWAY & TEMPLATES -->
         <div x-show="activeTab === 'sms'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">SMS Gateway & SMS Templates</h3>
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h3 class="font-serif text-xl font-bold text-slate-900">SMS Gateway & SMS Templates</h3>
+                <button type="button" @click="testSmsModal = true" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5">
+                    <span>📱 Send Test SMS</span>
+                </button>
+            </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
@@ -206,12 +231,17 @@
 
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Submission SMS Template</label>
-                    <textarea name="sms_template_submission" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_submission', $settings['sms_template_submission']) }}</textarea>
+                    <textarea name="sms_template_submission" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_submission', $settings['sms_template_submission']) }}</textarea>
                 </div>
 
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Approval SMS Template</label>
-                    <textarea name="sms_template_approval" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_approval', $settings['sms_template_approval']) }}</textarea>
+                    <textarea name="sms_template_approval" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_approval', $settings['sms_template_approval']) }}</textarea>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Rejection SMS Template</label>
+                    <textarea name="sms_template_rejection" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_rejection', $settings['sms_template_rejection']) }}</textarea>
                 </div>
             </div>
         </div>
@@ -222,5 +252,55 @@
             </button>
         </div>
     </form>
+
+    <!-- Test Mail Modal -->
+    <div x-show="testMailModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-6" @click.away="testMailModal = false">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <h3 class="font-serif text-xl font-bold text-slate-900">📧 Send Test Email</h3>
+                <button type="button" @click="testMailModal = false" class="text-slate-400 font-bold hover:text-slate-600">&times;</button>
+            </div>
+
+            <form action="{{ route('admin.settings.test-mail') }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Recipient Email Address</label>
+                    <input type="email" name="test_email" required value="{{ Auth::user()->email ?? 'admin@obituaries.co.ke' }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" @click="testMailModal = false" class="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">
+                        Send Test Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Test SMS Modal -->
+    <div x-show="testSmsModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-6" @click.away="testSmsModal = false">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <h3 class="font-serif text-xl font-bold text-slate-900">📱 Send Test SMS</h3>
+                <button type="button" @click="testSmsModal = false" class="text-slate-400 font-bold hover:text-slate-600">&times;</button>
+            </div>
+
+            <form action="{{ route('admin.settings.test-sms') }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Recipient Phone Number</label>
+                    <input type="tel" name="test_phone" required placeholder="e.g. 0712345678" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" @click="testSmsModal = false" class="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">
+                        Send Test SMS
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection

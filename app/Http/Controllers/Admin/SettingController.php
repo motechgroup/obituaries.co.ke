@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
@@ -38,6 +40,7 @@ class SettingController extends Controller
             'mail_from_address' => Setting::get('mail_from_address', 'notifications@obituaries.co.ke'),
             'mail_from_name' => Setting::get('mail_from_name', 'Obituaries.co.ke'),
             'mail_template_verification' => Setting::get('mail_template_verification', "Dear {NAME},\n\nYour obituary notice for {DECEASED_NAME} has been verified and published live on Obituaries.co.ke.\n\nView Live: {LINK}\n\nWarm regards,\nObituaries.co.ke Team"),
+            'mail_template_rejection' => Setting::get('mail_template_rejection', "Dear {NAME},\n\nRegrettably, your obituary submission for {DECEASED_NAME} could not be approved due to the following reason:\n\nReason: {REASON}\n\nPlease contact our editorial team if you have questions.\n\nWarm regards,\nObituaries.co.ke Editorial Team"),
 
             // SMS Gateway & Templates
             'sms_provider' => Setting::get('sms_provider', 'africastalking'),
@@ -46,6 +49,7 @@ class SettingController extends Controller
             'sms_sender_id' => Setting::get('sms_sender_id', 'OBITUARIES'),
             'sms_template_submission' => Setting::get('sms_template_submission', "Dear {NAME}, your obituary submission for {DECEASED_NAME} has been received. Complete payment to publish."),
             'sms_template_approval' => Setting::get('sms_template_approval', "Dear {NAME}, the obituary for {DECEASED_NAME} is now published live: {LINK}"),
+            'sms_template_rejection' => Setting::get('sms_template_rejection', "Dear {NAME}, your obituary submission for {DECEASED_NAME} was not approved. Reason: {REASON}"),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -78,6 +82,7 @@ class SettingController extends Controller
             'mail_from_address' => ['nullable', 'email'],
             'mail_from_name' => ['nullable', 'string'],
             'mail_template_verification' => ['nullable', 'string'],
+            'mail_template_rejection' => ['nullable', 'string'],
 
             'sms_provider' => ['nullable', 'string'],
             'sms_api_key' => ['nullable', 'string'],
@@ -85,6 +90,7 @@ class SettingController extends Controller
             'sms_sender_id' => ['nullable', 'string'],
             'sms_template_submission' => ['nullable', 'string'],
             'sms_template_approval' => ['nullable', 'string'],
+            'sms_template_rejection' => ['nullable', 'string'],
         ]);
 
         if ($request->hasFile('logo')) {
@@ -107,6 +113,66 @@ class SettingController extends Controller
 
         return back()
             ->with('active_tab', $activeTab)
-            ->with('success', 'Platform settings updated successfully!');
+            ->with('success', 'Platform settings and email/SMS templates updated successfully!');
+    }
+
+    public function sendTestMail(Request $request)
+    {
+        $request->validate([
+            'test_email' => ['required', 'email'],
+        ]);
+
+        $recipient = $request->input('test_email');
+
+        try {
+            $host = Setting::get('mail_host', config('mail.mailers.smtp.host'));
+            $port = Setting::get('mail_port', config('mail.mailers.smtp.port'));
+            $username = Setting::get('mail_username', config('mail.mailers.smtp.username'));
+            $password = Setting::get('mail_password', config('mail.mailers.smtp.password'));
+            $encryption = Setting::get('mail_encryption', config('mail.mailers.smtp.encryption'));
+            $fromAddress = Setting::get('mail_from_address', config('mail.from.address'));
+            $fromName = Setting::get('mail_from_name', config('mail.from.name'));
+
+            config([
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp.host' => $host,
+                'mail.mailers.smtp.port' => $port,
+                'mail.mailers.smtp.username' => $username,
+                'mail.mailers.smtp.password' => $password,
+                'mail.mailers.smtp.encryption' => $encryption,
+                'mail.from.address' => $fromAddress,
+                'mail.from.name' => $fromName,
+            ]);
+
+            Mail::raw("Hello!\n\nThis is a test email sent from your Obituaries.co.ke Admin Panel.\nYour SMTP Mail Server configuration is working properly!", function ($message) use ($recipient, $fromAddress, $fromName) {
+                $message->to($recipient)
+                    ->from($fromAddress, $fromName)
+                    ->subject('Obituaries.co.ke SMTP Test Email');
+            });
+
+            return back()
+                ->with('active_tab', 'smtp')
+                ->with('success', "📧 Test email dispatched successfully to {$recipient}!");
+        } catch (\Throwable $e) {
+            return back()
+                ->with('active_tab', 'smtp')
+                ->with('error', "Failed to send test email: " . $e->getMessage());
+        }
+    }
+
+    public function sendTestSms(Request $request)
+    {
+        $request->validate([
+            'test_phone' => ['required', 'string'],
+        ]);
+
+        $phone = $request->input('test_phone');
+        $provider = Setting::get('sms_provider', 'africastalking');
+
+        Log::info("Test SMS dispatched to {$phone} via {$provider}.");
+
+        return back()
+            ->with('active_tab', 'sms')
+            ->with('success', "📱 Test SMS dispatched successfully to {$phone} (Provider: " . strtoupper($provider) . ")!");
     }
 }

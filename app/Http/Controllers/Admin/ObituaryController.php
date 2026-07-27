@@ -126,6 +126,17 @@ class ObituaryController extends Controller
                 'verified_at' => now(),
             ]);
 
+            // Dispatch Approval Email if email provided
+            if ($obituary->submitter_email) {
+                try {
+                    $tmpl = \App\Models\Setting::get('mail_template_verification', "Dear {NAME},\n\nYour obituary notice for {DECEASED_NAME} has been published live.\n\nView Live: {LINK}");
+                    $body = str_replace(['{NAME}', '{DECEASED_NAME}', '{LINK}'], [$obituary->submitter_name, $obituary->full_name, route('obituaries.show', $obituary->slug)], $tmpl);
+                    \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($obituary) {
+                        $msg->to($obituary->submitter_email)->subject("Obituary Published: {$obituary->full_name}");
+                    });
+                } catch (\Throwable $e) {}
+            }
+
             return back()->with('success', "Obituary for '{$obituary->full_name}' has been verified and published live!");
         } else {
             $obituary->update([
@@ -135,6 +146,17 @@ class ObituaryController extends Controller
                 'verified_by' => Auth::guard('admin')->id(),
                 'verified_at' => now(),
             ]);
+
+            // Dispatch Rejection Email if email provided
+            if ($obituary->submitter_email) {
+                try {
+                    $tmpl = \App\Models\Setting::get('mail_template_rejection', "Dear {NAME},\n\nYour obituary submission for {DECEASED_NAME} was not approved. Reason: {REASON}");
+                    $body = str_replace(['{NAME}', '{DECEASED_NAME}', '{REASON}'], [$obituary->submitter_name, $obituary->full_name, $notes ?: 'Verification details incomplete.'], $tmpl);
+                    \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($obituary) {
+                        $msg->to($obituary->submitter_email)->subject("Update on Obituary Notice: {$obituary->full_name}");
+                    });
+                } catch (\Throwable $e) {}
+            }
 
             return back()->with('success', "Obituary for '{$obituary->full_name}' has been marked as rejected.");
         }
