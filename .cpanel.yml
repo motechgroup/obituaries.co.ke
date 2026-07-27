@@ -1,0 +1,7 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/zrmixzre/obituaries.co.ke
+    - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH 2>/dev/null || :
+    - /bin/cp .env.example $DEPLOYPATH/.env.example 2>/dev/null || :
