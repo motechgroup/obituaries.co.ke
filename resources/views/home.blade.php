@@ -265,6 +265,70 @@
     </div>
 </section>
 
+<!-- Virtual Candles Lit Today Section (Matching User Directive: After Search Section) -->
+<section class="w-full py-12 sm:py-16 bg-slate-950 text-white relative overflow-hidden border-b border-amber-950/40">
+    <!-- Subtle Golden Glow Background Accent -->
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10">
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+            <div>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider mb-2.5 border border-amber-500/20">
+                    <span class="animate-pulse text-amber-400">🕯️</span>
+                    <span>Virtual Candles Lit Today</span>
+                </div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-white">Candles Lit in Memory</h2>
+                <p class="text-xs sm:text-sm text-slate-400">Tributes and prayers offered by visitors for their loved ones.</p>
+            </div>
+            <a href="{{ route('obituaries.search') }}" class="text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors flex items-center space-x-1">
+                <span>Light a Candle for Someone</span>
+                <span>&rarr;</span>
+            </a>
+        </div>
+
+        @if($todayCandlesObituaries->isEmpty())
+            <div class="bg-slate-900/60 rounded-2xl p-8 text-center border border-slate-800 text-slate-400 text-xs italic">
+                No virtual candles lit yet today. Be the first to light a candle on an obituary memorial.
+            </div>
+        @else
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                @foreach($todayCandlesObituaries as $obituary)
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}#candles" class="group relative bg-slate-900/80 hover:bg-slate-800/90 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-amber-900/40 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg block cursor-pointer">
+                        <!-- Candle Flame Glowing Icon & Count Badge -->
+                        <div class="absolute top-3 right-3 bg-amber-500/20 text-amber-300 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-500/40 flex items-center space-x-1 z-10 shadow-xs">
+                            <span class="animate-pulse text-amber-400 text-[12px]">🕯️</span>
+                            <span>{{ $obituary->candles_count }} {{ Str::plural('Candle', $obituary->candles_count) }}</span>
+                        </div>
+
+                        <!-- Compact Avatar -->
+                        <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-slate-800">
+                            @if($obituary->photo)
+                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full bg-gradient-to-br from-amber-950 to-slate-900 flex flex-col items-center justify-center p-3 text-center text-amber-200">
+                                    <span class="text-2xl mb-1 animate-pulse">🕯️</span>
+                                    <span class="font-serif text-[9px] sm:text-[10px] italic">In Loving Memory</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Deceased Details & Light Candle CTA -->
+                        <div class="text-center">
+                            <span class="text-[9px] sm:text-[10px] font-semibold text-amber-400 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                            <h3 class="font-bold text-white text-xs sm:text-base mb-1 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                            
+                            <div class="mt-2.5 pt-2 border-t border-slate-800 flex items-center justify-center space-x-1 text-[11px] font-bold text-amber-400 group-hover:text-amber-300">
+                                <span>Light a Candle</span>
+                                <span>&rarr;</span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</section>
+
 <!-- Memorial Quote Section from Stitch Design -->
 <section class="w-full py-14 sm:py-20 flex flex-col items-center justify-center text-center px-4 sm:px-6">
     <div class="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-6 text-secondary/40 flex items-center justify-center">

@@ -294,6 +294,26 @@ class ObituarySeeder extends Seeder
                 'result_code' => '0',
                 'result_desc' => 'The service request is processed successfully.',
             ]);
+
+            if ($obituary->candles()->count() === 0) {
+                $candleNames = ['Grace Wanjiku', 'David Kamau', 'Peter Otieno', 'Mary Wambui', 'Joseph Kiprop', 'Sarah Njoroge', 'Mercy Achieng', 'Charles Musyoka'];
+                $candleMessages = [
+                    'Rest in eternal peace. You will forever remain in our hearts and prayers.',
+                    'Your light continues to shine bright in our memories. May God grant peace to the family.',
+                    'A life well lived. Rest in peace till we meet again.',
+                    'Shine on your way elder. Forever cherished by friends and family.'
+                ];
+
+                for ($i = 0; $i < rand(3, 7); $i++) {
+                    \App\Models\Candle::create([
+                        'obituary_id' => $obituary->id,
+                        'name' => $candleNames[array_rand($candleNames)],
+                        'message' => $candleMessages[array_rand($candleMessages)],
+                        'ip_address' => '127.0.0.1',
+                        'created_at' => now(),
+                    ]);
+                }
+            }
         }
     }
 }

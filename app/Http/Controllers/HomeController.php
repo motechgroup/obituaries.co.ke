@@ -19,6 +19,13 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
+        $todayCandlesObituaries = Obituary::published()
+            ->withCount('candles')
+            ->orderByDesc('candles_count')
+            ->latest('id')
+            ->take(4)
+            ->get();
+
         $totalCount = Obituary::published()->count();
 
         $counties = [
@@ -30,6 +37,6 @@ class HomeController extends Controller
             'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
         ];
 
-        return view('home', compact('latestObituaries', 'todayAnniversaries', 'totalCount', 'counties'));
+        return view('home', compact('latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties'));
     }
 }
