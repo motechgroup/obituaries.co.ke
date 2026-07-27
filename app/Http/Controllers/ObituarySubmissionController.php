@@ -74,7 +74,7 @@ class ObituarySubmissionController extends Controller
         // Upload Profile Photo if provided
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('obituaries/photos', 'public');
+            $photoPath = \App\Helpers\StorageHelper::savePublicFile($request->file('photo'), 'obituaries/photos');
         }
 
         // Upload Gallery Images ("Moments in Time")
@@ -82,7 +82,7 @@ class ObituarySubmissionController extends Controller
         if ($request->hasFile('gallery_images')) {
             foreach ($request->file('gallery_images') as $file) {
                 if ($file->isValid()) {
-                    $galleryPaths[] = $file->store('obituaries/gallery', 'public');
+                    $galleryPaths[] = \App\Helpers\StorageHelper::savePublicFile($file, 'obituaries/gallery');
                 }
             }
         }
@@ -90,7 +90,7 @@ class ObituarySubmissionController extends Controller
         // Upload Funeral Programme PDF if provided
         $programmePath = null;
         if ($request->hasFile('programme_file')) {
-            $programmePath = $request->file('programme_file')->store('obituaries/programmes', 'public');
+            $programmePath = \App\Helpers\StorageHelper::savePublicFile($request->file('programme_file'), 'obituaries/programmes');
         }
 
         // Generate unique slug

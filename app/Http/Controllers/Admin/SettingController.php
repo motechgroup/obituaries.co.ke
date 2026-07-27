@@ -100,12 +100,12 @@ class SettingController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('branding', 'public');
+            $logoPath = \App\Helpers\StorageHelper::savePublicFile($request->file('logo'), 'branding');
             Setting::set('logo', $logoPath);
         }
 
         if ($request->hasFile('favicon')) {
-            $faviconPath = $request->file('favicon')->store('branding', 'public');
+            $faviconPath = \App\Helpers\StorageHelper::savePublicFile($request->file('favicon'), 'branding');
             Setting::set('favicon', $faviconPath);
         }
 

@@ -84,21 +84,21 @@ class ObituaryController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('photos', 'public');
+            $validated['photo'] = \App\Helpers\StorageHelper::savePublicFile($request->file('photo'), 'obituaries/photos');
         }
 
         if ($request->hasFile('gallery_images')) {
             $galleryPaths = is_array($obituary->gallery_images) ? $obituary->gallery_images : [];
             foreach ($request->file('gallery_images') as $file) {
                 if ($file->isValid()) {
-                    $galleryPaths[] = $file->store('obituaries/gallery', 'public');
+                    $galleryPaths[] = \App\Helpers\StorageHelper::savePublicFile($file, 'obituaries/gallery');
                 }
             }
             $validated['gallery_images'] = array_values(array_unique($galleryPaths));
         }
 
         if ($request->hasFile('programme_file')) {
-            $validated['programme_file'] = $request->file('programme_file')->store('programmes', 'public');
+            $validated['programme_file'] = \App\Helpers\StorageHelper::savePublicFile($request->file('programme_file'), 'obituaries/programmes');
         }
 
         $obituary->update($validated);

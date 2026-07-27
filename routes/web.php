@@ -37,6 +37,16 @@ Route::get('/storage/{path}', function ($path) {
     if (!file_exists($filePath)) {
         abort(404);
     }
+
+    // Auto-sync file to public/storage/{path} so Apache serves future requests directly
+    try {
+        $publicDest = public_path('storage/' . $path);
+        if (!file_exists($publicDest)) {
+            @mkdir(dirname($publicDest), 0755, true);
+            @copy($filePath, $publicDest);
+        }
+    } catch (\Throwable $e) {}
+
     $mime = mime_content_type($filePath) ?: 'application/octet-stream';
     return response()->file($filePath, ['Content-Type' => $mime]);
 })->where('path', '.*')->name('storage.fallback');
