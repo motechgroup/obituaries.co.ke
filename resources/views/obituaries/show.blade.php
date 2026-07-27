@@ -18,24 +18,24 @@
     </div>
 
     <!-- Profile & Vital Info Overlap -->
-    <div class="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center md:items-start gap-4 sm:gap-8">
-        <div class="relative -mb-10 md:mb-0 flex-shrink-0">
-            <div class="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full border-4 sm:border-8 border-background overflow-hidden shadow-2xl bg-surface-container">
+    <div class="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center md:items-start gap-3 sm:gap-8">
+        <div class="relative flex-shrink-0">
+            <div class="w-32 h-32 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full border-4 sm:border-8 border-background overflow-hidden shadow-2xl bg-surface-container">
                 @if($obituary->photo)
                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover">
                 @else
                     <div class="w-full h-full bg-gradient-to-b from-primary to-primary-container flex flex-col items-center justify-center p-4 text-center text-on-primary">
-                        <span class="material-symbols-outlined text-[36px] sm:text-[48px] text-secondary-fixed mb-1">person</span>
+                        <span class="material-symbols-outlined text-[32px] sm:text-[48px] text-secondary-fixed mb-1">person</span>
                         <span class="font-serif text-[10px] sm:text-xs italic">In Loving Memory</span>
                     </div>
                 @endif
             </div>
         </div>
 
-        <div class="flex flex-col items-center md:items-start text-center md:text-left pt-2 sm:pt-4">
+        <div class="flex flex-col items-center md:items-start text-center md:text-left pt-1 sm:pt-4">
             <span class="text-[10px] sm:text-xs font-bold text-secondary tracking-[0.2em] uppercase mb-1 sm:mb-2">In Loving Memory</span>
-            <h1 class="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-primary mb-2">{{ $obituary->full_name }}</h1>
-            <div class="flex items-center gap-2 sm:gap-3 text-on-surface-variant mb-2 font-semibold text-xs sm:text-sm">
+            <h1 class="font-serif text-xl sm:text-4xl lg:text-5xl font-bold text-primary mb-1.5 sm:mb-2 leading-tight">{{ $obituary->full_name }}</h1>
+            <div class="flex items-center gap-2 sm:gap-3 text-on-surface-variant mb-1.5 sm:mb-2 font-semibold text-xs sm:text-sm">
                 <span>{{ $obituary->date_of_birth->format('Y') }}</span>
                 <span class="w-4 sm:w-6 h-[1px] bg-outline-variant"></span>
                 <span>{{ $obituary->date_of_death->format('Y') }}</span>

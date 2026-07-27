@@ -67,33 +67,33 @@
                 </a>
             </div>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
                 @foreach($latestObituaries as $obituary)
-                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-surface-container-lowest p-5 sm:p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between border border-outline-variant/20 block cursor-pointer">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-surface-container-lowest p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between border border-outline-variant/20 block cursor-pointer">
                         <div>
                             <!-- Aspect 4/5 Image -->
-                            <div class="relative aspect-4/5 mb-5 sm:mb-6 overflow-hidden rounded-xl bg-surface-container">
+                            <div class="relative aspect-4/5 mb-3 sm:mb-6 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container">
                                 @if($obituary->photo)
                                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-b from-primary-container to-primary flex flex-col items-center justify-center p-6 text-center text-on-primary">
-                                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 flex items-center justify-center text-secondary-fixed mb-2">
-                                            <span class="material-symbols-outlined text-[28px] sm:text-[32px]">church</span>
+                                    <div class="w-full h-full bg-gradient-to-b from-primary-container to-primary flex flex-col items-center justify-center p-3 sm:p-6 text-center text-on-primary">
+                                        <div class="w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-white/10 flex items-center justify-center text-secondary-fixed mb-1 sm:mb-2">
+                                            <span class="material-symbols-outlined text-[20px] sm:text-[32px]">church</span>
                                         </div>
-                                        <span class="font-serif text-xs sm:text-sm italic">In Loving Memory</span>
+                                        <span class="font-serif text-[10px] sm:text-xs italic">In Loving Memory</span>
                                     </div>
                                 @endif
 
-                                <div class="absolute top-3 right-3 bg-primary/80 backdrop-blur-md text-secondary-fixed text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border border-white/10 flex items-center space-x-1">
-                                    <span class="material-symbols-outlined text-[12px]">verified</span>
+                                <div class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-primary/80 backdrop-blur-md text-secondary-fixed text-[8px] sm:text-[10px] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase tracking-wider border border-white/10 flex items-center space-x-0.5 sm:space-x-1">
+                                    <span class="material-symbols-outlined text-[10px] sm:text-[12px]">verified</span>
                                     <span>Verified</span>
                                 </div>
                             </div>
 
                             <div class="text-center">
-                                <span class="text-[10px] sm:text-[11px] font-semibold text-secondary tracking-widest uppercase mb-1.5 block">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                <h3 class="font-serif text-lg sm:text-xl font-bold text-primary mb-1 group-hover:text-secondary transition-colors">{{ $obituary->full_name }}</h3>
-                                <p class="text-xs text-on-surface-variant/70 italic">
+                                <span class="text-[9px] sm:text-[11px] font-semibold text-secondary tracking-widest uppercase mb-0.5 sm:mb-1 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-sm sm:text-xl font-bold text-primary mb-0.5 sm:mb-1 group-hover:text-secondary transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                                <p class="text-[10px] sm:text-xs text-on-surface-variant/70 italic">
                                     {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
                                     @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
                                 </p>
