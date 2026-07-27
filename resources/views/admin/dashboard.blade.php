@@ -25,6 +25,13 @@
                     <span>Run Migrations</span>
                 </button>
             </form>
+            <form action="{{ route('admin.system.fix-storage') }}" method="POST" onsubmit="return confirm('Repair public storage symlink for uploaded images?')">
+                @csrf
+                <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-emerald-400 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[16px]">image</span>
+                    <span>Fix Image Storage</span>
+                </button>
+            </form>
             @if($pendingPaymentCount > 0)
                 <a href="{{ route('admin.obituaries.index', ['status' => 'pending_payment']) }}" class="inline-flex items-center px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl text-xs font-bold transition-colors">
                     <span>Pending Payment ({{ $pendingPaymentCount }})</span>

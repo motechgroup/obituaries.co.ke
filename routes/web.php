@@ -97,5 +97,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/database/migrate', [AdminSettingController::class, 'runMigrations'])->name('database.migrate');
         Route::post('/database/seed', [AdminSettingController::class, 'runSeeders'])->name('database.seed');
         Route::post('/system/git-pull', [AdminSettingController::class, 'gitPull'])->name('system.git-pull');
+        Route::post('/system/fix-storage', [AdminSettingController::class, 'fixStorage'])->name('system.fix-storage');
     });
 });

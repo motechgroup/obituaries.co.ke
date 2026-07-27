@@ -225,4 +225,34 @@ class SettingController extends Controller
                 ->with('error', "❌ Git Pull Error: " . $e->getMessage());
         }
     }
+
+    public function fixStorage(Request $request)
+    {
+        try {
+            $publicStoragePath = public_path('storage');
+            $targetStoragePath = storage_path('app/public');
+
+            if (!file_exists($targetStoragePath)) {
+                mkdir($targetStoragePath, 0755, true);
+            }
+            if (!file_exists($targetStoragePath . '/obituaries')) {
+                mkdir($targetStoragePath . '/obituaries', 0755, true);
+            }
+
+            if (is_link($publicStoragePath)) {
+                @unlink($publicStoragePath);
+            }
+
+            \Illuminate\Support\Facades\Artisan::call('storage:link', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'database'))
+                ->with('success', "🖼️ Storage Symlink Repaired Successfully! " . trim($output ?: 'Linked.'));
+        } catch (\Throwable $e) {
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'database'))
+                ->with('error', "❌ Storage Repair Error: " . $e->getMessage());
+        }
+    }
 }
