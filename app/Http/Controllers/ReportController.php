@@ -37,6 +37,23 @@ class ReportController extends Controller
             'status' => 'pending',
         ]);
 
+        // Dispatch Confirmation Email to Reporter
+        if (!empty($validated['reporter_email'])) {
+            try {
+                \App\Services\MailService::configure();
+                $tmpl = \App\Models\Setting::get('mail_template_report_ack', "Dear {REPORTER_NAME},\n\nThank you for submitting a report regarding the obituary for {DECEASED_NAME}.\n\nOur editorial and moderation team has received your report and is investigating the matter. We will notify you once a determination is made.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
+                $body = str_replace(
+                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{REASON}'],
+                    [$validated['reporter_name'], $obituary->full_name, ucfirst(str_replace('_', ' ', $validated['reason']))],
+                    $tmpl
+                );
+                \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($validated, $obituary) {
+                    $msg->to($validated['reporter_email'])
+                        ->subject("Report Received: Obituary for {$obituary->full_name}");
+                });
+            } catch (\Throwable $e) {}
+        }
+
         return back()->with('success', '🚩 Your report has been submitted to our moderation team. We will review it promptly.');
     }
 }

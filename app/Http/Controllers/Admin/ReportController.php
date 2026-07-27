@@ -36,7 +36,33 @@ class ReportController extends Controller
             'resolved_by' => Auth::guard('admin')->id(),
         ]);
 
-        return back()->with('success', "Report #{$report->id} has been marked as '{$validated['status']}'.");
+        $report->load('obituary');
+
+        // Notify reporter via Email if email is available
+        if (!empty($report->reporter_email)) {
+            try {
+                \App\Services\MailService::configure();
+                $tmpl = \App\Models\Setting::get('mail_template_report_resolved', "Dear {REPORTER_NAME},\n\nYour report concerning the obituary for {DECEASED_NAME} has been reviewed and updated by our moderation team.\n\nStatus: {STATUS}\nResolution Notes: {NOTES}\n\nThank you for helping us maintain accuracy and dignity on Obituaries.co.ke.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
+
+                $body = str_replace(
+                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{STATUS}', '{NOTES}'],
+                    [
+                        $report->reporter_name,
+                        $report->obituary->full_name ?? 'Obituary Notice',
+                        strtoupper($validated['status']),
+                        $validated['resolution_notes'] ?: 'Reviewed by moderation team.'
+                    ],
+                    $tmpl
+                );
+
+                \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($report) {
+                    $msg->to($report->reporter_email)
+                        ->subject("Report Status Update: Obituary Notice #{$report->obituary_id}");
+                });
+            } catch (\Throwable $e) {}
+        }
+
+        return back()->with('success', "Report #{$report->id} has been marked as '{$validated['status']}' and notification email dispatched.");
     }
 
     public function destroy(ObituaryReport $report)
