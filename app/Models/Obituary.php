@@ -83,6 +83,11 @@ class Obituary extends Model
         return $this->hasMany(Candle::class);
     }
 
+    public function reports()
+    {
+        return $this->hasMany(ObituaryReport::class);
+    }
+
     public function getAgeAttribute(): ?int
     {
         if ($this->date_of_birth && $this->date_of_death) {

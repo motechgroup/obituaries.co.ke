@@ -13,6 +13,7 @@ class Admin extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     protected $hidden = [
@@ -25,6 +26,16 @@ class Admin extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->role === 'editor' || $this->role === 'super_admin';
     }
 
     public function verifiedObituaries()

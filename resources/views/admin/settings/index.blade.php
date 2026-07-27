@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Platform Settings | Admin')
+@section('title', 'Platform Settings & Gateways | Admin')
 
 @section('content')
-<div class="max-w-3xl mx-auto space-y-6">
+<div class="max-w-5xl mx-auto space-y-6" x-data="{ activeTab: 'branding' }">
     <div>
-        <h1 class="font-serif text-3xl font-bold text-slate-900">Platform Settings</h1>
-        <p class="text-slate-500 text-sm mt-1">Configure site-wide obituary publishing pricing and settings.</p>
+        <h1 class="font-serif text-3xl font-bold text-slate-900">Platform Settings & Gateways</h1>
+        <p class="text-slate-500 text-sm mt-1">Manage branding, footer contacts, payment gateway credentials, SMTP mail templates, and SMS settings.</p>
     </div>
 
     @if(session('success'))
@@ -18,29 +18,208 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-        <form action="{{ route('admin.settings.update') }}" method="POST" class="space-y-6">
-            @csrf
-
-            <div class="space-y-2">
-                <label for="obituary_publishing_cost" class="block text-xs font-bold uppercase tracking-wider text-slate-800">
-                    Obituary Publishing Fee (KES)
-                </label>
-                <div class="relative max-w-xs">
-                    <span class="absolute left-4 top-3 text-slate-400 font-bold text-sm">KES</span>
-                    <input type="number" step="0.01" min="0" name="obituary_publishing_cost" id="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $publishingCost) }}" required class="w-full pl-16 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold text-slate-900 focus:ring-2 focus:ring-amber-500">
-                </div>
-                <p class="text-xs text-slate-500 mt-1">
-                    This fee will be dynamically displayed to submitters on the submission form, pricing badges, and M-Pesa STK push checkout!
-                </p>
-            </div>
-
-            <div class="pt-4 border-t border-slate-200 flex justify-end">
-                <button type="submit" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
-                    Save Pricing Settings
-                </button>
-            </div>
-        </form>
+    <!-- Navigation Tabs -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 overflow-x-auto text-xs font-bold">
+        <button type="button" @click="activeTab = 'branding'" :class="activeTab === 'branding' ? 'border-amber-600 text-amber-700 bg-amber-50' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'" class="px-4 py-3 border-b-2 rounded-t-xl transition-all">
+            🎨 Branding & Footer
+        </button>
+        <button type="button" @click="activeTab = 'payment'" :class="activeTab === 'payment' ? 'border-amber-600 text-amber-700 bg-amber-50' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'" class="px-4 py-3 border-b-2 rounded-t-xl transition-all">
+            💳 Payment Gateway & Pricing
+        </button>
+        <button type="button" @click="activeTab = 'smtp'" :class="activeTab === 'smtp' ? 'border-amber-600 text-amber-700 bg-amber-50' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'" class="px-4 py-3 border-b-2 rounded-t-xl transition-all">
+            ✉️ SMTP Mail & Templates
+        </button>
+        <button type="button" @click="activeTab = 'sms'" :class="activeTab === 'sms' ? 'border-amber-600 text-amber-700 bg-amber-50' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'" class="px-4 py-3 border-b-2 rounded-t-xl transition-all">
+            📱 SMS Gateway & Templates
+        </button>
     </div>
+
+    <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        @csrf
+
+        <!-- TAB 1: BRANDING & FOOTER -->
+        <div x-show="activeTab === 'branding'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">Website Branding & Footer Info</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Site Title</label>
+                    <input type="text" name="site_title" value="{{ old('site_title', $settings['site_title']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Site Tagline</label>
+                    <input type="text" name="site_tagline" value="{{ old('site_tagline', $settings['site_tagline']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Site Logo Upload</label>
+                    <div class="p-3 bg-slate-50 border border-slate-300 rounded-xl flex items-center space-x-3">
+                        @if($settings['logo'])
+                            <img src="{{ asset('storage/' . $settings['logo']) }}" class="h-8 object-contain">
+                        @endif
+                        <input type="file" name="logo" accept="image/*" class="block w-full text-xs text-slate-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Favicon Upload</label>
+                    <div class="p-3 bg-slate-50 border border-slate-300 rounded-xl flex items-center space-x-3">
+                        @if($settings['favicon'])
+                            <img src="{{ asset('storage/' . $settings['favicon']) }}" class="w-6 h-6 object-contain">
+                        @endif
+                        <input type="file" name="favicon" accept="image/*" class="block w-full text-xs text-slate-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Footer Phone Number</label>
+                    <input type="text" name="footer_phone" value="{{ old('footer_phone', $settings['footer_phone']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Footer Email Address</label>
+                    <input type="email" name="footer_email" value="{{ old('footer_email', $settings['footer_email']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Physical Address / Office</label>
+                    <input type="text" name="footer_address" value="{{ old('footer_address', $settings['footer_address']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Copyright Text</label>
+                    <input type="text" name="copyright_text" value="{{ old('copyright_text', $settings['copyright_text']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PAYMENT GATEWAY & PRICING -->
+        <div x-show="activeTab === 'payment'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">M-Pesa STK Push Payment Gateway & Publishing Pricing</h3>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Publishing Fee (KES)</label>
+                    <input type="number" step="0.01" min="0" name="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $settings['obituary_publishing_cost']) }}" required class="w-full max-w-xs px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-200">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">M-Pesa Environment</label>
+                        <select name="mpesa_env" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
+                            <option value="sandbox" {{ $settings['mpesa_env'] === 'sandbox' ? 'selected' : '' }}>Sandbox (Developer Testing)</option>
+                            <option value="live" {{ $settings['mpesa_env'] === 'live' ? 'selected' : '' }}>Live Production</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Paybill / Shortcode</label>
+                        <input type="text" name="mpesa_shortcode" value="{{ old('mpesa_shortcode', $settings['mpesa_shortcode']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Consumer Key</label>
+                        <input type="text" name="mpesa_consumer_key" value="{{ old('mpesa_consumer_key', $settings['mpesa_consumer_key']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Consumer Secret</label>
+                        <input type="password" name="mpesa_consumer_secret" value="{{ old('mpesa_consumer_secret', $settings['mpesa_consumer_secret']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Lipa Na M-Pesa Passkey</label>
+                        <input type="password" name="mpesa_passkey" value="{{ old('mpesa_passkey', $settings['mpesa_passkey']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: SMTP MAIL & TEMPLATES -->
+        <div x-show="activeTab === 'smtp'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">SMTP Email Server & Mail Templates</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMTP Host</label>
+                    <input type="text" name="mail_host" value="{{ old('mail_host', $settings['mail_host']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMTP Port</label>
+                    <input type="text" name="mail_port" value="{{ old('mail_port', $settings['mail_port']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMTP Username</label>
+                    <input type="text" name="mail_username" value="{{ old('mail_username', $settings['mail_username']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMTP Password</label>
+                    <input type="password" name="mail_password" value="{{ old('mail_password', $settings['mail_password']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">From Address</label>
+                    <input type="email" name="mail_from_address" value="{{ old('mail_from_address', $settings['mail_from_address']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">From Sender Name</label>
+                    <input type="text" name="mail_from_name" value="{{ old('mail_from_name', $settings['mail_from_name']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Verification & Approval Email Template</label>
+                    <textarea name="mail_template_verification" rows="5" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_verification', $settings['mail_template_verification']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {NAME}, {DECEASED_NAME}, {LINK}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SMS GATEWAY & TEMPLATES -->
+        <div x-show="activeTab === 'sms'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">SMS Gateway & SMS Templates</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMS Provider</label>
+                    <select name="sms_provider" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
+                        <option value="africastalking" {{ $settings['sms_provider'] === 'africastalking' ? 'selected' : '' }}>Africa's Talking</option>
+                        <option value="mobitech" {{ $settings['sms_provider'] === 'mobitech' ? 'selected' : '' }}>Mobitech SMS</option>
+                        <option value="generic" {{ $settings['sms_provider'] === 'generic' ? 'selected' : '' }}>Generic HTTP API</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Sender ID / Alphanumeric</label>
+                    <input type="text" name="sms_sender_id" value="{{ old('sms_sender_id', $settings['sms_sender_id']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold">
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMS API Key</label>
+                    <input type="password" name="sms_api_key" value="{{ old('sms_api_key', $settings['sms_api_key']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Submission SMS Template</label>
+                    <textarea name="sms_template_submission" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_submission', $settings['sms_template_submission']) }}</textarea>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Approval SMS Template</label>
+                    <textarea name="sms_template_approval" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_approval', $settings['sms_template_approval']) }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4 flex justify-end">
+            <button type="submit" class="px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
+                Save All Platform Settings
+            </button>
+        </div>
+    </form>
 </div>
 @endsection

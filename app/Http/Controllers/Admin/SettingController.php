@@ -10,18 +10,99 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $publishingCost = Setting::get('obituary_publishing_cost', '500');
-        return view('admin.settings.index', compact('publishingCost'));
+        $settings = [
+            // Branding & General
+            'site_title' => Setting::get('site_title', 'Obituaries.co.ke'),
+            'site_tagline' => Setting::get('site_tagline', 'A dignified space for remembrance, honouring loved ones across Kenya.'),
+            'logo' => Setting::get('logo'),
+            'favicon' => Setting::get('favicon'),
+            'footer_address' => Setting::get('footer_address', 'Nairobi, Kenya'),
+            'footer_phone' => Setting::get('footer_phone', '+254 700 000 000'),
+            'footer_email' => Setting::get('footer_email', 'support@obituaries.co.ke'),
+            'copyright_text' => Setting::get('copyright_text', '© ' . date('Y') . ' Obituaries.co.ke. All rights reserved.'),
+
+            // Publishing & M-Pesa
+            'obituary_publishing_cost' => Setting::get('obituary_publishing_cost', '500'),
+            'mpesa_env' => Setting::get('mpesa_env', 'sandbox'),
+            'mpesa_shortcode' => Setting::get('mpesa_shortcode', '174379'),
+            'mpesa_passkey' => Setting::get('mpesa_passkey', ''),
+            'mpesa_consumer_key' => Setting::get('mpesa_consumer_key', ''),
+            'mpesa_consumer_secret' => Setting::get('mpesa_consumer_secret', ''),
+
+            // SMTP Mail & Templates
+            'mail_host' => Setting::get('mail_host', 'smtp.mailtrap.io'),
+            'mail_port' => Setting::get('mail_port', '2525'),
+            'mail_username' => Setting::get('mail_username', ''),
+            'mail_password' => Setting::get('mail_password', ''),
+            'mail_encryption' => Setting::get('mail_encryption', 'tls'),
+            'mail_from_address' => Setting::get('mail_from_address', 'notifications@obituaries.co.ke'),
+            'mail_from_name' => Setting::get('mail_from_name', 'Obituaries.co.ke'),
+            'mail_template_verification' => Setting::get('mail_template_verification', "Dear {NAME},\n\nYour obituary notice for {DECEASED_NAME} has been verified and published live on Obituaries.co.ke.\n\nView Live: {LINK}\n\nWarm regards,\nObituaries.co.ke Team"),
+
+            // SMS Gateway & Templates
+            'sms_provider' => Setting::get('sms_provider', 'africastalking'),
+            'sms_api_key' => Setting::get('sms_api_key', ''),
+            'sms_shortcode' => Setting::get('sms_shortcode', 'OBITUARIES'),
+            'sms_sender_id' => Setting::get('sms_sender_id', 'OBITUARIES'),
+            'sms_template_submission' => Setting::get('sms_template_submission', "Dear {NAME}, your obituary submission for {DECEASED_NAME} has been received. Complete payment to publish."),
+            'sms_template_approval' => Setting::get('sms_template_approval', "Dear {NAME}, the obituary for {DECEASED_NAME} is now published live: {LINK}"),
+        ];
+
+        return view('admin.settings.index', compact('settings'));
     }
 
     public function update(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'site_title' => ['nullable', 'string', 'max:255'],
+            'site_tagline' => ['nullable', 'string', 'max:500'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,webp', 'max:2048'],
+            'favicon' => ['nullable', 'image', 'mimes:jpeg,png,jpg,ico,svg,webp', 'max:1024'],
+            'footer_address' => ['nullable', 'string', 'max:255'],
+            'footer_phone' => ['nullable', 'string', 'max:50'],
+            'footer_email' => ['nullable', 'email', 'max:255'],
+            'copyright_text' => ['nullable', 'string', 'max:255'],
+
             'obituary_publishing_cost' => ['required', 'numeric', 'min:0'],
+            'mpesa_env' => ['nullable', 'string', 'in:sandbox,live'],
+            'mpesa_shortcode' => ['nullable', 'string', 'max:50'],
+            'mpesa_passkey' => ['nullable', 'string'],
+            'mpesa_consumer_key' => ['nullable', 'string'],
+            'mpesa_consumer_secret' => ['nullable', 'string'],
+
+            'mail_host' => ['nullable', 'string'],
+            'mail_port' => ['nullable', 'numeric'],
+            'mail_username' => ['nullable', 'string'],
+            'mail_password' => ['nullable', 'string'],
+            'mail_encryption' => ['nullable', 'string'],
+            'mail_from_address' => ['nullable', 'email'],
+            'mail_from_name' => ['nullable', 'string'],
+            'mail_template_verification' => ['nullable', 'string'],
+
+            'sms_provider' => ['nullable', 'string'],
+            'sms_api_key' => ['nullable', 'string'],
+            'sms_shortcode' => ['nullable', 'string'],
+            'sms_sender_id' => ['nullable', 'string'],
+            'sms_template_submission' => ['nullable', 'string'],
+            'sms_template_approval' => ['nullable', 'string'],
         ]);
 
-        Setting::set('obituary_publishing_cost', $request->input('obituary_publishing_cost'));
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('branding', 'public');
+            Setting::set('logo', $logoPath);
+        }
 
-        return back()->with('success', 'Site publishing cost updated successfully!');
+        if ($request->hasFile('favicon')) {
+            $faviconPath = $request->file('favicon')->store('branding', 'public');
+            Setting::set('favicon', $faviconPath);
+        }
+
+        foreach ($validated as $key => $value) {
+            if ($key !== 'logo' && $key !== 'favicon') {
+                Setting::set($key, $value);
+            }
+        }
+
+        return back()->with('success', 'Platform settings, payment gateway, SMTP, and SMS templates updated successfully!');
     }
 }

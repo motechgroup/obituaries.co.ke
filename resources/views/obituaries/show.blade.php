@@ -229,10 +229,66 @@
             <span class="font-serif italic text-secondary font-bold text-xs">Obituaries.co.ke</span>
         </div>
 
-        <div class="pt-2">
+        <div class="pt-4 flex items-center justify-between" x-data="{ reportModal: false }">
             <a href="{{ route('obituaries.search') }}" class="text-xs font-bold text-primary hover:text-secondary inline-flex items-center space-x-1">
                 <span>&larr; Return to Obituary Directory</span>
             </a>
+
+            <button type="button" @click="reportModal = true" class="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center space-x-1">
+                <span class="material-symbols-outlined text-[16px]">flag</span>
+                <span>Report Obituary Issue</span>
+            </button>
+
+            <!-- Report Modal -->
+            <div x-show="reportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+                <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-surface-container space-y-6" @click.away="reportModal = false">
+                    <div class="flex items-center justify-between border-b border-surface-container pb-4">
+                        <div class="flex items-center space-x-2 text-rose-600">
+                            <span class="material-symbols-outlined text-[24px]">flag</span>
+                            <h3 class="font-serif text-lg font-bold text-primary">Report Obituary Notice</h3>
+                        </div>
+                        <button type="button" @click="reportModal = false" class="text-on-surface-variant text-sm font-bold hover:text-primary">&times;</button>
+                    </div>
+
+                    <form action="{{ route('obituaries.report', $obituary->id) }}" method="POST" class="space-y-4 text-xs">
+                        @csrf
+
+                        <div>
+                            <label class="block font-semibold uppercase text-on-surface-variant mb-1">Your Full Name <span class="text-rose-500">*</span></label>
+                            <input type="text" name="reporter_name" required placeholder="e.g. David Ochieng" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold uppercase text-on-surface-variant mb-1">Your Email Address <span class="text-rose-500">*</span></label>
+                            <input type="email" name="reporter_email" required placeholder="e.g. david@example.com" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold uppercase text-on-surface-variant mb-1">Reason for Reporting <span class="text-rose-500">*</span></label>
+                            <select name="reason" required class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface font-semibold">
+                                <option value="inaccurate_info">Inaccurate Dates or Details</option>
+                                <option value="impersonation">Fake / Impersonation Submission</option>
+                                <option value="unauthorized_post">Unauthorized Family Post</option>
+                                <option value="copyright_violation">Copyrighted Photo or Text</option>
+                                <option value="offensive_content">Inappropriate or Offensive Content</option>
+                                <option value="other">Other Concern</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold uppercase text-on-surface-variant mb-1">Description / Details <span class="text-rose-500">*</span></label>
+                            <textarea name="details" rows="3" required placeholder="Please describe the issue in detail so our editorial team can investigate." class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface leading-relaxed"></textarea>
+                        </div>
+
+                        <div class="pt-2 flex justify-end space-x-3">
+                            <button type="button" @click="reportModal = false" class="px-4 py-2 bg-surface-container text-on-surface rounded-xl font-semibold">Cancel</button>
+                            <button type="submit" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold shadow-md">
+                                Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -5,11 +5,14 @@ use App\Http\Controllers\ObituarySubmissionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PublicObituaryController;
 use App\Http\Controllers\CandleController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ObituaryController as AdminObituaryController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use Illuminate\Support\Facades\Route;
 
 // Public Front Routes
@@ -25,6 +28,7 @@ Route::view('/privacy', 'pages.privacy')->name('pages.privacy');
 Route::get('/search', [PublicObituaryController::class, 'search'])->name('obituaries.search');
 Route::get('/obituary/{slug}', [PublicObituaryController::class, 'show'])->name('obituaries.show');
 Route::post('/obituary/{obituary}/candle', [CandleController::class, 'store'])->name('obituaries.candle');
+Route::post('/obituary/{obituary}/report', [ReportController::class, 'store'])->name('obituaries.report');
 Route::get('/sitemap.xml', [PublicObituaryController::class, 'sitemap'])->name('sitemap');
 
 // Fallback route for storage files when symlink is disabled on shared hosting
@@ -56,7 +60,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
-        // Admin Obituary Management
+        // Admin & Editor Obituary Management
         Route::get('/obituaries', [AdminObituaryController::class, 'index'])->name('obituaries.index');
         Route::get('/obituaries/{obituary}', [AdminObituaryController::class, 'show'])->name('obituaries.show');
         Route::get('/obituaries/{obituary}/edit', [AdminObituaryController::class, 'edit'])->name('obituaries.edit');
@@ -64,10 +68,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/obituaries/{obituary}/verify', [AdminObituaryController::class, 'verify'])->name('obituaries.verify');
         Route::delete('/obituaries/{obituary}', [AdminObituaryController::class, 'destroy'])->name('obituaries.destroy');
 
+        // Admin & Editor Reports Moderation
+        Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+        Route::post('/reports/{report}/resolve', [AdminReportController::class, 'resolve'])->name('reports.resolve');
+        Route::delete('/reports/{report}', [AdminReportController::class, 'destroy'])->name('reports.destroy');
+
         // Admin Payment Audit Logs
         Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
 
-        // Admin General Settings
+        // Admin Staff & Roles Management (Super Admin)
+        Route::resource('/users', AdminUserController::class)->except(['create', 'edit', 'show']);
+
+        // Admin General Settings & Gateways (Super Admin)
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
     });

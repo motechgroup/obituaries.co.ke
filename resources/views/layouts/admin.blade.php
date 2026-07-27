@@ -86,12 +86,38 @@
                         </div>
                     </div>
 
+                    <!-- Obituary Reports -->
+                    <a href="{{ route('admin.reports.index') }}" class="flex items-center justify-between px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.reports.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 {{ request()->routeIs('admin.reports.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
+                            </svg>
+                            <span>Obituary Reports</span>
+                        </div>
+                        @php
+                            $pendingReportsCount = \App\Models\ObituaryReport::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingReportsCount > 0)
+                            <span class="text-xs bg-rose-500/20 text-rose-400 font-bold px-2 py-0.5 rounded-full border border-rose-500/30">
+                                {{ $pendingReportsCount }}
+                            </span>
+                        @endif
+                    </a>
+
                     <!-- M-Pesa Payments -->
                     <a href="{{ route('admin.payments.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.payments.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.payments.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <span>M-Pesa Payments Log</span>
+                    </a>
+
+                    <!-- Staff Accounts & Roles -->
+                    <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.users.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('admin.users.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span>Staff Accounts & Roles</span>
                     </a>
 
                     <!-- Platform Settings -->
