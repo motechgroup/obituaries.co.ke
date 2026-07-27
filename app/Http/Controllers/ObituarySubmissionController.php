@@ -51,6 +51,10 @@ class ObituarySubmissionController extends Controller
             'submitter_email' => ['nullable', 'email', 'max:255'],
             'relationship' => ['required', 'string', Rule::in(['Child', 'Spouse', 'Parent', 'Relative', 'Friend', 'Organization'])],
             'family_permission_confirmed' => ['accepted'],
+
+            // Gallery Images (Moments in Time)
+            'gallery_images' => ['nullable', 'array', 'max:8'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ], [
             'family_permission_confirmed.accepted' => 'You must confirm that you have permission from the family to submit this obituary.',
             'date_of_death.after_or_equal' => 'Date of death cannot be prior to date of birth.',
@@ -60,6 +64,16 @@ class ObituarySubmissionController extends Controller
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('obituaries/photos', 'public');
+        }
+
+        // Upload Gallery Images ("Moments in Time")
+        $galleryPaths = [];
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $file) {
+                if ($file->isValid()) {
+                    $galleryPaths[] = $file->store('obituaries/gallery', 'public');
+                }
+            }
         }
 
         // Upload Funeral Programme PDF if provided
@@ -76,6 +90,7 @@ class ObituarySubmissionController extends Controller
             'slug' => $slug,
             'full_name' => $validated['full_name'],
             'photo' => $photoPath,
+            'gallery_images' => $galleryPaths,
             'date_of_birth' => $validated['date_of_birth'],
             'date_of_death' => $validated['date_of_death'],
             'county' => $validated['county'],

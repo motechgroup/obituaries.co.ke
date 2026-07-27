@@ -79,10 +79,22 @@ class ObituaryController extends Controller
             'status' => ['required', 'string', 'in:published,pending_verification,rejected,pending_payment'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'programme_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'gallery_images' => ['nullable', 'array', 'max:8'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ]);
 
         if ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('photos', 'public');
+        }
+
+        if ($request->hasFile('gallery_images')) {
+            $galleryPaths = is_array($obituary->gallery_images) ? $obituary->gallery_images : [];
+            foreach ($request->file('gallery_images') as $file) {
+                if ($file->isValid()) {
+                    $galleryPaths[] = $file->store('obituaries/gallery', 'public');
+                }
+            }
+            $validated['gallery_images'] = array_values(array_unique($galleryPaths));
         }
 
         if ($request->hasFile('programme_file')) {

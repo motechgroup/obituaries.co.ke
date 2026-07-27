@@ -14,6 +14,7 @@ class Obituary extends Model
         'slug',
         'full_name',
         'photo',
+        'gallery_images',
         'date_of_birth',
         'date_of_death',
         'county',
@@ -41,6 +42,7 @@ class Obituary extends Model
         'funeral_date' => 'date',
         'verified_at' => 'datetime',
         'family_permission_confirmed' => 'boolean',
+        'gallery_images' => 'array',
     ];
 
     public static function generateUniqueSlug(string $name): string

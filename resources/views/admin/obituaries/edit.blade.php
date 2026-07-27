@@ -85,6 +85,23 @@
                     </div>
 
                     <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Moments in Time Gallery Photos (Add up to 5 photos)</label>
+                        <div class="p-3.5 bg-slate-50 border border-slate-300 rounded-xl space-y-3">
+                            @if(is_array($obituary->gallery_images) && count($obituary->gallery_images) > 0)
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    @foreach($obituary->gallery_images as $gImg)
+                                        <div class="w-12 h-12 rounded-lg overflow-hidden border border-slate-300">
+                                            <img src="{{ asset('storage/' . $gImg) }}" class="w-full h-full object-cover">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                            <input type="file" name="gallery_images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
+                            <span class="text-[10px] text-slate-400 block">Select multiple image files to add to the gallery.</span>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-2">
                         <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Biography & Life Story <span class="text-rose-500">*</span></label>
                         <textarea name="biography" rows="6" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm leading-relaxed">{{ old('biography', $obituary->biography) }}</textarea>
                     </div>

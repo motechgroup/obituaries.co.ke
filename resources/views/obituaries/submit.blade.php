@@ -138,6 +138,20 @@
                     </div>
                 </div>
 
+                <!-- Moments in Time Gallery Upload -->
+                <div>
+                    <label for="gallery_images" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
+                        Moments in Time Photo Gallery (Add up to 5 photos)
+                    </label>
+                    <div class="p-3.5 sm:p-4 bg-surface-container-low border border-dashed border-outline-variant rounded-xl flex items-center space-x-3">
+                        <span class="material-symbols-outlined text-on-surface-variant text-[28px] sm:text-[32px]">collections</span>
+                        <div class="flex-grow text-xs">
+                            <input type="file" name="gallery_images[]" id="gallery_images" multiple accept="image/jpeg,image/png,image/jpg,image/webp" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-secondary-fixed file:text-on-secondary-fixed">
+                            <span class="text-[10px] text-on-surface-variant/60 block mt-1">Upload up to 5 family photos, wedding moments, career memories, etc. (Max 5MB each)</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Biography -->
                 <div>
                     <label for="biography" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
