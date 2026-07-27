@@ -129,24 +129,10 @@ class SettingController extends Controller
         $recipient = $request->input('test_email');
 
         try {
-            $host = Setting::get('mail_host', config('mail.mailers.smtp.host'));
-            $port = Setting::get('mail_port', config('mail.mailers.smtp.port'));
-            $username = Setting::get('mail_username', config('mail.mailers.smtp.username'));
-            $password = Setting::get('mail_password', config('mail.mailers.smtp.password'));
-            $encryption = Setting::get('mail_encryption', config('mail.mailers.smtp.encryption'));
+            \App\Services\MailService::configure();
+
             $fromAddress = Setting::get('mail_from_address', config('mail.from.address'));
             $fromName = Setting::get('mail_from_name', config('mail.from.name'));
-
-            config([
-                'mail.default' => 'smtp',
-                'mail.mailers.smtp.host' => $host,
-                'mail.mailers.smtp.port' => $port,
-                'mail.mailers.smtp.username' => $username,
-                'mail.mailers.smtp.password' => $password,
-                'mail.mailers.smtp.encryption' => $encryption,
-                'mail.from.address' => $fromAddress,
-                'mail.from.name' => $fromName,
-            ]);
 
             Mail::raw("Hello!\n\nThis is a test email sent from your Obituaries.co.ke Admin Panel.\nYour SMTP Mail Server configuration is working properly!", function ($message) use ($recipient, $fromAddress, $fromName) {
                 $message->to($recipient)

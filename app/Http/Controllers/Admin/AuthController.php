@@ -76,6 +76,7 @@ class AuthController extends Controller
 
         // Send Email
         try {
+            \App\Services\MailService::configure();
             Mail::raw("Hello,\n\nYou requested a password reset for your Obituaries.co.ke admin account.\n\nClick the link below to reset your password:\n{$resetUrl}\n\nThis link will expire in 60 minutes. If you did not request a password reset, please ignore this email.", function ($message) use ($email) {
                 $message->to($email)->subject('Obituaries.co.ke Admin Password Reset Request');
             });

@@ -129,6 +129,7 @@ class ObituaryController extends Controller
             // Dispatch Approval Email if email provided
             if ($obituary->submitter_email) {
                 try {
+                    \App\Services\MailService::configure();
                     $tmpl = \App\Models\Setting::get('mail_template_verification', "Dear {NAME},\n\nYour obituary notice for {DECEASED_NAME} has been published live.\n\nView Live: {LINK}");
                     $body = str_replace(['{NAME}', '{DECEASED_NAME}', '{LINK}'], [$obituary->submitter_name, $obituary->full_name, route('obituaries.show', $obituary->slug)], $tmpl);
                     \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($obituary) {
@@ -150,6 +151,7 @@ class ObituaryController extends Controller
             // Dispatch Rejection Email if email provided
             if ($obituary->submitter_email) {
                 try {
+                    \App\Services\MailService::configure();
                     $tmpl = \App\Models\Setting::get('mail_template_rejection', "Dear {NAME},\n\nYour obituary submission for {DECEASED_NAME} was not approved. Reason: {REASON}");
                     $body = str_replace(['{NAME}', '{DECEASED_NAME}', '{REASON}'], [$obituary->submitter_name, $obituary->full_name, $notes ?: 'Verification details incomplete.'], $tmpl);
                     \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($obituary) {
