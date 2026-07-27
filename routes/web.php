@@ -24,6 +24,16 @@ Route::get('/search', [PublicObituaryController::class, 'search'])->name('obitua
 Route::get('/obituary/{slug}', [PublicObituaryController::class, 'show'])->name('obituaries.show');
 Route::get('/sitemap.xml', [PublicObituaryController::class, 'sitemap'])->name('sitemap');
 
+// Fallback route for storage files when symlink is disabled on shared hosting
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    $mime = mime_content_type($filePath) ?: 'application/octet-stream';
+    return response()->file($filePath, ['Content-Type' => $mime]);
+})->where('path', '.*')->name('storage.fallback');
+
 // Obituary Submission Workflow
 Route::get('/submit', [ObituarySubmissionController::class, 'create'])->name('obituaries.submit');
 Route::post('/submit', [ObituarySubmissionController::class, 'store'])->name('obituaries.store');
