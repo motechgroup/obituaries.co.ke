@@ -42,6 +42,40 @@
     </div>
 </section>
 
+<!-- Dark Obituaries Directory Horizontal Strip (Matching User Screenshot) -->
+<section class="w-full bg-[#0B101D] border-y border-slate-800/80 py-5 sm:py-6 overflow-hidden">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+        <div class="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth py-1">
+            @forelse($latestObituaries as $obituary)
+                <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex-shrink-0 flex items-center space-x-3.5 bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800/80 hover:border-amber-500/40 p-2.5 px-4 rounded-2xl transition-all duration-300 group shadow-md hover:-translate-y-0.5">
+                    <!-- Thumbnail Avatar -->
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/80">
+                        @if($obituary->photo)
+                            <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        @else
+                            <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-amber-400">
+                                <span class="material-symbols-outlined text-[20px]">church</span>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Deceased Name & Date of Death -->
+                    <div class="text-left whitespace-nowrap">
+                        <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight">
+                            {{ $obituary->full_name }}
+                        </h4>
+                        <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium">
+                            {{ $obituary->date_of_death->format('M d, Y') }}
+                        </span>
+                    </div>
+                </a>
+            @empty
+                <div class="text-slate-400 text-xs py-2 italic">No published notices available in directory.</div>
+            @endforelse
+        </div>
+    </div>
+</section>
+
 <!-- Latest Obituaries (Editorial Grid matching Stitch Design) -->
 <section class="w-full py-12 sm:py-20 bg-surface">
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
