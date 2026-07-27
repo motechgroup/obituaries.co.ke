@@ -159,51 +159,61 @@
         @endif
 
         @if($todayAnniversaries->isNotEmpty())
-            <!-- Today's Anniversaries Section -->
-            <div class="mt-16 pt-12 border-t border-outline-variant/30">
-                <div class="flex items-center justify-between mb-8">
+            <!-- Today's Anniversaries Section (List View Format for Mobile & Desktop) -->
+            <div class="mt-14 sm:mt-20 pt-10 sm:pt-14 border-t border-outline-variant/30">
+                <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-6 sm:mb-8 gap-3">
                     <div>
-                        <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-500/10 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                        <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-500/10 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border border-amber-300/30">
                             <span>🌹 In Loving Remembrance</span>
                         </div>
                         <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1">Today's Anniversaries</h2>
                         <p class="text-xs sm:text-sm text-on-surface-variant">Remembering loved ones whose anniversary of passing falls on today's date.</p>
                     </div>
-                    <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="text-xs font-bold text-amber-800 hover:text-amber-900 inline-flex items-center space-x-1">
+                    <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="text-xs font-bold text-amber-800 hover:text-amber-900 inline-flex items-center space-x-1 whitespace-nowrap">
                         <span>View All Anniversaries</span>
                         <span>&rarr;</span>
                     </a>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div class="divide-y divide-amber-200/60 border-y border-amber-200/60">
                     @foreach($todayAnniversaries as $obituary)
-                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-amber-50/50 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-amber-200/60 block cursor-pointer">
-                            <div>
-                                <!-- Compact Square Aspect Image Container -->
-                                <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container">
+                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group flex flex-col sm:flex-row sm:items-center justify-between py-3.5 sm:py-4 px-2 sm:px-3 rounded-xl hover:bg-amber-50/70 transition-all duration-300 gap-3">
+                            <!-- Left: Avatar & Deceased Info -->
+                            <div class="flex items-center space-x-3.5 sm:space-x-4 min-w-0">
+                                <!-- Thumbnail Avatar -->
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-surface-container flex-shrink-0 border border-amber-300/50 shadow-xs">
                                     @if($obituary->photo)
-                                        <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100">
+                                        <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     @else
-                                        <div class="w-full h-full bg-gradient-to-b from-amber-900 to-amber-950 flex flex-col items-center justify-center p-3 text-center text-amber-100">
-                                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex items-center justify-center text-amber-200 mb-1">
-                                                <span class="material-symbols-outlined text-[18px] sm:text-[22px]">church</span>
-                                            </div>
-                                            <span class="font-serif text-[9px] sm:text-[10px] italic">In Loving Memory</span>
+                                        <div class="w-full h-full bg-gradient-to-br from-amber-800 to-amber-950 flex items-center justify-center text-amber-100">
+                                            <span class="material-symbols-outlined text-[20px] sm:text-[24px]">church</span>
                                         </div>
                                     @endif
-
-                                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-[8px] sm:text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-xs z-10">
-                                        <span>{{ $obituary->anniversary_badge_text }}</span>
-                                    </div>
                                 </div>
 
-                                <div class="text-center">
-                                    <span class="text-[9px] sm:text-[10px] font-semibold text-amber-800 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                    <h3 class="font-serif text-xs sm:text-base font-bold text-primary mb-0.5 group-hover:text-amber-800 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
-                                    <p class="text-[10px] text-on-surface-variant/70 italic">
-                                        Passed {{ $obituary->date_of_death->format('M d, Y') }}
+                                <!-- Deceased Details -->
+                                <div class="text-left min-w-0 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-[9px] sm:text-[10px] font-semibold text-amber-800 tracking-widest uppercase truncate block">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                    </div>
+                                    <h3 class="font-serif text-sm sm:text-base font-bold text-primary group-hover:text-amber-800 transition-colors leading-tight truncate">
+                                        {{ $obituary->full_name }}
+                                    </h3>
+                                    <p class="text-[11px] sm:text-xs text-on-surface-variant/70 mt-0.5 truncate">
+                                        Passed {{ $obituary->date_of_death->format('M d, Y') }} &bull; <span class="italic text-amber-900/80 font-medium">{{ $obituary->anniversary_badge_text }}</span>
                                     </p>
                                 </div>
+                            </div>
+
+                            <!-- Right: Anniversary Badge Pill & View Link -->
+                            <div class="flex items-center justify-between sm:justify-end space-x-3 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-amber-200/40">
+                                <span class="bg-amber-100 text-amber-900 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-amber-300/60 shadow-2xs whitespace-nowrap">
+                                    {{ $obituary->anniversary_badge_text }}
+                                </span>
+                                <span class="text-xs font-bold text-primary group-hover:text-amber-800 transition-colors flex items-center space-x-1 whitespace-nowrap">
+                                    <span>View Tribute</span>
+                                    <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
+                                </span>
                             </div>
                         </a>
                     @endforeach
