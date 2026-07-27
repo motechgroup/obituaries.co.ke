@@ -111,4 +111,37 @@ class ObituaryTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Published John Doe');
     }
+
+    public function test_user_can_submit_obituary_report()
+    {
+        $obituary = Obituary::create([
+            'slug' => 'published-john-doe-report-test',
+            'full_name' => 'Published John Doe Report Test',
+            'date_of_birth' => '1950-01-01',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Bio for John Doe.',
+            'submitter_name' => 'Jane Doe',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Spouse',
+            'status' => 'published',
+            'verification_status' => 'verified',
+        ]);
+
+        $response = $this->post(route('obituaries.report', $obituary->id), [
+            'reporter_name' => 'Peter Ochieng',
+            'reporter_email' => 'peter@example.com',
+            'reason' => 'inaccurate_info',
+            'details' => 'The date of birth listed is incorrect.',
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseHas('obituary_reports', [
+            'obituary_id' => $obituary->id,
+            'reporter_name' => 'Peter Ochieng',
+            'reporter_email' => 'peter@example.com',
+            'reason' => 'inaccurate_info',
+        ]);
+    }
 }
