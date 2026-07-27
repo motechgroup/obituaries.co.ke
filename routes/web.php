@@ -18,18 +18,28 @@ use Illuminate\Support\Facades\Route;
 // Public Front Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+use App\Http\Controllers\BlogController;
+
 // Static Informational Pages
 Route::view('/about', 'pages.about')->name('pages.about');
 Route::view('/contact', 'pages.contact')->name('pages.contact');
 Route::view('/terms', 'pages.terms')->name('pages.terms');
 Route::view('/privacy', 'pages.privacy')->name('pages.privacy');
 
-// Search & Directory
+// Blog & Resource Guides
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// Search & Directory & County Landing Pages
 Route::get('/search', [PublicObituaryController::class, 'search'])->name('obituaries.search');
+Route::get('/county/{county}', [PublicObituaryController::class, 'countyIndex'])->name('obituaries.county');
 Route::get('/obituary/{slug}', [PublicObituaryController::class, 'show'])->name('obituaries.show');
 Route::post('/obituary/{obituary}/candle', [CandleController::class, 'store'])->name('obituaries.candle');
 Route::post('/obituary/{obituary}/report', [ReportController::class, 'store'])->name('obituaries.report');
 Route::get('/sitemap.xml', [PublicObituaryController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', function () {
+    return response(file_get_contents(public_path('robots.txt')), 200, ['Content-Type' => 'text/plain; charset=utf-8']);
+});
 
 // Fallback route for storage files when symlink is disabled on shared hosting
 Route::get('/storage/{path}', function ($path) {

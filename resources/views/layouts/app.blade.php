@@ -3,15 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Obituaries.co.ke | Remembering Lives. Sharing Memories.')</title>
-    <meta name="description" content="@yield('meta_description', 'Create and preserve a lasting tribute for your loved ones on Kenya\'s official obituary publishing platform.')">
     
-    <!-- Open Graph / Meta -->
-    <meta property="og:title" content="@yield('og_title', 'Obituaries.co.ke | Remembering Lives. Sharing Memories.')">
-    <meta property="og:description" content="@yield('og_description', 'Create and preserve a lasting tribute for your loved ones.')">
+    <title>@yield('title', 'Obituaries.co.ke | Kenya Obituaries, Death Notices & Memorials')</title>
+    <meta name="description" content="@yield('meta_description', 'Official Kenyan obituary platform. Read recent death notices, life stories, funeral schedules, and light virtual candles for loved ones across Kenya.')">
+    <meta name="keywords" content="@yield('seo_keywords', 'obituary Kenya, Kenya obituaries, death notices Kenya, Kenyan obituaries, online obituary Kenya, funeral announcements Kenya, Nairobi obituaries, Kisii obituaries')">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
+
+    @hasSection('noindex')
+        <meta name="robots" content="noindex, nofollow">
+    @endif
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:site_name" content="Obituaries.co.ke">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('og_title', 'Obituaries.co.ke | Kenya Obituaries & Death Notices')">
+    <meta property="og:description" content="@yield('og_description', 'Official Kenyan obituary publishing and memorial platform.')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', 'Obituaries.co.ke | Kenya Obituaries & Death Notices')">
+    <meta name="twitter:description" content="@yield('og_description', 'Official Kenyan obituary publishing and memorial platform.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('images/og-default.jpg'))">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -21,6 +35,49 @@
 
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Schema.org Organization & WebSite JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "{{ url('/') }}#organization",
+          "name": "Obituaries.co.ke",
+          "url": "{{ url('/') }}",
+          "logo": "{{ asset('images/logo.png') }}",
+          "description": "Kenya's official online obituary and death notice publishing platform.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Nairobi",
+            "addressCountry": "KE"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "email": "support@obituaries.co.ke"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ url('/') }}#website",
+          "url": "{{ url('/') }}",
+          "name": "Obituaries.co.ke",
+          "publisher": {
+            "@id": "{{ url('/') }}#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ url('/search') }}?name={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    @yield('structured_data')
 </head>
 <body class="bg-background font-sans text-on-surface flex flex-col min-h-screen antialiased selection:bg-secondary-container selection:text-on-secondary-container" x-data="{ mobileMenu: false }">
 
@@ -46,6 +103,7 @@
             <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center gap-6">
                 <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Directory</a>
+                <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Counties</a>
                 <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">About</a>
                 <a href="{{ route('admin.login') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Admin Portal</a>
                 
@@ -145,7 +203,7 @@
             <p class="font-serif text-xl sm:text-2xl font-bold text-on-surface mb-2">Remembering Lives. Sharing Memories.</p>
             <p class="text-xs text-on-surface-variant mb-6 sm:mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
             
-            <nav class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-8 text-xs font-semibold">
+            <nav class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-6 text-xs font-semibold">
                 <a href="{{ route('home') }}" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
                 <a href="{{ route('obituaries.search') }}" class="text-on-surface-variant hover:text-primary transition-colors">Search Directory</a>
                 <a href="{{ route('pages.about') }}" class="text-on-surface-variant hover:text-primary transition-colors">About</a>
@@ -154,6 +212,28 @@
                 <a href="{{ route('pages.terms') }}" class="text-on-surface-variant hover:text-primary transition-colors">Terms</a>
                 <a href="{{ route('obituaries.submit') }}" class="text-on-surface-variant hover:text-primary transition-colors">Submit Obituary</a>
             </nav>
+
+            <!-- Major County SEO Footer Links -->
+            <div class="border-t border-outline-variant/20 pt-6 mb-8 w-full">
+                <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant/70 block mb-3">Obituaries by County</span>
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] text-on-surface-variant/80">
+                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-primary font-medium">Nairobi Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-primary font-medium">Kisii Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-primary font-medium">Kisumu Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-primary font-medium">Mombasa Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-primary font-medium">Nakuru Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-primary font-medium">Kiambu Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-primary font-medium">Eldoret Obituaries</a>
+                    <span>&bull;</span>
+                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-primary font-medium">Machakos Obituaries</a>
+                </div>
+            </div>
             
             <p class="text-[11px] text-on-tertiary-container">&copy; {{ date('Y') }} Obituaries.co.ke. A dignified space for remembrance.</p>
         </div>

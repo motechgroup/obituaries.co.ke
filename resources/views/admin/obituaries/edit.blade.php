@@ -169,6 +169,37 @@
                 </div>
             </div>
 
+            <!-- SEO & Search Engine Optimization Metadata -->
+            <div class="space-y-4 pt-4 border-t border-slate-200">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <h3 class="font-serif text-lg font-bold text-slate-900">🔍 Search Engine Optimization (SEO Metadata)</h3>
+                    <span class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full font-semibold">Google Search Ready</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Custom Meta Title</label>
+                        <input type="text" name="meta_title" value="{{ old('meta_title', $obituary->meta_title) }}" placeholder="e.g. {{ $obituary->full_name }} Obituary | Death Notice & Funeral Details" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        <p class="text-[11px] text-slate-400 mt-1">Leave blank to automatically use system default format: "{Name} Obituary | Obituaries.co.ke"</p>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Custom Meta Description</label>
+                        <textarea name="meta_description" rows="2" placeholder="e.g. Read the obituary, life story, funeral details, and memories of {{ $obituary->full_name }} from {{ $obituary->town }}, {{ $obituary->county }}." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm leading-relaxed">{{ old('meta_description', $obituary->meta_description) }}</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">SEO Keywords (Comma Separated)</label>
+                        <input type="text" name="seo_keywords" value="{{ old('seo_keywords', $obituary->seo_keywords) }}" placeholder="e.g. {{ $obituary->full_name }} obituary, {{ $obituary->county }} obituaries, death notice Kenya" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Canonical URL (Optional)</label>
+                        <input type="text" name="canonical_url" value="{{ old('canonical_url', $obituary->canonical_url) }}" placeholder="e.g. https://obituaries.co.ke/obituary/{{ $obituary->slug }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                    </div>
+                </div>
+            </div>
+
             <div class="pt-6 border-t border-slate-200 flex justify-end space-x-3">
                 <a href="{{ route('admin.obituaries.show', $obituary->id) }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs">Cancel</a>
                 <button type="submit" class="px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-md">

@@ -34,6 +34,10 @@ class Obituary extends Model
         'verification_notes',
         'verified_by',
         'verified_at',
+        'meta_title',
+        'meta_description',
+        'seo_keywords',
+        'canonical_url',
     ];
 
     protected $casts = [

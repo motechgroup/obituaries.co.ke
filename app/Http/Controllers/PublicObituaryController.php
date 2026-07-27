@@ -4,9 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Obituary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PublicObituaryController extends Controller
 {
+    public static function getCountiesList(): array
+    {
+        return [
+            'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
+            'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
+            'Kisumu', 'Kitui', 'Kwale', 'Laikipia', 'Lamu', 'Machakos', 'Makueni', 'Mandera',
+            'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi', 'Nakuru', 'Nandi',
+            'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
+            'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
+        ];
+    }
+
     public function show($slug)
     {
         $obituary = Obituary::where('slug', $slug)
@@ -14,7 +27,15 @@ class PublicObituaryController extends Controller
             ->with(['candles' => fn($q) => $q->latest()])
             ->firstOrFail();
 
-        return view('obituaries.show', compact('obituary'));
+        // Similar Obituaries in same county for internal SEO linking
+        $similarObituaries = Obituary::published()
+            ->where('id', '!=', $obituary->id)
+            ->where('county', $obituary->county)
+            ->latest('date_of_death')
+            ->take(4)
+            ->get();
+
+        return view('obituaries.show', compact('obituary', 'similarObituaries'));
     }
 
     public function search(Request $request)
@@ -38,25 +59,51 @@ class PublicObituaryController extends Controller
         }
 
         $obituaries = $query->latest('date_of_death')->paginate(12)->withQueryString();
-
-        $counties = [
-            'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
-            'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
-            'Kisumu', 'Kitui', 'Kwale', 'Laikipia', 'Lamu', 'Machakos', 'Makueni', 'Mandera',
-            'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi', 'Nakuru', 'Nandi',
-            'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
-            'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
-        ];
+        $counties = static::getCountiesList();
 
         return view('obituaries.search', compact('obituaries', 'counties'));
+    }
+
+    public function countyIndex($countySlug)
+    {
+        $cleanSlug = str_replace('-obituaries', '', Str::slug($countySlug));
+        $counties = static::getCountiesList();
+
+        $matchedCounty = null;
+        foreach ($counties as $c) {
+            if (Str::slug($c) === $cleanSlug) {
+                $matchedCounty = $c;
+                break;
+            }
+        }
+
+        if (!$matchedCounty) {
+            abort(404);
+        }
+
+        $obituaries = Obituary::published()
+            ->where('county', $matchedCounty)
+            ->latest('date_of_death')
+            ->paginate(12);
+
+        $totalCount = Obituary::published()->where('county', $matchedCounty)->count();
+
+        return view('obituaries.county', [
+            'county' => $matchedCounty,
+            'countySlug' => Str::slug($matchedCounty),
+            'obituaries' => $obituaries,
+            'totalCount' => $totalCount,
+            'allCounties' => $counties,
+        ]);
     }
 
     public function sitemap()
     {
         $obituaries = Obituary::published()->select('slug', 'updated_at')->get();
+        $counties = static::getCountiesList();
 
-        $content = view('obituaries.sitemap', compact('obituaries'));
+        $content = view('obituaries.sitemap', compact('obituaries', 'counties'));
 
-        return response($content, 200)->header('Content-Type', 'text/xml');
+        return response($content, 200)->header('Content-Type', 'text/xml; charset=utf-8');
     }
 }

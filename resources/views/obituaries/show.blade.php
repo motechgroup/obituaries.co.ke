@@ -1,11 +1,66 @@
 @extends('layouts.app')
 
-@section('title', $obituary->full_name . ' Obituary | Obituaries.co.ke')
-@section('meta_description', 'Read the obituary, life story, funeral details and memories of ' . $obituary->full_name . '.')
+@section('title', $obituary->meta_title ?: $obituary->full_name . ' Obituary | Death Notice & Funeral Details | Obituaries.co.ke')
+@section('meta_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . ' from ' . $obituary->town . ', ' . $obituary->county . ' County. Share condolences.')
+@section('seo_keywords', $obituary->seo_keywords ?: $obituary->full_name . ' obituary, ' . $obituary->county . ' obituaries, ' . $obituary->full_name . ' funeral details, death notice Kenya')
+@section('canonical_url', $obituary->canonical_url ?: route('obituaries.show', $obituary->slug))
 
-@section('og_title', $obituary->full_name . ' Obituary | Obituaries.co.ke')
-@section('og_description', 'Read the obituary, life story, funeral details and memories of ' . $obituary->full_name . '.')
+@section('og_title', $obituary->meta_title ?: $obituary->full_name . ' Obituary | Obituaries.co.ke')
+@section('og_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . '.')
 @section('og_image', $obituary->photo ? asset('storage/' . $obituary->photo) : asset('images/og-default.jpg'))
+@section('og_type', 'article')
+
+@section('structured_data')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "{{ route('obituaries.show', $obituary->slug) }}#person",
+      "name": "{{ $obituary->full_name }}",
+      "birthDate": "{{ $obituary->date_of_birth->format('Y-m-d') }}",
+      "deathDate": "{{ $obituary->date_of_death->format('Y-m-d') }}",
+      "image": "{{ $obituary->photo ? asset('storage/' . $obituary->photo) : asset('images/og-default.jpg') }}",
+      "description": "{{ Str::limit(strip_tags($obituary->biography), 200) }}",
+      "homeLocation": {
+        "@type": "Place",
+        "name": "{{ $obituary->town }}, {{ $obituary->county }} County, Kenya"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ route('obituaries.show', $obituary->slug) }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ url('/') }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Obituaries Directory",
+          "item": "{{ url('/search') }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ $obituary->county }} Obituaries",
+          "item": "{{ url('/county/' . \Illuminate\Support\Str::slug($obituary->county) . '-obituaries') }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "{{ $obituary->full_name }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 

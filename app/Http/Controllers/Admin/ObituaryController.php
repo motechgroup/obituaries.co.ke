@@ -81,6 +81,10 @@ class ObituaryController extends Controller
             'programme_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'gallery_images' => ['nullable', 'array', 'max:8'],
             'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'seo_keywords' => ['nullable', 'string', 'max:255'],
+            'canonical_url' => ['nullable', 'string', 'max:255'],
         ]);
 
         if ($request->hasFile('photo')) {
