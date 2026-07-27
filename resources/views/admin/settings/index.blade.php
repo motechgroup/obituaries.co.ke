@@ -194,8 +194,14 @@
 
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Rejection Email Template</label>
-                    <textarea name="mail_template_rejection" rows="4" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_rejection', $settings['mail_template_rejection']) }}</textarea>
+                    <textarea name="mail_template_rejection" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_rejection', $settings['mail_template_rejection']) }}</textarea>
                     <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {NAME}, {DECEASED_NAME}, {REASON}</span>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Annual Anniversary Reminder Email Template</label>
+                    <textarea name="mail_template_anniversary" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_anniversary', $settings['mail_template_anniversary']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {NAME}, {DECEASED_NAME}, {YEARS}, {LINK}</span>
                 </div>
             </div>
         </div>
@@ -242,6 +248,11 @@
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Rejection SMS Template</label>
                     <textarea name="sms_template_rejection" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_rejection', $settings['sms_template_rejection']) }}</textarea>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Annual Anniversary Reminder SMS Template</label>
+                    <textarea name="sms_template_anniversary" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_anniversary', $settings['sms_template_anniversary']) }}</textarea>
                 </div>
             </div>
         </div>

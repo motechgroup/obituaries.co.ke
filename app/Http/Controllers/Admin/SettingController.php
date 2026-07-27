@@ -41,6 +41,7 @@ class SettingController extends Controller
             'mail_from_name' => Setting::get('mail_from_name', 'Obituaries.co.ke'),
             'mail_template_verification' => Setting::get('mail_template_verification', "Dear {NAME},\n\nYour obituary notice for {DECEASED_NAME} has been verified and published live on Obituaries.co.ke.\n\nView Live: {LINK}\n\nWarm regards,\nObituaries.co.ke Team"),
             'mail_template_rejection' => Setting::get('mail_template_rejection', "Dear {NAME},\n\nRegrettably, your obituary submission for {DECEASED_NAME} could not be approved due to the following reason:\n\nReason: {REASON}\n\nPlease contact our editorial team if you have questions.\n\nWarm regards,\nObituaries.co.ke Editorial Team"),
+            'mail_template_anniversary' => Setting::get('mail_template_anniversary', "Dear {NAME},\n\nToday marks the {YEARS} Anniversary of the passing of {DECEASED_NAME}.\n\nIn honoring their cherished legacy, friends and family are remembering them today on Obituaries.co.ke.\n\nView Memorial: {LINK}\n\nWarm regards,\nObituaries.co.ke Team"),
 
             // SMS Gateway & Templates
             'sms_provider' => Setting::get('sms_provider', 'africastalking'),
@@ -50,6 +51,7 @@ class SettingController extends Controller
             'sms_template_submission' => Setting::get('sms_template_submission', "Dear {NAME}, your obituary submission for {DECEASED_NAME} has been received. Complete payment to publish."),
             'sms_template_approval' => Setting::get('sms_template_approval', "Dear {NAME}, the obituary for {DECEASED_NAME} is now published live: {LINK}"),
             'sms_template_rejection' => Setting::get('sms_template_rejection', "Dear {NAME}, your obituary submission for {DECEASED_NAME} was not approved. Reason: {REASON}"),
+            'sms_template_anniversary' => Setting::get('sms_template_anniversary', "Dear {NAME}, today marks the {YEARS} Anniversary of {DECEASED_NAME}'s passing. We join you in memory: {LINK}"),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -83,6 +85,7 @@ class SettingController extends Controller
             'mail_from_name' => ['nullable', 'string'],
             'mail_template_verification' => ['nullable', 'string'],
             'mail_template_rejection' => ['nullable', 'string'],
+            'mail_template_anniversary' => ['nullable', 'string'],
 
             'sms_provider' => ['nullable', 'string'],
             'sms_api_key' => ['nullable', 'string'],
@@ -91,6 +94,7 @@ class SettingController extends Controller
             'sms_template_submission' => ['nullable', 'string'],
             'sms_template_approval' => ['nullable', 'string'],
             'sms_template_rejection' => ['nullable', 'string'],
+            'sms_template_anniversary' => ['nullable', 'string'],
         ]);
 
         if ($request->hasFile('logo')) {

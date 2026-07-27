@@ -21,6 +21,10 @@ class PublicObituaryController extends Controller
     {
         $query = Obituary::published();
 
+        if ($request->input('filter') === 'anniversaries') {
+            $query->todayAnniversaries();
+        }
+
         if ($name = $request->input('name')) {
             $query->where('full_name', 'like', "%{$name}%");
         }

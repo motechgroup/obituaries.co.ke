@@ -84,6 +84,12 @@
                                     </div>
                                 @endif
 
+                                @if($obituary->is_anniversary_today)
+                                    <div class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-amber-700/90 backdrop-blur-md text-amber-100 text-[8px] sm:text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase tracking-wider border border-amber-300/30 flex items-center space-x-1 shadow-md z-10">
+                                        <span>{{ $obituary->anniversary_badge_text }}</span>
+                                    </div>
+                                @endif
+
                                 <div class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-primary/80 backdrop-blur-md text-secondary-fixed text-[8px] sm:text-[10px] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase tracking-wider border border-white/10 flex items-center space-x-0.5 sm:space-x-1">
                                     <span class="material-symbols-outlined text-[10px] sm:text-[12px]">verified</span>
                                     <span>Verified</span>
@@ -101,6 +107,55 @@
                         </div>
                     </a>
                 @endforeach
+            </div>
+        @endif
+
+        @if($todayAnniversaries->isNotEmpty())
+            <!-- Today's Anniversaries Section -->
+            <div class="mt-16 pt-12 border-t border-outline-variant/30">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-500/10 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>🌹 In Loving Remembrance</span>
+                        </div>
+                        <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1">Today's Anniversaries</h2>
+                        <p class="text-xs sm:text-sm text-on-surface-variant">Remembering loved ones whose anniversary of passing falls on today's date.</p>
+                    </div>
+                    <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="text-xs font-bold text-amber-800 hover:text-amber-900 inline-flex items-center space-x-1">
+                        <span>View All Anniversaries</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+                    @foreach($todayAnniversaries as $obituary)
+                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-amber-50/50 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between border border-amber-200/60 block cursor-pointer">
+                            <div>
+                                <div class="relative aspect-4/5 mb-3 sm:mb-6 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container">
+                                    @if($obituary->photo)
+                                        <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-b from-amber-900 to-amber-950 flex flex-col items-center justify-center p-3 text-center text-amber-100">
+                                            <span class="font-serif text-[10px] sm:text-xs italic">In Loving Memory</span>
+                                        </div>
+                                    @endif
+
+                                    <div class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-amber-800 text-white text-[8px] sm:text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase tracking-wider shadow-md z-10">
+                                        <span>{{ $obituary->anniversary_badge_text }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="text-center">
+                                    <span class="text-[9px] sm:text-[11px] font-semibold text-amber-800 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                    <h3 class="font-serif text-sm sm:text-xl font-bold text-primary mb-0.5 group-hover:text-amber-800 transition-colors line-clamp-2">{{ $obituary->full_name }}</h3>
+                                    <p class="text-[10px] sm:text-xs text-on-surface-variant/70 italic">
+                                        Passed {{ $obituary->date_of_death->format('M d, Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
         @endif
     </div>

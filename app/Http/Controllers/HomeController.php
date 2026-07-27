@@ -14,6 +14,11 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
+        $todayAnniversaries = Obituary::todayAnniversaries()
+            ->latest('date_of_death')
+            ->take(6)
+            ->get();
+
         $totalCount = Obituary::published()->count();
 
         $counties = [
@@ -25,6 +30,6 @@ class HomeController extends Controller
             'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
         ];
 
-        return view('home', compact('latestObituaries', 'totalCount', 'counties'));
+        return view('home', compact('latestObituaries', 'todayAnniversaries', 'totalCount', 'counties'));
     }
 }

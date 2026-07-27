@@ -96,9 +96,52 @@ class Obituary extends Model
         return null;
     }
 
+    public function getAnniversaryYearsAttribute(): ?int
+    {
+        if (!$this->date_of_death) {
+            return null;
+        }
+        $today = now();
+        if ($this->date_of_death->month === $today->month && $this->date_of_death->day === $today->day && $this->date_of_death->year < $today->year) {
+            return $this->date_of_death->diffInYears($today);
+        }
+        return null;
+    }
+
+    public function getIsAnniversaryTodayAttribute(): bool
+    {
+        return $this->anniversary_years !== null && $this->anniversary_years > 0;
+    }
+
+    public function getAnniversaryBadgeTextAttribute(): ?string
+    {
+        if (!$this->is_anniversary_today || !$this->anniversary_years) {
+            return null;
+        }
+
+        $years = $this->anniversary_years;
+        $ends = ['th','st','nd','rd','th','th','th','th','th','th'];
+        if ((($years % 100) >= 11) && (($years % 100) <= 13)) {
+            $abbreviation = $years . 'th';
+        } else {
+            $abbreviation = $years . $ends[$years % 10];
+        }
+
+        return "🌹 {$abbreviation} Anniversary";
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published');
+    }
+
+    public function scopeTodayAnniversaries($query)
+    {
+        $today = now();
+        return $query->where('status', 'published')
+            ->whereMonth('date_of_death', $today->month)
+            ->whereDay('date_of_death', $today->day)
+            ->whereYear('date_of_death', '<', $today->year);
     }
 
     public function scopePendingVerification($query)
