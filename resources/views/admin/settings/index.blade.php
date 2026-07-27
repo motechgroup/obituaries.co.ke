@@ -58,7 +58,26 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Git Pull Box -->
+            <div class="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-4 shadow-md">
+                <div class="flex items-center space-x-2 text-sky-400 font-bold text-sm">
+                    <span class="material-symbols-outlined text-[22px]">sync</span>
+                    <span class="text-base">Git Pull Codebase</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Executes <code>git pull origin main</code> online to pull the latest source code from GitHub and clear cache.
+                </p>
+                <form action="{{ route('admin.system.git-pull') }}" method="POST" onsubmit="return confirm('Pull latest codebase from GitHub onto live server?')">
+                    @csrf
+                    <input type="hidden" name="active_tab" value="database">
+                    <button type="submit" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                        <span>Pull Latest Code Now</span>
+                    </button>
+                </form>
+            </div>
+
             <!-- Migrations Box -->
             <div class="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-4 shadow-md">
                 <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">

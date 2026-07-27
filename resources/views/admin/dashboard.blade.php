@@ -11,6 +11,13 @@
             <p class="text-slate-500 text-sm mt-1">Monitor all submissions, verify submitter contacts, and review M-Pesa payments.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            <form action="{{ route('admin.system.git-pull') }}" method="POST" onsubmit="return confirm('Pull latest codebase from GitHub onto live server?')">
+                @csrf
+                <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-sky-400 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[16px]">sync</span>
+                    <span>Git Pull Code</span>
+                </button>
+            </form>
             <form action="{{ route('admin.database.migrate') }}" method="POST" onsubmit="return confirm('Execute database migrations online?')">
                 @csrf
                 <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-xl text-xs font-bold transition-all shadow-sm">

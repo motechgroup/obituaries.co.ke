@@ -205,4 +205,24 @@ class SettingController extends Controller
                 ->with('error', "❌ Seeder Error: " . $e->getMessage());
         }
     }
+
+    public function gitPull(Request $request)
+    {
+        try {
+            $basePath = base_path();
+            $command = "cd " . escapeshellarg($basePath) . " && git config --global --add safe.directory " . escapeshellarg($basePath) . " 2>&1 && git pull origin main 2>&1";
+            $output = shell_exec($command);
+
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+            \Illuminate\Support\Facades\Artisan::call('cache:clear');
+
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'database'))
+                ->with('success', "🔄 Git Pull Executed Successfully! Output: " . trim($output ?: 'Already up to date.'));
+        } catch (\Throwable $e) {
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'database'))
+                ->with('error', "❌ Git Pull Error: " . $e->getMessage());
+        }
+    }
 }
