@@ -338,15 +338,42 @@
     </div>
 </section>
 
-<!-- Memorial Quote Section from Stitch Design -->
-<section class="w-full py-14 sm:py-20 flex flex-col items-center justify-center text-center px-4 sm:px-6">
+<!-- Memorial Quote Section from Stitch Design (Daily Shuffling Quote) -->
+<section class="w-full py-14 sm:py-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 bg-surface-container-lowest border-t border-outline-variant/10">
     <div class="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-6 text-secondary/40 flex items-center justify-center">
         <span class="material-symbols-outlined text-[36px] sm:text-[48px]">format_quote</span>
     </div>
     <blockquote class="font-serif text-xl sm:text-3xl text-primary max-w-2xl mb-4 sm:mb-6 italic leading-relaxed">
-        "The song is ended, but the melody lingers on."
+        "{{ $dailyQuote['text'] }}"
     </blockquote>
-    <cite class="text-[10px] sm:text-xs font-bold text-secondary uppercase tracking-[0.2em]">&mdash; Irving Berlin</cite>
+    <cite class="text-[10px] sm:text-xs font-bold text-secondary uppercase tracking-[0.2em]">&mdash; {{ $dailyQuote['author'] }}</cite>
+</section>
+
+<!-- Submit Obituary Call-To-Action (CTA) Section -->
+<section class="w-full bg-slate-950 text-white py-16 sm:py-20 relative overflow-hidden border-t border-slate-800">
+    <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-slate-900/50 to-primary/20 pointer-events-none"></div>
+    <div class="max-w-[1000px] mx-auto px-4 sm:px-6 text-center relative z-10">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-amber-500/20">
+            <span class="material-symbols-outlined text-[16px]">edit_document</span>
+            <span>Preserve Their Memory</span>
+        </div>
+        <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+            Honoring Lives With Grace & Dignity
+        </h2>
+        <p class="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
+            Publish a verified obituary notice to celebrate your loved one's legacy, notify family and friends, and receive virtual candle tributes across Kenya and worldwide.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="{{ route('obituaries.submit') }}" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-8 py-4 rounded-xl text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-amber-500/25 flex items-center justify-center space-x-2">
+                <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                <span>Submit Obituary Notice</span>
+            </a>
+            <a href="{{ route('obituaries.search') }}" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-4 rounded-xl text-sm sm:text-base transition-all duration-300 border border-slate-700 flex items-center justify-center space-x-2">
+                <span class="material-symbols-outlined text-[20px]">search</span>
+                <span>Browse Archives</span>
+            </a>
+        </div>
+    </div>
 </section>
 
 <!-- Features / Pillars Section -->
