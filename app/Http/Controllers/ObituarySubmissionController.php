@@ -29,6 +29,17 @@ class ObituarySubmissionController extends Controller
 
     public function store(Request $request)
     {
+        // Parse flexible Date of Birth (e.g. DD/MM/YYYY, DD-MM-YYYY, or YYYY)
+        if ($request->filled('date_of_birth')) {
+            $dobInput = trim($request->input('date_of_birth'));
+            if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $dobInput, $matches)) {
+                $dobInput = sprintf('%04d-%02d-%02d', $matches[3], $matches[2], $matches[1]);
+            } elseif (preg_match('/^\d{4}$/', $dobInput)) {
+                $dobInput = $dobInput . '-01-01';
+            }
+            $request->merge(['date_of_birth' => $dobInput]);
+        }
+
         $validated = $request->validate([
             // Step 1: Deceased Info
             'full_name' => ['required', 'string', 'max:255'],

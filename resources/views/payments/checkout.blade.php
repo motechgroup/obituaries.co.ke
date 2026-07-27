@@ -3,12 +3,16 @@
 @section('title', 'Complete Payment | Obituaries.co.ke')
 
 @section('content')
+@php
+    $cost = \App\Models\Setting::get('obituary_publishing_cost', 500);
+@endphp
+
 <div class="bg-slate-900 text-white py-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <span class="text-xs font-semibold uppercase tracking-widest text-amber-400 block mb-2">Step 4 of 4</span>
         <h1 class="font-serif text-3xl sm:text-4xl font-bold mb-3">M-Pesa Payment Checkout</h1>
         <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto">
-            Pay KES 500 securely via Safaricom M-Pesa to submit your obituary for admin verification.
+            Pay KES {{ number_format($cost) }} securely via Safaricom M-Pesa to submit your obituary for admin verification.
         </p>
     </div>
 </div>
@@ -28,7 +32,7 @@
             </div>
             <div class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm text-right">
                 <span class="text-xs text-slate-500 block uppercase font-medium">Total Fee</span>
-                <span class="font-serif text-2xl font-bold text-slate-900">KES 500.00</span>
+                <span class="font-serif text-2xl font-bold text-slate-900">KES {{ number_format($cost, 2) }}</span>
             </div>
         </div>
 
@@ -71,7 +75,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
-                        <span>Send STK Push Prompt (KES 500)</span>
+                        <span>Send STK Push Prompt (KES {{ number_format($cost) }})</span>
                     </button>
                 </div>
             </form>

@@ -91,7 +91,8 @@
                         <label for="date_of_birth" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
                             Date of Birth <span class="text-rose-500">*</span>
                         </label>
-                        <input type="date" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth') }}" required class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        <input type="text" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth') }}" required placeholder="DD/MM/YYYY (e.g. 15/04/1945 or 1945)" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        <span class="text-[10px] text-on-surface-variant/70 mt-1 block">Format: DD/MM/YYYY or 4-digit Year (e.g. 15/04/1945 or 1945)</span>
                     </div>
 
                     <div>
@@ -289,7 +290,7 @@
                         <span class="text-primary-fixed/70">Standard Obituary Notice Publishing</span>
                     </div>
                     <div class="text-right">
-                        <span class="font-serif text-base sm:text-lg font-bold text-white">KES 500</span>
+                        <span class="font-serif text-base sm:text-lg font-bold text-white">KES {{ number_format(\App\Models\Setting::get('obituary_publishing_cost', 500)) }}</span>
                         <span class="text-[10px] text-primary-fixed/60 block">Via M-Pesa STK Push</span>
                     </div>
                 </div>
@@ -300,7 +301,7 @@
                         Back to Step 2
                     </button>
                     <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-secondary text-on-secondary font-bold rounded-xl text-xs sm:text-sm hover:bg-secondary/90 transition-all shadow-md flex items-center justify-center space-x-2">
-                        <span>Proceed to M-Pesa Payment (KES 500)</span>
+                        <span>Proceed to M-Pesa Payment (KES {{ number_format(\App\Models\Setting::get('obituary_publishing_cost', 500)) }})</span>
                         <span class="material-symbols-outlined text-[18px]">payments</span>
                     </button>
                 </div>

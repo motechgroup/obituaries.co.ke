@@ -57,7 +57,7 @@
 <!-- Content Grid matching Screenshot -->
 <div class="max-w-[1200px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 mt-12 sm:mt-16 pb-16">
     
-    <!-- Left Column: Biography & Moments in Time Gallery (8 cols) -->
+    <!-- Left Column: Biography, Gallery & Candles (8 cols) -->
     <div class="lg:col-span-8 space-y-12 sm:space-y-16">
         
         <!-- Life & Journey Section -->
@@ -122,6 +122,101 @@
                         </div>
                     @endforeach
                 @endif
+            </div>
+        </section>
+
+        <!-- Light a Virtual Candle Section -->
+        <section id="candles" class="pt-8 border-t border-surface-container-high space-y-6" x-data="{ candleModal: false }">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary flex items-center gap-2">
+                        <span>🕯️ Candles of Remembrance</span>
+                    </h2>
+                    <p class="text-xs text-on-surface-variant mt-1">Light a virtual candle to honor {{ $firstName }} and offer your condolences.</p>
+                </div>
+
+                <button type="button" @click="candleModal = true" class="px-5 py-3 bg-secondary text-on-secondary rounded-xl text-xs font-bold shadow-md hover:bg-secondary/90 transition-all flex items-center justify-center space-x-2">
+                    <span>🕯️ Light a Candle</span>
+                </button>
+            </div>
+
+            @if(session('success'))
+                <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl font-semibold">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- Candle Count Banner -->
+            <div class="p-5 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-2xl flex items-center justify-between shadow-sm">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-amber-400 text-2xl animate-pulse">
+                        🕯️
+                    </div>
+                    <div>
+                        <span class="font-serif text-xl font-bold block">{{ $obituary->candles->count() }} {{ Str::plural('Candle', $obituary->candles->count()) }} Lit</span>
+                        <span class="text-xs text-primary-fixed/80">In loving memory and eternal peace</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lit Candles Grid / List -->
+            @if($obituary->candles->count() > 0)
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($obituary->candles as $candle)
+                        <div class="p-4 bg-surface-container-lowest rounded-xl border border-surface-container shadow-xs space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-primary text-xs">🕯️ {{ $candle->name }}</span>
+                                <span class="text-[10px] text-on-surface-variant/60">{{ $candle->created_at->diffForHumans() }}</span>
+                            </div>
+                            @if($candle->message)
+                                <p class="text-xs text-on-surface-variant italic font-serif">"{{ $candle->message }}"</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="p-8 text-center bg-surface-container-low rounded-2xl border border-dashed border-outline-variant text-on-surface-variant">
+                    <span class="text-3xl block mb-2">🕯️</span>
+                    <p class="font-serif text-sm font-bold text-primary mb-1">Be the first to light a candle</p>
+                    <p class="text-xs text-on-surface-variant/70 mb-4">Share your love, warmth, and heartfelt tribute for {{ $firstName }}.</p>
+                    <button type="button" @click="candleModal = true" class="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-xs font-semibold">
+                        Light a Candle Now
+                    </button>
+                </div>
+            @endif
+
+            <!-- Light Candle Modal -->
+            <div x-show="candleModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" x-transition>
+                <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-surface-container space-y-6" @click.away="candleModal = false">
+                    <div class="flex items-center justify-between border-b border-surface-container pb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl">🕯️</span>
+                            <h3 class="font-serif text-lg font-bold text-primary">Light a Candle</h3>
+                        </div>
+                        <button type="button" @click="candleModal = false" class="text-on-surface-variant text-sm font-bold hover:text-primary">&times;</button>
+                    </div>
+
+                    <form action="{{ route('obituaries.candle', $obituary->id) }}" method="POST" class="space-y-4">
+                        @csrf
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-on-surface-variant mb-1.5">Your Name (Optional)</label>
+                            <input type="text" name="name" placeholder="e.g. Grace Wanjiku (Leave blank for Anonymous)" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-xs text-on-surface">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-on-surface-variant mb-1.5">Short Tribute Message (Optional)</label>
+                            <textarea name="message" rows="3" placeholder="e.g. Rest in eternal peace. You will forever be remembered." class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-xs text-on-surface leading-relaxed"></textarea>
+                        </div>
+
+                        <div class="pt-2 flex justify-end space-x-3">
+                            <button type="button" @click="candleModal = false" class="px-4 py-2 bg-surface-container text-on-surface rounded-xl text-xs font-semibold">Cancel</button>
+                            <button type="submit" class="px-6 py-2.5 bg-secondary text-on-secondary rounded-xl text-xs font-bold shadow-md">
+                                🕯️ Light Candle
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </section>
 

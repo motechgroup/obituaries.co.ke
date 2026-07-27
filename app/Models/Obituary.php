@@ -78,6 +78,11 @@ class Obituary extends Model
         return $this->belongsTo(Admin::class, 'verified_by');
     }
 
+    public function candles()
+    {
+        return $this->hasMany(Candle::class);
+    }
+
     public function getAgeAttribute(): ?int
     {
         if ($this->date_of_birth && $this->date_of_death) {

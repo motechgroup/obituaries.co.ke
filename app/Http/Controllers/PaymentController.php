@@ -34,7 +34,8 @@ class PaymentController extends Controller
         ]);
 
         $phoneNumber = $request->input('phone_number');
-        $result = $this->mpesaService->initiateStkPush($obituary, $phoneNumber, 500.00);
+        $cost = (float) \App\Models\Setting::get('obituary_publishing_cost', 500.00);
+        $result = $this->mpesaService->initiateStkPush($obituary, $phoneNumber, $cost);
 
         if (!$result['success']) {
             return back()->with('error', $result['message']);

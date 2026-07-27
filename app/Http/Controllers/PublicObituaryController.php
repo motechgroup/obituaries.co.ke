@@ -11,6 +11,7 @@ class PublicObituaryController extends Controller
     {
         $obituary = Obituary::where('slug', $slug)
             ->where('status', 'published')
+            ->with(['candles' => fn($q) => $q->latest()])
             ->firstOrFail();
 
         return view('obituaries.show', compact('obituary'));
