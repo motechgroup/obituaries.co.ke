@@ -84,46 +84,28 @@
             </div>
         </section>
 
-        <!-- Moments in Time Photo Gallery Section matching Screenshot -->
-        <section id="gallery" class="pt-4 border-t border-surface-container-high">
-            @php
-                $uploadedGallery = is_array($obituary->gallery_images) ? $obituary->gallery_images : [];
-                
-                // Fallback editorial photos from Stitch design if user uploaded fewer photos
-                $fallbackPhotos = [
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuCcNSUav8hgd77PC0w9ZLe_IQZGDaUQ71pWcHahnSqpMRmq7m586sKPya2Ph62_Ksrx8l56WcF1UwsGYo3x1RxFUVcDTQCGDRa_nOz6s9CwEESMHIxzHV8Sxff1rDJaMlDmYRii7c6ki6AWeZkQlxHrpBv_7KgDBWSF1-VJ2IPlSZUuwZgs5lJGBqbL3_4wl0Tm8FkLzUVLddYx30vv-5NRkHLhp4xlpOACAY5rVSV5v8ZUx-t4KKkKq-hIiAkuwkbqnGKsmtrwiB7Q',
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuB3MiuMhuWWC74JZqTX5us5oXNvVHSprWPkfEhxHtniMBIhgN5PwW3Wb-TaE5mOD2BF4un7BJhy4wkhgWubD-BpzSQe-C3sigO_ufZ61YRgJs_ZCUWwmEZCSyf4JUKtO00Flf3rpNzIGnF38sK4GxFZOqHe0D9esw51shImOD-SKLRlnyWGENK9Ik-2xjgeJGRAq7051PtgvhVdvtt6NCdRhVJT3Ci8ohVRDhWhUumlhuIXVlsrGvAZCpBD4f2lG_sVWHTiCX4AV4uV',
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuArgYeyvBzLRdN0Z9pXBrFcPbGrUAtI3uEANYGYyNjj1qKE9D3wIlALTmtd9t56igopd6Ncml-VUgGoCvXEaFWXdunlzsFaTVs0LaZD0imZ_2Xa2HN-0eP7FhmG2OL985W8JjFeTLYI-MAOPX1xDteYa5_rI1y1VjTTIFUK0ZLEb-nBpKv4S4pQtBRcBmermASiE14nEhvE8MdfnI-3nf3Gi_qMvD3MgeNB9Buz6vmZb2SYMTjmJv9BobJWaZGVf62b3cOT97JGUtt0',
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuCHDBzkr8w2_iAGiEnaimZjXxvmpZj0g8uK2mq-XTiX-2sX7hQA3XpHx2833hDz_eu4gzyfRglcIbEX2Fmzop5cCIgqnVg9Oat2dUIBvYE4ujyyRcXufL3-nsdFL4gwvxeyJmCDRdGfgOJahuFF9ZLudI3RwAnDNa4srTJO3d0ID4WS8TOb9iX5OHsafmCAXN_eum-milpiIi_-iEgvoT0TgzkVbfO3NabOC1zpx-QPelz99Gi3_zjE58_B-DiB5O43a3qg4tHy_c67',
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuAnDRktyvVVkNyGU3KNswBB5oMZaJ8ppkY4qfqVyxPW_YODfGv5i5sHeHnrWur59fAXIvs3149h9z_jM_l0abjCGmmHUqFlMZGp1avV8YIqYZuCiP0eJLJ8VhXzQLRoOBhnmjiyoxKqYtOprp4_KlWv6dhWxUdTh4DH2erWzl6O3s58cFcQWr79x5bqtKyXruI25cwDc5wRltIEqjWnkPb8-4GuwN1kk88to6V4HIPzchzfGDqc548-syWrJLY3XpZ036kw1J-Ko8aT',
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuAx14X-755rQjtunY8uAGTU9NqIOovP0mWC_eJSvz1yaT4BZ9JnOKUmM3IaZ5ipbINeWMe_11ff5tjvwrbzDdBG-zhzloyJlz4LmXNOzlxdRthtmlS5bWL6nFV5WVkoaZTZiudW51ud3FM4fHU2DtvJeDGa8QMGYNkifTAwqjtyPedMcDY4HsM-tiwDcvJP3zEp2p2q-sWt6qbeGh3XBU8-ohcO4O6uh5rjCAh8KlbCUeeczH7PTdB75Pt-ghwTnhkj1dMnWokgYEFk',
-                ];
+        @php
+            $uploadedGallery = is_array($obituary->gallery_images) ? array_filter($obituary->gallery_images) : [];
+        @endphp
 
-                $galleryCount = count($uploadedGallery) > 0 ? count($uploadedGallery) : count($fallbackPhotos);
-            @endphp
+        <!-- Moments in Time Photo Gallery Section (Only rendered if gallery images uploaded) -->
+        @if(count($uploadedGallery) > 0)
+            <section id="gallery" class="pt-4 border-t border-surface-container-high">
+                <div class="flex items-end justify-between mb-8">
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary">Moments in Time</h2>
+                    <span class="text-xs font-semibold text-on-surface-variant">{{ count($uploadedGallery) }} {{ Str::plural('Photograph', count($uploadedGallery)) }}</span>
+                </div>
 
-            <div class="flex items-end justify-between mb-8">
-                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary">Moments in Time</h2>
-                <span class="text-xs font-semibold text-on-surface-variant">{{ $galleryCount }} Photographs</span>
-            </div>
-
-            <!-- Gallery Grid matching Stitch Design -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                @if(count($uploadedGallery) > 0)
+                <!-- Gallery Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     @foreach($uploadedGallery as $img)
                         <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container">
                             <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         </div>
                     @endforeach
-                @else
-                    @foreach($fallbackPhotos as $index => $photoUrl)
-                        <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container">
-                            <img src="{{ $photoUrl }}" alt="Moments in Time photograph" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                        </div>
-                    @endforeach
-                @endif
-            </div>
-        </section>
+                </div>
+            </section>
+        @endif
 
         <!-- Light a Virtual Candle Section -->
         <section id="candles" class="pt-8 border-t border-surface-container-high space-y-6" x-data="{ candleModal: false }">
