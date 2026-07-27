@@ -41,6 +41,62 @@
         <button type="button" @click="activeTab = 'sms'" :class="activeTab === 'sms' ? 'border-amber-600 text-amber-700 bg-amber-50' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'" class="px-4 py-3 border-b-2 rounded-t-xl transition-all">
             📱 SMS Gateway & Templates
         </button>
+        <button type="button" @click="activeTab = 'database'" :class="activeTab === 'database' ? 'border-amber-600 text-amber-700 bg-amber-50' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'" class="px-4 py-3 border-b-2 rounded-t-xl transition-all">
+            ⚡ Database & Migrations
+        </button>
+    </div>
+
+    <!-- TAB 5: DATABASE MAINTENANCE & MIGRATIONS (Independent Form) -->
+    <div x-show="activeTab === 'database'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <div>
+                <h3 class="font-serif text-xl font-bold text-slate-900">⚡ Online Database Maintenance & Migrations</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Run database migrations and seeders anytime on your live server directly from the admin dashboard.</p>
+            </div>
+            <a href="/run-migrations.php" target="_blank" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all">
+                Open Web Migration Script &rarr;
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Migrations Box -->
+            <div class="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-4 shadow-md">
+                <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                    <span class="material-symbols-outlined text-[22px]">bolt</span>
+                    <span class="text-base">Run Database Migrations</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Executes <code>php artisan migrate --force</code> online to create missing tables and update database column schemas.
+                </p>
+                <form action="{{ route('admin.database.migrate') }}" method="POST" onsubmit="return confirm('Execute database migrations on live server?')">
+                    @csrf
+                    <input type="hidden" name="active_tab" value="database">
+                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                        <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                        <span>Run Migrations Now</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Seeders Box -->
+            <div class="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-4 shadow-md">
+                <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
+                    <span class="material-symbols-outlined text-[22px]">potted_plant</span>
+                    <span class="text-base">Run Database Seeders</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Executes <code>php artisan db:seed --force</code> online to populate default platform settings, admin roles, and sample data.
+                </p>
+                <form action="{{ route('admin.database.seed') }}" method="POST" onsubmit="return confirm('Populate default database seeders?')">
+                    @csrf
+                    <input type="hidden" name="active_tab" value="database">
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                        <span class="material-symbols-outlined text-[18px]">nature</span>
+                        <span>Run Seeders Now</span>
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">

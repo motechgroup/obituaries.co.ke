@@ -173,4 +173,36 @@ class SettingController extends Controller
                 ->with('error', "Failed to send test SMS via " . strtoupper($provider) . ". Please check API credentials / balance.");
         }
     }
+
+    public function runMigrations(Request $request)
+    {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'branding'))
+                ->with('success', "⚡ Database Migrations Executed Successfully! " . ($output ?: 'Database schema is up to date.'));
+        } catch (\Throwable $e) {
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'branding'))
+                ->with('error', "❌ Migration Error: " . $e->getMessage());
+        }
+    }
+
+    public function runSeeders(Request $request)
+    {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'branding'))
+                ->with('success', "🌱 Database Seeders Executed Successfully! " . ($output ?: 'Database seeded.'));
+        } catch (\Throwable $e) {
+            return back()
+                ->with('active_tab', $request->input('active_tab', 'branding'))
+                ->with('error', "❌ Seeder Error: " . $e->getMessage());
+        }
+    }
 }

@@ -10,7 +10,14 @@
             <h1 class="font-serif text-3xl font-bold text-slate-900">Administration Overview</h1>
             <p class="text-slate-500 text-sm mt-1">Monitor all submissions, verify submitter contacts, and review M-Pesa payments.</p>
         </div>
-        <div class="flex items-center space-x-3">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            <form action="{{ route('admin.database.migrate') }}" method="POST" onsubmit="return confirm('Execute database migrations online?')">
+                @csrf
+                <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[16px]">bolt</span>
+                    <span>Run Migrations</span>
+                </button>
+            </form>
             @if($pendingPaymentCount > 0)
                 <a href="{{ route('admin.obituaries.index', ['status' => 'pending_payment']) }}" class="inline-flex items-center px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl text-xs font-bold transition-colors">
                     <span>Pending Payment ({{ $pendingPaymentCount }})</span>

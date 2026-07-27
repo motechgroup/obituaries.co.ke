@@ -92,5 +92,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
         Route::post('/settings/test-mail', [AdminSettingController::class, 'sendTestMail'])->name('settings.test-mail');
         Route::post('/settings/test-sms', [AdminSettingController::class, 'sendTestSms'])->name('settings.test-sms');
+
+        // Admin Database Maintenance Operations
+        Route::post('/database/migrate', [AdminSettingController::class, 'runMigrations'])->name('database.migrate');
+        Route::post('/database/seed', [AdminSettingController::class, 'runSeeders'])->name('database.seed');
     });
 });
