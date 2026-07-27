@@ -3,7 +3,7 @@
 @section('title', 'Platform Settings & Gateways | Admin')
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6" x-data="{ activeTab: 'branding' }">
+<div class="max-w-5xl mx-auto space-y-6" x-data="{ activeTab: '{{ session('active_tab', 'branding') }}' }">
     <div>
         <h1 class="font-serif text-3xl font-bold text-slate-900">Platform Settings & Gateways</h1>
         <p class="text-slate-500 text-sm mt-1">Manage branding, footer contacts, payment gateway credentials, SMTP mail templates, and SMS settings.</p>
@@ -36,6 +36,7 @@
 
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
+        <input type="hidden" name="active_tab" x-model="activeTab">
 
         <!-- TAB 1: BRANDING & FOOTER -->
         <div x-show="activeTab === 'branding'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">

@@ -103,6 +103,10 @@ class SettingController extends Controller
             }
         }
 
-        return back()->with('success', 'Platform settings, payment gateway, SMTP, and SMS templates updated successfully!');
+        $activeTab = $request->input('active_tab', 'branding');
+
+        return back()
+            ->with('active_tab', $activeTab)
+            ->with('success', 'Platform settings updated successfully!');
     }
 }
