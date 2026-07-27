@@ -68,7 +68,7 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @foreach($latestObituaries as $obituary)
-                    <div class="group relative bg-surface-container-lowest p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between border border-outline-variant/20">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-surface-container-lowest p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between border border-outline-variant/20 block cursor-pointer">
                         <div>
                             <!-- Aspect 4/5 Image -->
                             <div class="relative aspect-4/5 mb-6 overflow-hidden rounded-xl bg-surface-container">
@@ -92,20 +92,13 @@
                             <div class="text-center">
                                 <span class="text-[11px] font-semibold text-secondary tracking-widest uppercase mb-2 block">{{ $obituary->town }}, {{ $obituary->county }}</span>
                                 <h3 class="font-serif text-xl font-bold text-primary mb-1 group-hover:text-secondary transition-colors">{{ $obituary->full_name }}</h3>
-                                <p class="text-xs text-on-surface-variant/70 mb-4 italic">
+                                <p class="text-xs text-on-surface-variant/70 italic">
                                     {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
                                     @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
                                 </p>
-                                <p class="text-xs text-on-surface-variant line-clamp-3 mb-6 leading-relaxed">
-                                    {{ $obituary->biography }}
-                                </p>
                             </div>
                         </div>
-
-                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="w-full py-3 border border-outline-variant rounded-xl text-xs font-semibold text-primary hover:bg-primary hover:text-on-primary transition-colors text-center block">
-                            Read Tribute & Service
-                        </a>
-                    </div>
+                    </a>
                 @endforeach
             </div>
         @endif
