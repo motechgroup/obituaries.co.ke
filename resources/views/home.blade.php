@@ -357,20 +357,13 @@
             <span class="material-symbols-outlined text-[16px]">edit_document</span>
             <span>Preserve Their Memory</span>
         </div>
-        <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+        <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight">
             Honoring Lives With Grace & Dignity
         </h2>
-        <p class="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
-            Publish a verified obituary notice to celebrate your loved one's legacy, notify family and friends, and receive virtual candle tributes across Kenya and worldwide.
-        </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div class="flex items-center justify-center">
             <a href="{{ route('obituaries.submit') }}" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-8 py-4 rounded-xl text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-amber-500/25 flex items-center justify-center space-x-2">
                 <span class="material-symbols-outlined text-[20px]">add_circle</span>
                 <span>Submit Obituary Notice</span>
-            </a>
-            <a href="{{ route('obituaries.search') }}" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-4 rounded-xl text-sm sm:text-base transition-all duration-300 border border-slate-700 flex items-center justify-center space-x-2">
-                <span class="material-symbols-outlined text-[20px]">search</span>
-                <span>Browse Archives</span>
             </a>
         </div>
     </div>
