@@ -43,8 +43,22 @@
 </section>
 
 <!-- Dark Obituaries Directory Section (2 Rows, Clean Layout, Truncated Text) -->
-<section class="w-full bg-[#0B101D] border-y border-slate-800/80 py-6 sm:py-8 overflow-hidden">
+<section class="w-full bg-[#0B101D] border-y border-slate-800/80 py-5 sm:py-6 overflow-hidden">
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+        <!-- Directory Header Badge -->
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/60">
+            <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-amber-500/20 flex items-center space-x-1.5">
+                    <span class="material-symbols-outlined text-[14px]">church</span>
+                    <span>OBITUARIES DIRECTORY</span>
+                </span>
+            </div>
+            <a href="{{ route('obituaries.search') }}" class="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-amber-400 transition-colors flex items-center space-x-1">
+                <span>Browse All Archives</span>
+                <span>&rarr;</span>
+            </a>
+        </div>
+
         <div class="grid grid-rows-2 grid-flow-col auto-cols-max gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-5 overflow-x-auto no-scrollbar scroll-smooth py-1">
             @forelse($latestObituaries as $obituary)
                 <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3.5 group transition-opacity hover:opacity-90">
