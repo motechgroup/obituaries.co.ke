@@ -59,26 +59,26 @@
             </a>
         </div>
 
-        <div class="grid grid-rows-2 grid-flow-col auto-cols-max gap-x-8 sm:gap-x-12 gap-y-4 sm:gap-y-5 overflow-x-auto no-scrollbar scroll-smooth py-1">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 py-1">
             @forelse($latestObituaries as $obituary)
-                <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3.5 group transition-opacity hover:opacity-90">
+                <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3 sm:space-x-3.5 group transition-opacity hover:opacity-90 min-w-0">
                     <!-- Thumbnail Avatar -->
-                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
                         @if($obituary->photo)
                             <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-amber-400">
-                                <span class="material-symbols-outlined text-[20px]">church</span>
+                                <span class="material-symbols-outlined text-[18px] sm:text-[20px]">church</span>
                             </div>
                         @endif
                     </div>
                     
                     <!-- Deceased Name & Date of Death -->
-                    <div class="text-left min-w-0">
-                        <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight truncate max-w-[130px] sm:max-w-[170px]">
+                    <div class="text-left min-w-0 flex-1">
+                        <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight truncate">
                             {{ $obituary->full_name }}
                         </h4>
-                        <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium truncate max-w-[130px] sm:max-w-[170px]">
+                        <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium truncate">
                             {{ $obituary->date_of_death->format('M d, Y') }}
                         </span>
                     </div>

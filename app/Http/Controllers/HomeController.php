@@ -11,7 +11,7 @@ class HomeController extends Controller
     {
         $latestObituaries = Obituary::published()
             ->latest('id')
-            ->take(12)
+            ->take(8)
             ->get();
 
         $todayAnniversaries = Obituary::todayAnniversaries()
