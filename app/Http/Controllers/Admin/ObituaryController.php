@@ -50,7 +50,14 @@ class ObituaryController extends Controller
             'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
         ];
 
-        return view('admin.obituaries.edit', compact('obituary', 'counties'));
+        $statuses = [
+            'published' => 'Published',
+            'pending_verification' => 'Pending Verification',
+            'rejected' => 'Rejected',
+            'pending_payment' => 'Pending Payment'
+        ];
+
+        return view('admin.obituaries.edit', compact('obituary', 'counties', 'statuses'));
     }
 
     public function update(Request $request, Obituary $obituary)
@@ -69,7 +76,18 @@ class ObituaryController extends Controller
             'submitter_phone' => ['required', 'string'],
             'submitter_email' => ['nullable', 'email'],
             'relationship' => ['required', 'string'],
+            'status' => ['required', 'string', 'in:published,pending_verification,rejected,pending_payment'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'programme_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('photos', 'public');
+        }
+
+        if ($request->hasFile('programme_file')) {
+            $validated['programme_file'] = $request->file('programme_file')->store('programmes', 'public');
+        }
 
         $obituary->update($validated);
 
