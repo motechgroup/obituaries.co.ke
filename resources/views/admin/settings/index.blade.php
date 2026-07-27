@@ -219,6 +219,7 @@
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMS Provider</label>
                     <select name="sms_provider" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
+                        <option value="textsms" {{ $settings['sms_provider'] === 'textsms' ? 'selected' : '' }}>TextSMS Kenya (textsms.co.ke)</option>
                         <option value="africastalking" {{ $settings['sms_provider'] === 'africastalking' ? 'selected' : '' }}>Africa's Talking</option>
                         <option value="mobitech" {{ $settings['sms_provider'] === 'mobitech' ? 'selected' : '' }}>Mobitech SMS</option>
                         <option value="generic" {{ $settings['sms_provider'] === 'generic' ? 'selected' : '' }}>Generic HTTP API</option>
@@ -227,12 +228,17 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Sender ID / Alphanumeric</label>
-                    <input type="text" name="sms_sender_id" value="{{ old('sms_sender_id', $settings['sms_sender_id']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold">
+                    <input type="text" name="sms_sender_id" value="{{ old('sms_sender_id', $settings['sms_sender_id']) }}" placeholder="OBITUARIES" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold">
                 </div>
 
-                <div class="sm:col-span-2">
+                <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMS API Key</label>
                     <input type="password" name="sms_api_key" value="{{ old('sms_api_key', $settings['sms_api_key']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">SMS Partner ID / User ID (TextSMS & Mobitech)</label>
+                    <input type="text" name="sms_partner_id" value="{{ old('sms_partner_id', $settings['sms_partner_id']) }}" placeholder="e.g. 1234" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                 </div>
 
                 <div class="sm:col-span-2">

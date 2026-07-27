@@ -44,8 +44,9 @@ class SettingController extends Controller
             'mail_template_anniversary' => Setting::get('mail_template_anniversary', "Dear {NAME},\n\nToday marks the {YEARS} Anniversary of the passing of {DECEASED_NAME}.\n\nIn honoring their cherished legacy, friends and family are remembering them today on Obituaries.co.ke.\n\nView Memorial: {LINK}\n\nWarm regards,\nObituaries.co.ke Team"),
 
             // SMS Gateway & Templates
-            'sms_provider' => Setting::get('sms_provider', 'africastalking'),
+            'sms_provider' => Setting::get('sms_provider', 'textsms'),
             'sms_api_key' => Setting::get('sms_api_key', ''),
+            'sms_partner_id' => Setting::get('sms_partner_id', ''),
             'sms_shortcode' => Setting::get('sms_shortcode', 'OBITUARIES'),
             'sms_sender_id' => Setting::get('sms_sender_id', 'OBITUARIES'),
             'sms_template_submission' => Setting::get('sms_template_submission', "Dear {NAME}, your obituary submission for {DECEASED_NAME} has been received. Complete payment to publish."),
@@ -89,6 +90,7 @@ class SettingController extends Controller
 
             'sms_provider' => ['nullable', 'string'],
             'sms_api_key' => ['nullable', 'string'],
+            'sms_partner_id' => ['nullable', 'string'],
             'sms_shortcode' => ['nullable', 'string'],
             'sms_sender_id' => ['nullable', 'string'],
             'sms_template_submission' => ['nullable', 'string'],
@@ -157,12 +159,18 @@ class SettingController extends Controller
         ]);
 
         $phone = $request->input('test_phone');
-        $provider = Setting::get('sms_provider', 'africastalking');
+        $provider = Setting::get('sms_provider', 'textsms');
 
-        Log::info("Test SMS dispatched to {$phone} via {$provider}.");
+        $sent = \App\Services\SmsService::send($phone, "Hello! This is a test SMS sent from your Obituaries.co.ke Admin Panel.");
 
-        return back()
-            ->with('active_tab', 'sms')
-            ->with('success', "📱 Test SMS dispatched successfully to {$phone} (Provider: " . strtoupper($provider) . ")!");
+        if ($sent) {
+            return back()
+                ->with('active_tab', 'sms')
+                ->with('success', "📱 Test SMS dispatched successfully to {$phone} via " . strtoupper($provider) . "!");
+        } else {
+            return back()
+                ->with('active_tab', 'sms')
+                ->with('error', "Failed to send test SMS via " . strtoupper($provider) . ". Please check API credentials / balance.");
+        }
     }
 }

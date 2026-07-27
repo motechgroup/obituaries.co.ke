@@ -10,6 +10,12 @@ class MailService
 {
     public static function configure(): void
     {
+        // Fix Homebrew / macOS / cPanel OpenSSL missing cert.pem stream issue
+        $caFile = ini_get('openssl.cafile');
+        if ($caFile && !file_exists($caFile)) {
+            @ini_set('openssl.cafile', '');
+        }
+
         $host = Setting::get('mail_host', config('mail.mailers.smtp.host', 'mail.obituaries.co.ke'));
         $port = (int) Setting::get('mail_port', config('mail.mailers.smtp.port', 465));
         $username = Setting::get('mail_username', config('mail.mailers.smtp.username'));
@@ -33,6 +39,8 @@ class MailService
                 'allow_self_signed' => true,
                 'verify_peer' => false,
                 'verify_peer_name' => false,
+                'cafile' => null,
+                'capath' => null,
             ],
         ]);
         Config::set('mail.from.address', $fromAddress);
