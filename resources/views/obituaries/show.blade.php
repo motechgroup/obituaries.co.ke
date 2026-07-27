@@ -72,7 +72,7 @@
                 <span class="flex-1 h-[1px] bg-surface-container-high"></span>
             </h2>
 
-            <div class="prose max-w-none text-on-surface text-base sm:text-lg leading-relaxed font-serif">
+            <div class="prose max-w-none text-on-surface text-base sm:text-lg leading-relaxed font-serif break-words break-all overflow-hidden">
                 {!! nl2br(e($obituary->biography)) !!}
             </div>
 
@@ -169,7 +169,7 @@
                                 <span class="text-[10px] text-on-surface-variant/60">{{ $candle->created_at->diffForHumans() }}</span>
                             </div>
                             @if($candle->message)
-                                <p class="text-xs text-on-surface-variant italic font-serif">"{{ $candle->message }}"</p>
+                                <p class="text-xs text-on-surface-variant italic font-serif break-words break-all overflow-hidden">"{{ $candle->message }}"</p>
                             @endif
                         </div>
                     @endforeach
