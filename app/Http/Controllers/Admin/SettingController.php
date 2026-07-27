@@ -239,16 +239,44 @@ class SettingController extends Controller
                 mkdir($targetStoragePath . '/obituaries', 0755, true);
             }
 
-            if (is_link($publicStoragePath)) {
-                @unlink($publicStoragePath);
-            }
+            if (function_exists('symlink')) {
+                if (is_link($publicStoragePath)) {
+                    @unlink($publicStoragePath);
+                }
+                \Illuminate\Support\Facades\Artisan::call('storage:link', ['--force' => true]);
+                $output = \Illuminate\Support\Facades\Artisan::output();
+            } else {
+                if (is_link($publicStoragePath)) {
+                    @unlink($publicStoragePath);
+                }
+                if (!file_exists($publicStoragePath)) {
+                    mkdir($publicStoragePath, 0755, true);
+                    mkdir($publicStoragePath . '/obituaries', 0755, true);
+                }
 
-            \Illuminate\Support\Facades\Artisan::call('storage:link', ['--force' => true]);
-            $output = \Illuminate\Support\Facades\Artisan::output();
+                // Copy files recursively
+                $copyDir = function ($src, $dst) use (&$copyDir) {
+                    $dir = @opendir($src);
+                    if (!$dir) return;
+                    @mkdir($dst, 0755, true);
+                    while (false !== ($file = readdir($dir))) {
+                        if (($file != '.') && ($file != '..')) {
+                            if (is_dir($src . '/' . $file)) {
+                                $copyDir($src . '/' . $file, $dst . '/' . $file);
+                            } else {
+                                @copy($src . '/' . $file, $dst . '/' . $file);
+                            }
+                        }
+                    }
+                    closedir($dir);
+                };
+                $copyDir($targetStoragePath, $publicStoragePath);
+                $output = "Copied files directly to public/storage (symlink() is disabled on server).";
+            }
 
             return back()
                 ->with('active_tab', $request->input('active_tab', 'database'))
-                ->with('success', "🖼️ Storage Symlink Repaired Successfully! " . trim($output ?: 'Linked.'));
+                ->with('success', "🖼️ Storage Repaired Successfully! " . trim($output));
         } catch (\Throwable $e) {
             return back()
                 ->with('active_tab', $request->input('active_tab', 'database'))
