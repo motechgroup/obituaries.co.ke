@@ -175,28 +175,32 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
                     @foreach($todayAnniversaries as $obituary)
-                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-amber-50/50 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between border border-amber-200/60 block cursor-pointer">
+                        <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-amber-50/50 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-amber-200/60 block cursor-pointer">
                             <div>
-                                <div class="relative aspect-4/5 mb-3 sm:mb-6 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container">
+                                <!-- Compact Square Aspect Image Container -->
+                                <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container">
                                     @if($obituary->photo)
-                                        <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                                        <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100">
                                     @else
                                         <div class="w-full h-full bg-gradient-to-b from-amber-900 to-amber-950 flex flex-col items-center justify-center p-3 text-center text-amber-100">
-                                            <span class="font-serif text-[10px] sm:text-xs italic">In Loving Memory</span>
+                                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex items-center justify-center text-amber-200 mb-1">
+                                                <span class="material-symbols-outlined text-[18px] sm:text-[22px]">church</span>
+                                            </div>
+                                            <span class="font-serif text-[9px] sm:text-[10px] italic">In Loving Memory</span>
                                         </div>
                                     @endif
 
-                                    <div class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-amber-800 text-white text-[8px] sm:text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase tracking-wider shadow-md z-10">
+                                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-[8px] sm:text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-xs z-10">
                                         <span>{{ $obituary->anniversary_badge_text }}</span>
                                     </div>
                                 </div>
 
                                 <div class="text-center">
-                                    <span class="text-[9px] sm:text-[11px] font-semibold text-amber-800 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                    <h3 class="font-serif text-sm sm:text-xl font-bold text-primary mb-0.5 group-hover:text-amber-800 transition-colors line-clamp-2">{{ $obituary->full_name }}</h3>
-                                    <p class="text-[10px] sm:text-xs text-on-surface-variant/70 italic">
+                                    <span class="text-[9px] sm:text-[10px] font-semibold text-amber-800 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                    <h3 class="font-serif text-xs sm:text-base font-bold text-primary mb-0.5 group-hover:text-amber-800 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                                    <p class="text-[10px] text-on-surface-variant/70 italic">
                                         Passed {{ $obituary->date_of_death->format('M d, Y') }}
                                     </p>
                                 </div>
