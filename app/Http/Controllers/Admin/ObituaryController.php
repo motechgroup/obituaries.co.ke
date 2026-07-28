@@ -33,6 +33,88 @@ class ObituaryController extends Controller
         return view('admin.obituaries.index', compact('obituaries', 'status', 'search'));
     }
 
+    public function create()
+    {
+        $counties = [
+            'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
+            'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
+            'Kisumu', 'Kitui', 'Kwale', 'Laikipia', 'Lamu', 'Machakos', 'Makueni', 'Mandera',
+            'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi', 'Nakuru', 'Nandi',
+            'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
+            'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
+        ];
+
+        return view('admin.obituaries.create', compact('counties'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'full_name' => ['required', 'string', 'max:255'],
+            'date_of_birth' => ['required', 'date'],
+            'date_of_death' => ['required', 'date', 'after_or_equal:date_of_birth'],
+            'county' => ['required', 'string'],
+            'town' => ['required', 'string'],
+            'biography' => ['required', 'string'],
+            'funeral_date' => ['nullable', 'date'],
+            'burial_location' => ['nullable', 'string', 'max:255'],
+            'church_service_location' => ['nullable', 'string', 'max:255'],
+            'submitter_name' => ['required', 'string', 'max:255'],
+            'submitter_phone' => ['required', 'string', 'max:255'],
+            'submitter_email' => ['nullable', 'email', 'max:255'],
+            'relationship' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', 'in:published,draft,pending_verification'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'programme_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'gallery_images' => ['nullable', 'array', 'max:8'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'seo_keywords' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        // Auto generate unique slug
+        $baseSlug = \Illuminate\Support\Str::slug($validated['full_name']);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Obituary::where('slug', $slug)->exists()) {
+            $slug = "{$baseSlug}-{$counter}";
+            $counter++;
+        }
+        $validated['slug'] = $slug;
+
+        // Process Main Photo Upload
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = \App\Helpers\StorageHelper::savePublicFile($request->file('photo'), 'obituaries/photos');
+        }
+
+        // Process Gallery Images Upload
+        if ($request->hasFile('gallery_images')) {
+            $galleryPaths = [];
+            foreach ($request->file('gallery_images') as $file) {
+                if ($file->isValid()) {
+                    $galleryPaths[] = \App\Helpers\StorageHelper::savePublicFile($file, 'obituaries/gallery');
+                }
+            }
+            $validated['gallery_images'] = $galleryPaths;
+        }
+
+        // Process Programme File Upload
+        if ($request->hasFile('programme_file')) {
+            $validated['programme_file'] = \App\Helpers\StorageHelper::savePublicFile($request->file('programme_file'), 'obituaries/programmes');
+        }
+
+        // Admin submissions auto-verify and skip payment completely
+        $validated['verification_status'] = ($validated['status'] === 'published') ? 'verified' : 'pending';
+        $validated['verified_by'] = Auth::guard('admin')->id();
+        $validated['verified_at'] = now();
+
+        $obituary = Obituary::create($validated);
+
+        return redirect()->route('admin.obituaries.show', $obituary->id)
+            ->with('success', "Obituary notice for '{$obituary->full_name}' created and published successfully by Admin (Payment Waived)!");
+    }
+
     public function show(Obituary $obituary)
     {
         $obituary->load(['payments', 'verifier']);

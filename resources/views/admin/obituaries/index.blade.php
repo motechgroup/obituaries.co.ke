@@ -8,8 +8,13 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="font-serif text-3xl font-bold text-slate-900">Obituaries Directory Management</h1>
-            <p class="text-slate-500 text-sm mt-1">Filter, inspect, verify, and publish obituary notices.</p>
+            <p class="text-slate-500 text-sm mt-1">Filter, inspect, verify, publish, and manually create obituary notices.</p>
         </div>
+
+        <a href="{{ route('admin.obituaries.create') }}" class="px-5 py-2.5 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center space-x-2 self-start sm:self-auto">
+            <span class="text-base font-bold">+</span>
+            <span>Add New Obituary (No Payment)</span>
+        </a>
     </div>
 
     <!-- Filters & Search Bar -->

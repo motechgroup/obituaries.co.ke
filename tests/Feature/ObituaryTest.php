@@ -277,4 +277,41 @@ class ObituaryTest extends TestCase
         // Ensure Admin user remains intact!
         $this->assertDatabaseHas('admins', ['email' => 'purge@obituaries.co.ke']);
     }
+
+    public function test_admin_can_create_and_publish_obituary_without_payment()
+    {
+        $admin = Admin::create([
+            'name' => 'Creator Admin',
+            'email' => 'creator@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.obituaries.create'));
+        $response->assertStatus(200);
+        $response->assertSee('Create New Obituary Notice');
+
+        $storeResponse = $this->actingAs($admin, 'admin')->post(route('admin.obituaries.store'), [
+            'full_name' => 'Mzee Peter Karanja',
+            'date_of_birth' => '1945-05-10',
+            'date_of_death' => '2026-06-20',
+            'county' => 'Kiambu',
+            'town' => 'Ruiru',
+            'biography' => 'Beloved father and grandfather.',
+            'submitter_name' => 'Admin Editorial',
+            'submitter_phone' => '0711000000',
+            'relationship' => 'Editorial Team',
+            'status' => 'published',
+        ]);
+
+        $this->assertDatabaseHas('obituaries', [
+            'full_name' => 'Mzee Peter Karanja',
+            'county' => 'Kiambu',
+            'status' => 'published',
+            'verification_status' => 'verified',
+            'verified_by' => $admin->id,
+        ]);
+
+        $obituary = Obituary::where('full_name', 'Mzee Peter Karanja')->first();
+        $storeResponse->assertRedirect(route('admin.obituaries.show', $obituary->id));
+    }
 }

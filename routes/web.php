@@ -93,6 +93,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Admin & Editor Obituary Management
         Route::get('/obituaries', [AdminObituaryController::class, 'index'])->name('obituaries.index');
+        Route::get('/obituaries/create', [AdminObituaryController::class, 'create'])->name('obituaries.create');
+        Route::post('/obituaries', [AdminObituaryController::class, 'store'])->name('obituaries.store');
         Route::get('/obituaries/{obituary}', [AdminObituaryController::class, 'show'])->name('obituaries.show');
         Route::get('/obituaries/{obituary}/edit', [AdminObituaryController::class, 'edit'])->name('obituaries.edit');
         Route::put('/obituaries/{obituary}', [AdminObituaryController::class, 'update'])->name('obituaries.update');

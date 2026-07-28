@@ -86,6 +86,10 @@
 
                         <!-- Sub-menu Filters with Live Counters -->
                         <div x-show="open" class="pl-9 pr-2 py-1.5 space-y-1 text-xs font-normal">
+                            <a href="{{ route('admin.obituaries.create') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors text-amber-400 font-bold hover:bg-slate-800/80">
+                                <span>+ Add New Obituary</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">Free</span>
+                            </a>
                             <a href="{{ route('admin.obituaries.index', ['status' => 'pending_verification']) }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'pending_verification' ? 'text-amber-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
                                 <span>&bull; Pending Verification</span>
                                 <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
