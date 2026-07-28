@@ -143,6 +143,14 @@
                         <span>Staff Accounts & Roles</span>
                     </a>
 
+                    <!-- My Profile -->
+                    <a href="{{ route('admin.profile.edit') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.profile.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('admin.profile.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span>My Profile</span>
+                    </a>
+
                     <!-- Platform Settings -->
                     <a href="{{ route('admin.settings.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.settings.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.settings.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,15 +182,19 @@
             <!-- Bottom Section: Admin User Footer & Logout -->
             <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex-shrink-0">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3 overflow-hidden">
-                        <div class="w-9 h-9 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-sm flex-shrink-0 shadow-sm">
-                            {{ strtoupper(substr(Auth::guard('admin')->user()->name ?? 'A', 0, 1)) }}
+                    <a href="{{ route('admin.profile.edit') }}" class="flex items-center space-x-3 overflow-hidden group flex-grow pr-2" title="Manage Admin Profile">
+                        <div class="w-9 h-9 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-sm flex-shrink-0 shadow-sm overflow-hidden border border-amber-400/30 group-hover:border-amber-400 transition-all">
+                            @if(Auth::guard('admin')->user()->avatar ?? false)
+                                <img src="{{ asset('storage/' . Auth::guard('admin')->user()->avatar) }}" alt="{{ Auth::guard('admin')->user()->name }}" class="w-full h-full object-cover">
+                            @else
+                                {{ strtoupper(substr(Auth::guard('admin')->user()->name ?? 'A', 0, 1)) }}
+                            @endif
                         </div>
                         <div class="truncate text-xs">
-                            <span class="font-bold text-white block truncate">{{ Auth::guard('admin')->user()->name ?? 'Administrator' }}</span>
-                            <span class="text-slate-400 block truncate text-[11px]">{{ Auth::guard('admin')->user()->email ?? 'admin@obituaries.co.ke' }}</span>
+                            <span class="font-bold text-white block truncate group-hover:text-amber-400 transition-colors">{{ Auth::guard('admin')->user()->name ?? 'Administrator' }}</span>
+                            <span class="text-slate-400 block truncate text-[11px]">Edit Profile &rarr;</span>
                         </div>
-                    </div>
+                    </a>
 
                     <form action="{{ route('admin.logout') }}" method="POST" class="inline flex-shrink-0">
                         @csrf

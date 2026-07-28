@@ -341,4 +341,39 @@ class ObituaryTest extends TestCase
         $obituary = Obituary::where('full_name', 'Mzee Peter Karanja')->first();
         $storeResponse->assertRedirect(route('admin.obituaries.show', $obituary->id));
     }
+
+    public function test_admin_can_view_and_update_profile_and_password()
+    {
+        $admin = Admin::create([
+            'name' => 'Original Profile Name',
+            'email' => 'profile@obituaries.co.ke',
+            'password' => bcrypt('oldpassword123'),
+            'role' => 'super_admin',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.profile.edit'));
+        $response->assertStatus(200);
+        $response->assertSee('Manage Admin Profile');
+        $response->assertSee('Original Profile Name');
+
+        $updateResponse = $this->actingAs($admin, 'admin')->put(route('admin.profile.update'), [
+            'name' => 'Updated Profile Name',
+            'email' => 'updated_profile@obituaries.co.ke',
+            'phone' => '0799887766',
+            'current_password' => 'oldpassword123',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+
+        $updateResponse->assertSessionHas('success');
+        $this->assertDatabaseHas('admins', [
+            'id' => $admin->id,
+            'name' => 'Updated Profile Name',
+            'email' => 'updated_profile@obituaries.co.ke',
+            'phone' => '0799887766',
+        ]);
+
+        $admin->refresh();
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('newpassword123', $admin->password));
+    }
 }
