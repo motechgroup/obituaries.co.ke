@@ -76,11 +76,18 @@
     <div class="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center sm:items-center gap-6 sm:gap-10">
         <!-- Square Portrait Photo with Rounded Corners & Shadow -->
         <div class="relative flex-shrink-0">
-            <div class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-surface-container flex items-center justify-center">
+            <div class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-surface-container flex items-center justify-center relative group select-none">
                 @if($obituary->photo)
-                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover">
+                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover select-none pointer-events-none">
+                    
+                    <!-- Glassmorphism Watermark Overlay (Centered) -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                        <div class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-2xl flex items-center space-x-1.5 text-white transform -rotate-12 select-none">
+                            <span class="font-serif font-bold text-[10px] sm:text-xs tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
+                        </div>
+                    </div>
                 @else
-                    <div class="w-full h-full bg-gradient-to-b from-primary to-primary-container flex flex-col items-center justify-center p-4 text-center text-on-primary">
+                    <div class="w-full h-full bg-gradient-to-b from-primary to-primary-container flex flex-col items-center justify-center p-4 text-center text-on-primary select-none">
                         <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-secondary-fixed mb-2">
                             <span class="material-symbols-outlined text-[28px]">person</span>
                         </div>
@@ -109,8 +116,8 @@
     </div>
 </section>
 
-<!-- Content Grid matching Screenshot -->
-<div class="max-w-[1200px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 mt-12 sm:mt-16 pb-16">
+<!-- Content Grid with Copy Protection -->
+<div id="obituary-content" class="max-w-[1200px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 mt-12 sm:mt-16 pb-16 select-none" style="-webkit-user-select: none; user-select: none;">
     
     <!-- Left Column: Biography, Gallery & Candles (8 cols) -->
     <div class="lg:col-span-8 space-y-12 sm:space-y-16">
@@ -151,11 +158,18 @@
                     <span class="text-xs font-semibold text-on-surface-variant">{{ count($uploadedGallery) }} {{ Str::plural('Photograph', count($uploadedGallery)) }}</span>
                 </div>
 
-                <!-- Gallery Grid -->
+                <!-- Gallery Grid with Glass Watermark -->
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     @foreach($uploadedGallery as $img)
-                        <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container">
-                            <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container relative select-none">
+                            <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none pointer-events-none">
+                            
+                            <!-- Glassmorphism Watermark Overlay (Centered) -->
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                <div class="px-3 py-1 rounded-full bg-white/25 backdrop-blur-md border border-white/40 shadow-xl flex items-center space-x-1 text-white transform -rotate-12 select-none">
+                                    <span class="font-serif font-bold text-[9px] sm:text-[11px] tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
+                                </div>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -425,4 +439,70 @@
     </div>
 </div>
 
+<!-- Public Obituary Copy Protection & Security Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const protectSection = document.getElementById('obituary-content');
+        if (!protectSection) return;
+
+        function showProtectionToast() {
+            let toast = document.getElementById('copy-protection-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'copy-protection-toast';
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 text-xs font-semibold flex items-center space-x-2 border border-slate-700 backdrop-blur-md transition-all duration-300 pointer-events-none';
+                toast.innerHTML = `<span class="text-amber-400 font-bold text-sm">🔒</span><span>Notice Protected: Copying obituary text is restricted to preserve dignity.</span>`;
+                document.body.appendChild(toast);
+            }
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, 10px)';
+            }, 3000);
+        }
+
+        // Disable Context Menu (Right Click)
+        protectSection.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showProtectionToast();
+            return false;
+        });
+
+        // Disable Copy & Cut
+        protectSection.addEventListener('copy', function(e) {
+            e.preventDefault();
+            showProtectionToast();
+            return false;
+        });
+
+        protectSection.addEventListener('cut', function(e) {
+            e.preventDefault();
+            showProtectionToast();
+            return false;
+        });
+
+        // Disable Image Dragging
+        protectSection.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Disable Keyboard Copy Shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (
+                (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'C' || e.key === 'U' || e.key === 'S')) ||
+                (e.metaKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'C' || e.key === 'U' || e.key === 'S')) ||
+                (e.key === 'F12')
+            ) {
+                if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                    return true;
+                }
+                e.preventDefault();
+                showProtectionToast();
+                return false;
+            }
+        });
+    });
+</script>
 @endsection

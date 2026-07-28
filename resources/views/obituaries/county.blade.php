@@ -58,9 +58,16 @@
             @foreach($obituaries as $obituary)
                 <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer hover:-translate-y-1">
                     <div>
-                        <div class="relative aspect-4/3 bg-surface-container overflow-hidden">
+                        <div class="relative aspect-4/3 bg-surface-container overflow-hidden select-none">
                             @if($obituary->photo)
-                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} obituary photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} obituary photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none">
+                                
+                                <!-- Glassmorphism Watermark Overlay (Centered) -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                    <div class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-xl flex items-center space-x-1 text-white transform -rotate-12 select-none">
+                                        <span class="font-serif font-bold text-[9px] sm:text-[10px] tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
+                                    </div>
+                                </div>
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-amber-900 to-amber-950 flex flex-col items-center justify-center p-4 text-center text-amber-100">
                                     <span class="material-symbols-outlined text-3xl mb-1 text-amber-300">church</span>

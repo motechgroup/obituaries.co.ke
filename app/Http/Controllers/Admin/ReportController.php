@@ -41,7 +41,6 @@ class ReportController extends Controller
         // Notify reporter via Email if email is available
         if (!empty($report->reporter_email)) {
             try {
-                \App\Services\MailService::configure();
                 $tmpl = \App\Models\Setting::get('mail_template_report_resolved', "Dear {REPORTER_NAME},\n\nYour report concerning the obituary for {DECEASED_NAME} has been reviewed and updated by our moderation team.\n\nStatus: {STATUS}\nResolution Notes: {NOTES}\n\nThank you for helping us maintain accuracy and dignity on Obituaries.co.ke.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
 
                 $body = str_replace(
@@ -55,10 +54,11 @@ class ReportController extends Controller
                     $tmpl
                 );
 
-                \Illuminate\Support\Facades\Mail::raw($body, function ($msg) use ($report) {
-                    $msg->to($report->reporter_email)
-                        ->subject("Report Status Update: Obituary Notice #{$report->obituary_id}");
-                });
+                \App\Services\MailService::sendHtmlEmail(
+                    $report->reporter_email,
+                    "Report Status Update: Obituary Notice #{$report->obituary_id}",
+                    $body
+                );
             } catch (\Throwable $e) {}
         }
 

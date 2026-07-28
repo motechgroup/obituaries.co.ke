@@ -120,9 +120,16 @@
                     <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-surface-container-lowest p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-outline-variant/20 block cursor-pointer">
                         <div>
                             <!-- Compact Square Aspect Image Container -->
-                            <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container">
+                            <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container select-none">
                                 @if($obituary->photo)
-                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100">
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
+                                    
+                                    <!-- Glassmorphism Watermark Overlay (Centered) -->
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                        <div class="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-xl flex items-center space-x-1 text-white transform -rotate-12 select-none">
+                                            <span class="font-serif font-bold text-[8px] sm:text-[9px] tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
+                                        </div>
+                                    </div>
                                 @else
                                     <div class="w-full h-full bg-gradient-to-b from-primary-container to-primary flex flex-col items-center justify-center p-3 text-center text-on-primary">
                                         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex items-center justify-center text-secondary-fixed mb-1">

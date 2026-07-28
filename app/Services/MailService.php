@@ -49,4 +49,18 @@ class MailService
         // Purge cached mailer instance to force rebuild of transport
         Mail::purge('smtp');
     }
+
+    public static function sendHtmlEmail(string $toEmail, string $subject, string $bodyContent, ?string $actionUrl = null, ?string $actionText = null): void
+    {
+        self::configure();
+
+        Mail::send('emails.branded', [
+            'subject' => $subject,
+            'bodyContent' => $bodyContent,
+            'actionUrl' => $actionUrl,
+            'actionText' => $actionText,
+        ], function ($msg) use ($toEmail, $subject) {
+            $msg->to($toEmail)->subject($subject);
+        });
+    }
 }

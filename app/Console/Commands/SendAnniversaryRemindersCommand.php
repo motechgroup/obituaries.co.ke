@@ -39,7 +39,6 @@ class SendAnniversaryRemindersCommand extends Command
             // Send Anniversary Email
             if ($obituary->submitter_email) {
                 try {
-                    \App\Services\MailService::configure();
                     $tmpl = Setting::get('mail_template_anniversary', "Dear {NAME},\n\nToday marks the {YEARS} Anniversary of the passing of {DECEASED_NAME}.\n\nIn honoring their cherished legacy, friends and family are remembering them today on Obituaries.co.ke.\n\nView Memorial: {LINK}\n\nWarm regards,\nObituaries.co.ke Team");
                     $body = str_replace(
                         ['{NAME}', '{DECEASED_NAME}', '{YEARS}', '{LINK}'],
@@ -47,10 +46,13 @@ class SendAnniversaryRemindersCommand extends Command
                         $tmpl
                     );
 
-                    Mail::raw($body, function ($msg) use ($obituary, $years) {
-                        $msg->to($obituary->submitter_email)
-                            ->subject("In Loving Memory: {$years}" . $this->getOrdinalSuffix($years) . " Anniversary of {$obituary->full_name}");
-                    });
+                    \App\Services\MailService::sendHtmlEmail(
+                        $obituary->submitter_email,
+                        "In Loving Memory: {$years}" . $this->getOrdinalSuffix($years) . " Anniversary of {$obituary->full_name}",
+                        $body,
+                        $link,
+                        'View Memorial Notice'
+                    );
 
                     $emailCount++;
                 } catch (\Throwable $e) {

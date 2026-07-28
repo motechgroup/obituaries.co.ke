@@ -147,19 +147,14 @@ class SettingController extends Controller
             'test_email' => ['required', 'email'],
         ]);
 
-        $recipient = $request->input('test_email');
-
         try {
-            \App\Services\MailService::configure();
-
-            $fromAddress = Setting::get('mail_from_address', config('mail.from.address'));
-            $fromName = Setting::get('mail_from_name', config('mail.from.name'));
-
-            Mail::raw("Hello!\n\nThis is a test email sent from your Obituaries.co.ke Admin Panel.\nYour SMTP Mail Server configuration is working properly!", function ($message) use ($recipient, $fromAddress, $fromName) {
-                $message->to($recipient)
-                    ->from($fromAddress, $fromName)
-                    ->subject('Obituaries.co.ke SMTP Test Email');
-            });
+            \App\Services\MailService::sendHtmlEmail(
+                $recipient,
+                'Obituaries.co.ke SMTP Test Email',
+                "Hello!\n\nThis is a test email sent from your Obituaries.co.ke Admin Panel.\nYour SMTP Mail Server configuration and branded HTML email layout are working properly!",
+                config('app.url'),
+                'Visit Obituaries.co.ke'
+            );
 
             return back()
                 ->with('active_tab', 'smtp')
