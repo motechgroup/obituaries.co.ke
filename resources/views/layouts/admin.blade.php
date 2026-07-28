@@ -37,6 +37,35 @@
         .obituary-biography ol { list-style-type: decimal !important; }
         .obituary-biography li { margin-bottom: 0.5rem !important; }
     </style>
+    <script>
+        window.applyTag = function(tag, elementId = 'admin_biography') {
+            const el = document.getElementById(elementId) || document.querySelector('textarea[name="biography"]');
+            if (!el) return;
+            const start = el.selectionStart || 0;
+            const end = el.selectionEnd || 0;
+            const selectedText = el.value.substring(start, end) || 'text';
+            const replacement = `<${tag}>${selectedText}</${tag}>`;
+            el.value = el.value.substring(0, start) + replacement + el.value.substring(end);
+            el.selectionStart = start;
+            el.selectionEnd = start + replacement.length;
+            el.focus();
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+
+        window.applyList = function(elementId = 'admin_biography') {
+            const el = document.getElementById(elementId) || document.querySelector('textarea[name="biography"]');
+            if (!el) return;
+            const start = el.selectionStart || 0;
+            const end = el.selectionEnd || 0;
+            const selectedText = el.value.substring(start, end) || 'Item 1';
+            const replacement = `<ul>\n  <li>${selectedText}</li>\n</ul>`;
+            el.value = el.value.substring(0, start) + replacement + el.value.substring(end);
+            el.selectionStart = start;
+            el.selectionEnd = start + replacement.length;
+            el.focus();
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+    </script>
 </head>
 <body class="h-full bg-slate-100 antialiased font-sans text-slate-800" x-data="{ sidebarOpen: false }">
 
