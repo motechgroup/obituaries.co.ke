@@ -401,4 +401,40 @@ class ObituaryTest extends TestCase
         $dashboardResponse->assertStatus(200);
         $dashboardResponse->assertDontSee('Total Revenue');
     }
+
+    public function test_admin_and_editor_can_unpublish_obituary()
+    {
+        $editor = Admin::create([
+            'name' => 'Moderator Editor',
+            'email' => 'moderator@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'editor',
+        ]);
+
+        $obituary = Obituary::create([
+            'slug' => 'to-be-unpublished',
+            'full_name' => 'Unpublish Test Mzee',
+            'date_of_birth' => '1950-01-01',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Bio to be unpublished.',
+            'submitter_name' => 'Submitter Name',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Friend',
+            'status' => 'published',
+            'verification_status' => 'verified',
+        ]);
+
+        $unpublishResponse = $this->actingAs($editor, 'admin')->post(route('admin.obituaries.unpublish', $obituary->id), [
+            'reason' => 'Content flagged for review.',
+        ]);
+
+        $unpublishResponse->assertSessionHas('success');
+        $this->assertDatabaseHas('obituaries', [
+            'id' => $obituary->id,
+            'status' => 'draft',
+            'verification_status' => 'pending',
+        ]);
+    }
 }

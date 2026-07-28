@@ -104,6 +104,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/obituaries/{obituary}/edit', [AdminObituaryController::class, 'edit'])->name('obituaries.edit');
         Route::put('/obituaries/{obituary}', [AdminObituaryController::class, 'update'])->name('obituaries.update');
         Route::post('/obituaries/{obituary}/verify', [AdminObituaryController::class, 'verify'])->name('obituaries.verify');
+        Route::post('/obituaries/{obituary}/unpublish', [AdminObituaryController::class, 'unpublish'])->name('obituaries.unpublish');
         Route::delete('/obituaries/{obituary}', [AdminObituaryController::class, 'destroy'])->name('obituaries.destroy');
 
         // Admin & Editor Reports Moderation

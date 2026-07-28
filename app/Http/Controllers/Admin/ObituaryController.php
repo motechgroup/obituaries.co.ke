@@ -255,6 +255,19 @@ class ObituaryController extends Controller
         }
     }
 
+    public function unpublish(Request $request, Obituary $obituary)
+    {
+        $reason = $request->input('reason', 'Unpublished for moderation review.');
+        
+        $obituary->update([
+            'status' => 'draft',
+            'verification_status' => 'pending',
+            'verification_notes' => $reason,
+        ]);
+
+        return back()->with('success', "Obituary notice for '{$obituary->full_name}' has been unpublished.");
+    }
+
     public function destroy(Obituary $obituary)
     {
         $name = $obituary->full_name;

@@ -22,6 +22,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                     </svg>
                 </a>
+                <form action="{{ route('admin.obituaries.unpublish', $obituary->id) }}" method="POST" class="inline" onsubmit="return confirm('Unpublish this obituary notice from live website?')">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-1">
+                        <span class="material-symbols-outlined text-[16px]">visibility_off</span>
+                        <span>Unpublish Notice</span>
+                    </button>
+                </form>
             @endif
 
             <a href="{{ route('admin.obituaries.edit', $obituary->id) }}" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-bold transition-all">

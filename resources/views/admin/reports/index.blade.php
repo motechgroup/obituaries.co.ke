@@ -51,10 +51,18 @@
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-4">
                             @if($r->obituary)
-                                <a href="{{ route('admin.obituaries.show', $r->obituary_id) }}" class="font-bold text-amber-700 hover:underline block">
-                                    {{ $r->obituary->full_name }}
-                                </a>
-                                <span class="text-xs text-slate-500">Reported {{ $r->created_at->diffForHumans() }}</span>
+                                <div class="font-bold text-slate-900">{{ $r->obituary->full_name }}</div>
+                                <div class="flex items-center space-x-2 mt-1 text-xs">
+                                    <a href="{{ route('admin.obituaries.show', $r->obituary_id) }}" class="text-amber-700 font-semibold hover:underline">
+                                        Inspect Notice
+                                    </a>
+                                    <span class="text-slate-300">&bull;</span>
+                                    <a href="{{ route('obituaries.show', $r->obituary->slug) }}" target="_blank" class="text-sky-600 font-semibold hover:underline flex items-center space-x-0.5">
+                                        <span>View Public</span>
+                                        <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+                                    </a>
+                                </div>
+                                <span class="text-[11px] text-slate-400 block mt-0.5">Reported {{ $r->created_at->diffForHumans() }}</span>
                             @else
                                 <span class="text-slate-400 italic">Deleted Obituary</span>
                             @endif
@@ -82,7 +90,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <button type="button" @click="activeReport = {{ json_encode($r) }}; resolveModal = true" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold">
+                            <button type="button" @click="activeReport = {{ json_encode($r) }}; resolveModal = true" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold">
                                 Review / Resolve
                             </button>
                         </td>
@@ -110,11 +118,39 @@
                 <button type="button" @click="resolveModal = false" class="text-slate-400 font-bold hover:text-slate-600">&times;</button>
             </div>
 
+            <!-- Reported Obituary Live Banner -->
+            <template x-if="activeReport.obituary">
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs">
+                    <div>
+                        <span class="text-amber-950 font-bold block text-sm" x-text="activeReport.obituary.full_name"></span>
+                        <span class="text-amber-800 text-[11px]">Notice Status: <span class="uppercase font-bold" x-text="activeReport.obituary.status"></span></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <a :href="'/obituary/' + activeReport.obituary.slug" target="_blank" class="px-3 py-1.5 bg-white border border-amber-300 text-amber-900 rounded-lg font-bold flex items-center space-x-1 hover:bg-amber-100 transition-colors">
+                            <span>View Public Page</span>
+                            <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                        </a>
+                    </div>
+                </div>
+            </template>
+
             <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs">
                 <div><strong class="text-slate-700">Reason:</strong> <span class="uppercase font-bold text-rose-700" x-text="activeReport.reason"></span></div>
                 <div><strong class="text-slate-700">Report Details:</strong> <p class="mt-1 text-slate-800 whitespace-pre-line font-sans" x-text="activeReport.details"></p></div>
                 <div><strong class="text-slate-700">Reporter:</strong> <span x-text="activeReport.reporter_name + ' (' + activeReport.reporter_email + ')'"></span></div>
             </div>
+
+            <!-- Quick Unpublish Notice Button -->
+            <template x-if="activeReport.obituary && activeReport.obituary.status === 'published'">
+                <form :action="'/admin/obituaries/' + activeReport.obituary.id + '/unpublish'" method="POST" onsubmit="return confirm('Unpublish this obituary notice immediately from live website?')">
+                    @csrf
+                    <input type="hidden" name="reason" value="Unpublished during report moderation review.">
+                    <button type="submit" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-2 shadow-sm transition-all">
+                        <span class="material-symbols-outlined text-[16px]">visibility_off</span>
+                        <span>Unpublish Obituary Notice Immediately</span>
+                    </button>
+                </form>
+            </template>
 
             <form :action="'/admin/reports/' + activeReport.id + '/resolve'" method="POST" class="space-y-4">
                 @csrf
@@ -130,7 +166,7 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Resolution Notes</label>
-                    <textarea name="resolution_notes" rows="3" placeholder="e.g. Contacted submitter to fix birth date issue." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs"></textarea>
+                    <textarea name="resolution_notes" rows="3" placeholder="e.g. Contacted submitter or unpublished notice for editorial review." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs"></textarea>
                 </div>
 
                 <div class="pt-4 flex justify-end space-x-3">

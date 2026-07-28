@@ -104,6 +104,14 @@
                                 <a href="{{ route('admin.obituaries.edit', $ob->id) }}" class="inline-flex items-center px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition-colors">
                                     Edit
                                 </a>
+                                @if($ob->status === 'published')
+                                    <form action="{{ route('admin.obituaries.unpublish', $ob->id) }}" method="POST" class="inline" onsubmit="return confirm('Unpublish {{ e($ob->full_name) }} from live website?')">
+                                        @csrf
+                                        <button type="submit" class="inline-flex items-center px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-semibold transition-colors">
+                                            Unpublish
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
