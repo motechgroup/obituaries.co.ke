@@ -99,7 +99,8 @@
                         <label for="date_of_death" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
                             Date of Death <span class="text-rose-500">*</span>
                         </label>
-                        <input type="date" name="date_of_death" id="date_of_death" value="{{ old('date_of_death') }}" required class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        <input type="text" name="date_of_death" id="date_of_death" value="{{ old('date_of_death') }}" required placeholder="e.g. 2026 or 28/07/2026" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        <span class="text-[10px] text-on-surface-variant/70 mt-1 block">Format: DD/MM/YYYY or 4-digit Year (e.g., <strong>2026</strong>).</span>
                     </div>
                 </div>
 

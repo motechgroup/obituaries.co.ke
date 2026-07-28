@@ -565,4 +565,52 @@ class ObituaryTest extends TestCase
         \App\Models\Setting::set('enable_public_submissions', '1');
         $this->get(route('obituaries.submit'))->assertStatus(200);
     }
+
+    public function test_flexible_year_only_or_full_date_entry()
+    {
+        $admin = Admin::create([
+            'name' => 'Date Admin',
+            'email' => 'date_admin@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'editor',
+        ]);
+
+        // 1. Submit obituary with 4-digit year only for DOB and DOD
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.obituaries.store'), [
+            'full_name' => 'Mzee Year Only Test',
+            'date_of_birth' => '1945',
+            'date_of_death' => '2026',
+            'county' => 'Nyeri',
+            'town' => 'Karatina',
+            'biography' => 'Full biography text for Mzee Year Only Test obituary notice.',
+            'submitter_name' => 'Family Admin',
+            'submitter_phone' => '0700112233',
+            'relationship' => 'Child',
+            'status' => 'published',
+        ]);
+
+        $obituary = Obituary::where('full_name', 'Mzee Year Only Test')->first();
+        $this->assertNotNull($obituary);
+        $this->assertEquals('1945-01-01', $obituary->date_of_birth->format('Y-m-d'));
+        $this->assertEquals('2026-01-01', $obituary->date_of_death->format('Y-m-d'));
+
+        // 2. Submit obituary with DD/MM/YYYY full dates
+        $response2 = $this->post(route('obituaries.store'), [
+            'full_name' => 'Mzee Full Date Test',
+            'date_of_birth' => '15/04/1950',
+            'date_of_death' => '20/07/2026',
+            'county' => 'Kisumu',
+            'town' => 'Milimani',
+            'biography' => 'Full biography text for Mzee Full Date Test obituary notice.',
+            'submitter_name' => 'Jane Submitter',
+            'submitter_phone' => '0711998877',
+            'relationship' => 'Spouse',
+            'family_permission_confirmed' => '1',
+        ]);
+
+        $obituary2 = Obituary::where('full_name', 'Mzee Full Date Test')->first();
+        $this->assertNotNull($obituary2);
+        $this->assertEquals('1950-04-15', $obituary2->date_of_birth->format('Y-m-d'));
+        $this->assertEquals('2026-07-20', $obituary2->date_of_death->format('Y-m-d'));
+    }
 }

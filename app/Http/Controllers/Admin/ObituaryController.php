@@ -49,6 +49,13 @@ class ObituaryController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->filled('date_of_birth')) {
+            $request->merge(['date_of_birth' => $this->parseFlexibleDate($request->input('date_of_birth'))]);
+        }
+        if ($request->filled('date_of_death')) {
+            $request->merge(['date_of_death' => $this->parseFlexibleDate($request->input('date_of_death'))]);
+        }
+
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'date'],
@@ -147,6 +154,13 @@ class ObituaryController extends Controller
 
     public function update(Request $request, Obituary $obituary)
     {
+        if ($request->filled('date_of_birth')) {
+            $request->merge(['date_of_birth' => $this->parseFlexibleDate($request->input('date_of_birth'))]);
+        }
+        if ($request->filled('date_of_death')) {
+            $request->merge(['date_of_death' => $this->parseFlexibleDate($request->input('date_of_death'))]);
+        }
+
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'date'],
@@ -281,5 +295,35 @@ class ObituaryController extends Controller
 
         return redirect()->route('admin.obituaries.index')
             ->with('success', "Obituary for '{$name}' has been deleted.");
+    }
+
+    private function parseFlexibleDate(?string $input): ?string
+    {
+        if (empty($input)) {
+            return null;
+        }
+
+        $input = trim($input);
+
+        // 1. Year only e.g. "1945" or "2026"
+        if (preg_match('/^\d{4}$/', $input)) {
+            return $input . '-01-01';
+        }
+
+        // 2. Format DD/MM/YYYY or DD-MM-YYYY
+        if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $input, $matches)) {
+            return sprintf('%04d-%02d-%02d', $matches[3], $matches[2], $matches[1]);
+        }
+
+        // 3. Format YYYY-MM-DD
+        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $input)) {
+            return $input;
+        }
+
+        try {
+            return \Carbon\Carbon::parse($input)->format('Y-m-d');
+        } catch (\Throwable $e) {
+            return $input;
+        }
     }
 }
