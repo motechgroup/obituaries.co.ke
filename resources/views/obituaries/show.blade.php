@@ -80,10 +80,10 @@
                 @if($obituary->photo)
                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover select-none pointer-events-none">
                     
-                    <!-- Glass Embossed Text Watermark (Centered - No Border) -->
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 select-none">
-                        <span class="font-serif font-extrabold text-xs sm:text-sm lg:text-base tracking-[0.25em] uppercase text-white/40 transform -rotate-12 select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.7), -1px -1px 2px rgba(0,0,0,0.7);">
-                            Obituaries<span class="text-amber-200/50">.co.ke</span>
+                    <!-- Translucent Liquid Glass Watermark Overlay (Chest Level) -->
+                    <div class="absolute inset-x-0 bottom-3 sm:bottom-4 lg:bottom-5 flex justify-center pointer-events-none z-10 select-none">
+                        <span class="font-serif font-black text-xs sm:text-sm lg:text-base tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/90 opacity-70 transform -rotate-6 select-none pointer-events-none" style="text-shadow: 0 1px 2px rgba(255,255,255,0.9), 0 -1px 3px rgba(0,0,0,0.6), 0 0 8px rgba(255,255,255,0.7); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">
+                            Obituaries<span class="text-amber-200/90">.co.ke</span>
                         </span>
                     </div>
                 @else
@@ -164,10 +164,10 @@
                         <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container relative select-none">
                             <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none pointer-events-none">
                             
-                            <!-- Glass Embossed Text Watermark (Centered - No Border) -->
-                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 select-none">
-                                <span class="font-serif font-extrabold text-[10px] sm:text-xs tracking-[0.2em] uppercase text-white/40 transform -rotate-12 select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.7), -1px -1px 2px rgba(0,0,0,0.7);">
-                                    Obituaries<span class="text-amber-200/50">.co.ke</span>
+                            <!-- Translucent Liquid Glass Watermark Overlay (Chest Level) -->
+                            <div class="absolute inset-x-0 bottom-2 sm:bottom-3 flex justify-center pointer-events-none z-10 select-none">
+                                <span class="font-serif font-black text-[10px] sm:text-xs tracking-[0.18em] uppercase text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/90 opacity-70 transform -rotate-6 select-none pointer-events-none" style="text-shadow: 0 1px 2px rgba(255,255,255,0.9), 0 -1px 3px rgba(0,0,0,0.6), 0 0 6px rgba(255,255,255,0.7); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">
+                                    Obituaries<span class="text-amber-200/90">.co.ke</span>
                                 </span>
                             </div>
                         </div>
