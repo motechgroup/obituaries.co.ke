@@ -50,17 +50,10 @@ class ObituaryController extends Controller
 
     public function store(Request $request)
     {
-        if ($request->filled('date_of_birth')) {
-            $request->merge(['date_of_birth' => $this->parseFlexibleDate($request->input('date_of_birth'))]);
-        }
-        if ($request->filled('date_of_death')) {
-            $request->merge(['date_of_death' => $this->parseFlexibleDate($request->input('date_of_death'))]);
-        }
-
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['nullable', 'date'],
-            'date_of_death' => ['required', 'date'],
+            'date_of_birth' => ['nullable', 'string'],
+            'date_of_death' => ['required', 'string'],
             'county' => ['required', 'string'],
             'town' => ['required', 'string'],
             'biography' => ['required', 'string'],
@@ -81,6 +74,9 @@ class ObituaryController extends Controller
             'seo_keywords' => ['nullable', 'string', 'max:255'],
             'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $validated['date_of_birth'] = $this->parseFlexibleDate($validated['date_of_birth'] ?? null);
+        $validated['date_of_death'] = $this->parseFlexibleDate($validated['date_of_death'] ?? null);
 
         // Auto generate unique slug
         $baseSlug = \Illuminate\Support\Str::slug($validated['full_name']);
@@ -207,6 +203,9 @@ class ObituaryController extends Controller
             'canonical_url' => ['nullable', 'string', 'max:255'],
             'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $validated['date_of_birth'] = $this->parseFlexibleDate($validated['date_of_birth'] ?? null);
+        $validated['date_of_death'] = $this->parseFlexibleDate($validated['date_of_death'] ?? null);
 
         if ($request->hasFile('photo')) {
             $validated['photo'] = \App\Helpers\StorageHelper::savePublicFile($request->file('photo'), 'obituaries/photos');
@@ -362,14 +361,39 @@ class ObituaryController extends Controller
             return $input . '-01-01';
         }
 
-        // 2. Format DD/MM/YYYY or DD-MM-YYYY
-        if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $input, $matches)) {
-            return sprintf('%04d-%02d-%02d', $matches[3], $matches[2], $matches[1]);
+        // 2. Format YYYY-MM-DD or YYYY/MM/DD
+        if (preg_match('/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/', $input, $matches)) {
+            $year = (int) $matches[1];
+            $m = (int) $matches[2];
+            $d = (int) $matches[3];
+
+            if ($m > 12 && $d <= 12) {
+                return sprintf('%04d-%02d-%02d', $year, $d, $m);
+            }
+            return sprintf('%04d-%02d-%02d', $year, max(1, min(12, $m)), max(1, min(31, $d)));
         }
 
-        // 3. Format YYYY-MM-DD
-        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $input)) {
-            return $input;
+        // 3. Format DD/MM/YYYY or MM/DD/YYYY or DD-MM-YYYY
+        if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $input, $matches)) {
+            $p1 = (int) $matches[1];
+            $p2 = (int) $matches[2];
+            $year = (int) $matches[3];
+
+            if ($p1 > 12 && $p2 <= 12) {
+                // p1 is Day (>12), p2 is Month (<=12) -> DD/MM/YYYY
+                $day = $p1;
+                $month = $p2;
+            } elseif ($p2 > 12 && $p1 <= 12) {
+                // p2 is Day (>12), p1 is Month (<=12) -> MM/DD/YYYY
+                $day = $p2;
+                $month = $p1;
+            } else {
+                // Both <= 12 (e.g. 15/04/1995 or 05/04/1995). Standard Kenyan/UK format is DD/MM/YYYY
+                $day = $p1;
+                $month = $p2;
+            }
+
+            return sprintf('%04d-%02d-%02d', $year, max(1, min(12, $month)), max(1, min(31, $day)));
         }
 
         try {

@@ -37,14 +37,6 @@ class ObituarySubmissionController extends Controller
             return redirect()->route('home')->with('error', 'Public obituary submissions are currently disabled by administration.');
         }
 
-        // Parse flexible Date of Birth and Date of Death (e.g. DD/MM/YYYY, DD-MM-YYYY, YYYY-MM-DD, or YYYY)
-        if ($request->filled('date_of_birth')) {
-            $request->merge(['date_of_birth' => $this->parseFlexibleDate($request->input('date_of_birth'))]);
-        }
-        if ($request->filled('date_of_death')) {
-            $request->merge(['date_of_death' => $this->parseFlexibleDate($request->input('date_of_death'))]);
-        }
-
         if ($request->has('biography')) {
             $request->merge(['biography' => strip_tags($request->input('biography', ''))]);
         }
@@ -53,8 +45,8 @@ class ObituarySubmissionController extends Controller
             // Step 1: Deceased Info
             'full_name' => ['required', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB max
-            'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
-            'date_of_death' => ['required', 'date', 'before_or_equal:today'],
+            'date_of_birth' => ['nullable', 'string'],
+            'date_of_death' => ['required', 'string'],
             'county' => ['required', 'string', 'max:100'],
             'town' => ['required', 'string', 'max:100'],
             'biography' => ['required', 'string', 'min:20'],
@@ -78,6 +70,16 @@ class ObituarySubmissionController extends Controller
         ], [
             'family_permission_confirmed.accepted' => 'You must confirm that you have permission from the family to submit this obituary.',
         ]);
+
+        $dobParsed = $this->parseFlexibleDate($validated['date_of_birth'] ?? null);
+        $dodParsed = $this->parseFlexibleDate($validated['date_of_death'] ?? null);
+
+        if ($dobParsed && \Carbon\Carbon::parse($dobParsed)->isFuture()) {
+            return back()->withInput()->withErrors(['date_of_birth' => 'Date of birth cannot be in the future.']);
+        }
+        if ($dodParsed && \Carbon\Carbon::parse($dodParsed)->isFuture()) {
+            return back()->withInput()->withErrors(['date_of_death' => 'Date of death cannot be in the future.']);
+        }
 
         // Upload Profile Photo if provided
         $photoPath = null;
@@ -110,8 +112,8 @@ class ObituarySubmissionController extends Controller
             'full_name' => $validated['full_name'],
             'photo' => $photoPath,
             'gallery_images' => $galleryPaths,
-            'date_of_birth' => $validated['date_of_birth'] ?? null,
-            'date_of_death' => $validated['date_of_death'],
+            'date_of_birth' => $dobParsed,
+            'date_of_death' => $dodParsed,
             'county' => $validated['county'],
             'town' => $validated['town'],
             'biography' => strip_tags($validated['biography']),
@@ -147,14 +149,39 @@ class ObituarySubmissionController extends Controller
             return $input . '-01-01';
         }
 
-        // 2. Format DD/MM/YYYY or DD-MM-YYYY
-        if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $input, $matches)) {
-            return sprintf('%04d-%02d-%02d', $matches[3], $matches[2], $matches[1]);
+        // 2. Format YYYY-MM-DD or YYYY/MM/DD
+        if (preg_match('/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/', $input, $matches)) {
+            $year = (int) $matches[1];
+            $m = (int) $matches[2];
+            $d = (int) $matches[3];
+
+            if ($m > 12 && $d <= 12) {
+                return sprintf('%04d-%02d-%02d', $year, $d, $m);
+            }
+            return sprintf('%04d-%02d-%02d', $year, max(1, min(12, $m)), max(1, min(31, $d)));
         }
 
-        // 3. Format YYYY-MM-DD
-        if (preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $input)) {
-            return $input;
+        // 3. Format DD/MM/YYYY or MM/DD/YYYY or DD-MM-YYYY
+        if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/', $input, $matches)) {
+            $p1 = (int) $matches[1];
+            $p2 = (int) $matches[2];
+            $year = (int) $matches[3];
+
+            if ($p1 > 12 && $p2 <= 12) {
+                // p1 is Day (>12), p2 is Month (<=12) -> DD/MM/YYYY
+                $day = $p1;
+                $month = $p2;
+            } elseif ($p2 > 12 && $p1 <= 12) {
+                // p2 is Day (>12), p1 is Month (<=12) -> MM/DD/YYYY
+                $day = $p2;
+                $month = $p1;
+            } else {
+                // Both <= 12 (e.g. 15/04/1995 or 05/04/1995). Standard Kenyan/UK format is DD/MM/YYYY
+                $day = $p1;
+                $month = $p2;
+            }
+
+            return sprintf('%04d-%02d-%02d', $year, max(1, min(12, $month)), max(1, min(31, $day)));
         }
 
         try {

@@ -687,4 +687,26 @@ class ObituaryTest extends TestCase
             'status' => 'completed',
         ]);
     }
+
+    public function test_date_reversal_prevention_and_flexible_date_formats()
+    {
+        $response = $this->post(route('obituaries.store'), [
+            'full_name' => 'Test Date Reversal',
+            'date_of_birth' => '15/04/1995',
+            'date_of_death' => '20/07/2026',
+            'county' => 'Nairobi',
+            'town' => 'Kilimani',
+            'biography' => 'Respectful memory notice biography description here for testing dates.',
+            'submitter_name' => 'Family Submitter',
+            'submitter_phone' => '0712345678',
+            'relationship' => 'Child',
+            'family_permission_confirmed' => '1',
+        ]);
+        $response->assertSessionHasNoErrors();
+
+        $obituary = Obituary::where('full_name', 'Test Date Reversal')->first();
+        $this->assertNotNull($obituary);
+        $this->assertEquals('1995-04-15', $obituary->date_of_birth->format('Y-m-d'));
+        $this->assertEquals('2026-07-20', $obituary->date_of_death->format('Y-m-d'));
+    }
 }
