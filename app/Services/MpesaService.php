@@ -25,7 +25,7 @@ class MpesaService
         $this->consumerSecret = trim(\App\Models\Setting::get('mpesa_consumer_secret', config('mpesa.consumer_secret', '')));
         $this->shortcode = trim(\App\Models\Setting::get('mpesa_shortcode', config('mpesa.shortcode', '174379')));
         $this->passkey = trim(\App\Models\Setting::get('mpesa_passkey', config('mpesa.passkey', '')));
-        $this->callbackUrl = \App\Models\Setting::get('mpesa_callback_url', config('mpesa.callback_url', url('/api/v1/mpesa/callback')));
+        $this->callbackUrl = $this->resolveCallbackUrl();
         $this->transactionType = \App\Models\Setting::get('mpesa_transaction_type', 'CustomerPayBillOnline');
 
         // Check if mock mode is explicitly turned on/off in Admin Settings
@@ -36,6 +36,27 @@ class MpesaService
             // Default to mock mode only if credentials are not configured
             $this->mockMode = empty($this->consumerKey) || empty($this->consumerSecret);
         }
+    }
+
+    /**
+     * Auto-detect and resolve the M-Pesa Callback URL
+     */
+    public function resolveCallbackUrl(): string
+    {
+        $customUrl = trim(\App\Models\Setting::get('mpesa_callback_url', ''));
+
+        if (!empty($customUrl)) {
+            // On a live domain (non-localhost), reject localhost callback URLs & auto-detect live URL
+            $host = request()->getHost();
+            if ($host !== 'localhost' && $host !== '127.0.0.1') {
+                if (str_contains($customUrl, 'localhost') || str_contains($customUrl, '127.0.0.1')) {
+                    return route('api.mpesa.callback');
+                }
+            }
+            return $customUrl;
+        }
+
+        return route('api.mpesa.callback');
     }
 
     /**

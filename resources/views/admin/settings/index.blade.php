@@ -234,10 +234,15 @@
                         <input type="password" name="mpesa_passkey" value="{{ old('mpesa_passkey', $settings['mpesa_passkey']) }}" placeholder="Lipa Na M-Pesa Online Passkey" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
                     </div>
 
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">M-Pesa Callback URL</label>
-                        <input type="text" name="mpesa_callback_url" value="{{ old('mpesa_callback_url', $settings['mpesa_callback_url']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">
-                        <p class="text-[11px] text-slate-500 mt-1">Set this exact URL on your Safaricom Daraja Developer portal for instant payment verification.</p>
+                    <div class="sm:col-span-2 p-4 bg-sky-50/70 rounded-2xl border border-sky-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-sky-900">🔗 M-Pesa Callback URL</label>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-sky-200 text-sky-900 px-2 py-0.5 rounded-full">Auto-Detect Active</span>
+                        </div>
+                        <input type="text" name="mpesa_callback_url" value="{{ old('mpesa_callback_url', $settings['mpesa_callback_url']) }}" placeholder="{{ route('api.mpesa.callback') }}" class="w-full px-4 py-2.5 bg-white border border-sky-300 rounded-xl text-xs font-mono font-bold text-sky-950">
+                        <p class="text-[11px] text-sky-800">
+                            Auto-detected system callback URL: <code class="font-bold bg-white px-2 py-0.5 rounded border border-sky-300 select-all">{{ route('api.mpesa.callback') }}</code>. Set this exact URL on your Safaricom Daraja Developer app.
+                        </p>
                     </div>
                 </div>
             </div>
