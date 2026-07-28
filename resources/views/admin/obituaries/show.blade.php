@@ -165,6 +165,16 @@
                 <form action="{{ route('admin.obituaries.verify', $obituary->id) }}" method="POST" class="space-y-4 pt-4 border-t border-slate-200">
                     @csrf
 
+                    @if(Auth::guard('admin')->user()->isEditor() && $obituary->status !== 'published')
+                        <div>
+                            <label for="mpesa_transaction_code" class="block text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
+                                M-Pesa Receipt / Transaction Code <span class="text-rose-600">* (Required for Editors)</span>
+                            </label>
+                            <input type="text" name="mpesa_transaction_code" id="mpesa_transaction_code" value="{{ old('mpesa_transaction_code') }}" required placeholder="e.g. QJK1234567 or RAB9876543" class="w-full px-3 py-2 bg-amber-50 border border-amber-300 rounded-xl text-xs font-mono font-bold uppercase text-amber-950 focus:ring-2 focus:ring-amber-500">
+                            <p class="text-[10px] text-amber-800 mt-1">Editors cannot publish free notices. Enter a verified M-Pesa code.</p>
+                        </div>
+                    @endif
+
                     <div>
                         <label for="verification_notes" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
                             Internal Verification Notes

@@ -37,7 +37,7 @@ class Admin extends Authenticatable
 
     public function isEditor(): bool
     {
-        return $this->role === 'editor' || $this->role === 'super_admin';
+        return $this->role === 'editor';
     }
 
     public function verifiedObituaries()

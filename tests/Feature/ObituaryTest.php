@@ -466,10 +466,10 @@ class ObituaryTest extends TestCase
     public function test_visitor_cannot_format_biography_but_admin_and_editor_can()
     {
         $editor = Admin::create([
-            'name' => 'Formatting Editor',
-            'email' => 'formatting_editor@obituaries.co.ke',
+            'name' => 'Formatting Admin',
+            'email' => 'formatting_admin@obituaries.co.ke',
             'password' => bcrypt('password123'),
-            'role' => 'editor',
+            'role' => 'super_admin',
         ]);
 
         // 1. Admin/Editor creates obituary with HTML formatting -> Preserved safely
@@ -485,6 +485,7 @@ class ObituaryTest extends TestCase
             'relationship' => 'Family Representative',
             'status' => 'published',
         ]);
+        $adminResponse->assertSessionHasNoErrors();
 
         $obituary = Obituary::where('full_name', 'Mzee Formatted Bio')->first();
         $this->assertStringContainsString('<h3>Early Life</h3>', $obituary->biography);
@@ -572,7 +573,7 @@ class ObituaryTest extends TestCase
             'name' => 'Date Admin',
             'email' => 'date_admin@obituaries.co.ke',
             'password' => bcrypt('password123'),
-            'role' => 'editor',
+            'role' => 'super_admin',
         ]);
 
         // 1. Submit obituary with 4-digit year only for DOB and DOD
@@ -612,5 +613,78 @@ class ObituaryTest extends TestCase
         $this->assertNotNull($obituary2);
         $this->assertEquals('1950-04-15', $obituary2->date_of_birth->format('Y-m-d'));
         $this->assertEquals('2026-07-20', $obituary2->date_of_death->format('Y-m-d'));
+    }
+
+    public function test_editors_must_provide_mpesa_transaction_code_while_super_admins_can_waive()
+    {
+        $superAdmin = Admin::create([
+            'name' => 'Super Admin Free Post',
+            'email' => 'super_free@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        $editor = Admin::create([
+            'name' => 'Restricted Editor',
+            'email' => 'restricted_editor@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'editor',
+        ]);
+
+        // 1. Super Admin creates free published obituary without M-Pesa code -> Allowed
+        $superAdminResponse = $this->actingAs($superAdmin, 'admin')->post(route('admin.obituaries.store'), [
+            'full_name' => 'Mzee Super Admin Free Notice',
+            'date_of_death' => '2026-06-01',
+            'county' => 'Nairobi',
+            'town' => 'Kilimani',
+            'biography' => 'Super admin free publishing test notice biography content.',
+            'submitter_name' => 'Admin Desk',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Official Desk',
+            'status' => 'published',
+        ]);
+        $superAdminResponse->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('obituaries', ['full_name' => 'Mzee Super Admin Free Notice', 'status' => 'published']);
+
+        // 2. Editor attempts to post free published obituary without M-Pesa code -> Blocked with error
+        $editorFreeResponse = $this->actingAs($editor, 'admin')->post(route('admin.obituaries.store'), [
+            'full_name' => 'Mzee Editor Free Attempt',
+            'date_of_death' => '2026-06-01',
+            'county' => 'Kiambu',
+            'town' => 'Ruiru',
+            'biography' => 'Editor attempting free publishing test notice biography content.',
+            'submitter_name' => 'Editor Staff',
+            'submitter_phone' => '0711223344',
+            'relationship' => 'Editor Desk',
+            'status' => 'published',
+        ]);
+        $editorFreeResponse->assertSessionHasErrors('mpesa_transaction_code');
+        $this->assertDatabaseMissing('obituaries', ['full_name' => 'Mzee Editor Free Attempt']);
+
+        // 3. Editor posts published obituary WITH valid M-Pesa transaction code -> Approved & Published
+        $this->flushSession();
+        $this->actingAs($editor, 'admin');
+        $editorValidResponse = $this->post(route('admin.obituaries.store'), [
+            'full_name' => 'Mzee Editor Paid Notice',
+            'date_of_death' => '2026-06-01',
+            'county' => 'Nakuru',
+            'town' => 'Naivasha',
+            'biography' => 'Editor posting with valid M-Pesa receipt code biography content.',
+            'submitter_name' => 'Editor Staff',
+            'submitter_phone' => '0711223344',
+            'relationship' => 'Editor Desk',
+            'status' => 'published',
+            'mpesa_transaction_code' => 'QJK9876543',
+        ]);
+        $editorValidResponse->assertSessionHasNoErrors();
+
+        $publishedObituary = Obituary::where('full_name', 'Mzee Editor Paid Notice')->first();
+        $this->assertNotNull($publishedObituary);
+        $this->assertEquals('published', $publishedObituary->status);
+        $this->assertDatabaseHas('payments', [
+            'obituary_id' => $publishedObituary->id,
+            'mpesa_receipt_number' => 'QJK9876543',
+            'status' => 'completed',
+        ]);
     }
 }

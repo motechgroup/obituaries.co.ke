@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Obituary;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,6 +79,7 @@ class ObituaryController extends Controller
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'seo_keywords' => ['nullable', 'string', 'max:255'],
+            'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
 
         // Auto generate unique slug
@@ -114,15 +116,33 @@ class ObituaryController extends Controller
         // Allow rich formatting for Admin/Editor biography
         $validated['biography'] = \App\Helpers\StorageHelper::sanitizeHtml($validated['biography']);
 
-        // Admin submissions auto-verify and skip payment completely
+        $user = Auth::guard('admin')->user();
+        if ($user->isEditor() && $validated['status'] === 'published') {
+            $error = $this->verifyEditorMpesaPayment($request, new Obituary(), $user);
+            if ($error) {
+                return back()->withInput()->withErrors(['mpesa_transaction_code' => $error]);
+            }
+        }
+
+        // Admin submissions auto-verify
         $validated['verification_status'] = ($validated['status'] === 'published') ? 'verified' : 'pending';
-        $validated['verified_by'] = Auth::guard('admin')->id();
+        $validated['verified_by'] = $user->id;
         $validated['verified_at'] = now();
+
+        $mpesaCode = $validated['mpesa_transaction_code'] ?? null;
+        unset($validated['mpesa_transaction_code']);
 
         $obituary = Obituary::create($validated);
 
+        if ($user->isEditor()) {
+            $code = $request->input('mpesa_transaction_code');
+            if (!empty($code)) {
+                $this->linkOrCreatePayment($obituary, $code, $user);
+            }
+        }
+
         return redirect()->route('admin.obituaries.show', $obituary->id)
-            ->with('success', "Obituary notice for '{$obituary->full_name}' created and published successfully by Admin (Payment Waived)!");
+            ->with('success', "Obituary notice for '{$obituary->full_name}' created and published successfully!");
     }
 
     public function show(Obituary $obituary)
@@ -184,6 +204,7 @@ class ObituaryController extends Controller
             'meta_description' => ['nullable', 'string', 'max:500'],
             'seo_keywords' => ['nullable', 'string', 'max:255'],
             'canonical_url' => ['nullable', 'string', 'max:255'],
+            'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -207,7 +228,25 @@ class ObituaryController extends Controller
         // Allow rich formatting for Admin/Editor biography
         $validated['biography'] = \App\Helpers\StorageHelper::sanitizeHtml($validated['biography']);
 
+        $user = Auth::guard('admin')->user();
+        if ($user->isEditor() && $validated['status'] === 'published') {
+            $error = $this->verifyEditorMpesaPayment($request, $obituary, $user);
+            if ($error) {
+                return back()->withInput()->withErrors(['mpesa_transaction_code' => $error]);
+            }
+        }
+
+        $mpesaCode = $validated['mpesa_transaction_code'] ?? null;
+        unset($validated['mpesa_transaction_code']);
+
         $obituary->update($validated);
+
+        if ($user->isEditor()) {
+            $code = $request->input('mpesa_transaction_code');
+            if (!empty($code)) {
+                $this->linkOrCreatePayment($obituary, $code, $user);
+            }
+        }
 
         return redirect()->route('admin.obituaries.show', $obituary->id)
             ->with('success', 'Obituary details updated successfully.');
@@ -222,13 +261,25 @@ class ObituaryController extends Controller
 
         $action = $request->input('action');
         $notes = $request->input('verification_notes');
+        $user = Auth::guard('admin')->user();
 
         if ($action === 'approve') {
+            if ($user->isEditor()) {
+                $error = $this->verifyEditorMpesaPayment($request, $obituary, $user);
+                if ($error) {
+                    return back()->withInput()->withErrors(['mpesa_transaction_code' => $error]);
+                }
+                $code = $request->input('mpesa_transaction_code');
+                if ($code) {
+                    $this->linkOrCreatePayment($obituary, $code, $user);
+                }
+            }
+
             $obituary->update([
                 'status' => 'published',
                 'verification_status' => 'verified',
                 'verification_notes' => $notes,
-                'verified_by' => Auth::guard('admin')->id(),
+                'verified_by' => $user->id,
                 'verified_at' => now(),
             ]);
 
@@ -324,6 +375,79 @@ class ObituaryController extends Controller
             return \Carbon\Carbon::parse($input)->format('Y-m-d');
         } catch (\Throwable $e) {
             return $input;
+        }
+    }
+
+    /**
+     * Verifies M-Pesa transaction code for Editor publishing requests.
+     */
+    private function verifyEditorMpesaPayment(Request $request, Obituary $obituary, $user): ?string
+    {
+        if ($user->isSuperAdmin()) {
+            return null; // Super Admin payment waived
+        }
+
+        // Check if obituary already has a completed payment associated
+        if ($obituary->exists) {
+            $hasPayment = Payment::where('obituary_id', $obituary->id)->where('status', 'completed')->exists();
+            if ($hasPayment) {
+                return null;
+            }
+        }
+
+        $code = strtoupper(trim((string)$request->input('mpesa_transaction_code', '')));
+
+        if (empty($code)) {
+            return "Editors cannot publish free notices. A valid M-Pesa Transaction Code (e.g. QJK1234567) is required to verify payment.";
+        }
+
+        if (strlen($code) < 6) {
+            return "The M-Pesa Transaction Code '{$code}' is invalid. Please enter a valid 10-character M-Pesa receipt code.";
+        }
+
+        // Check if existing payment in DB
+        $payment = Payment::where('mpesa_receipt_number', $code)->first();
+
+        if ($payment) {
+            if ($payment->status !== 'completed') {
+                return "M-Pesa Receipt '{$code}' status is '{$payment->status}'. Only completed payments can be approved.";
+            }
+
+            if ($payment->obituary_id && $obituary->exists && $payment->obituary_id != $obituary->id) {
+                return "M-Pesa Receipt '{$code}' is already associated with another obituary notice.";
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Links or creates completed payment for M-Pesa receipt code.
+     */
+    private function linkOrCreatePayment(Obituary $obituary, string $code, $user): void
+    {
+        $code = strtoupper(trim($code));
+        if (empty($code)) return;
+
+        $payment = Payment::where('mpesa_receipt_number', $code)->first();
+
+        if ($payment) {
+            $payment->update([
+                'obituary_id' => $obituary->id,
+                'status' => 'completed',
+            ]);
+        } else {
+            Payment::create([
+                'obituary_id' => $obituary->id,
+                'phone_number' => $obituary->submitter_phone ?? '0700000000',
+                'amount' => \App\Models\Setting::get('obituary_publishing_cost', '500'),
+                'merchant_request_id' => 'EDITOR_VERIFIED_' . \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(8)),
+                'checkout_request_id' => 'EDITOR_VERIFIED_' . \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(8)),
+                'mpesa_receipt_number' => $code,
+                'status' => 'completed',
+                'result_code' => 0,
+                'result_desc' => 'Verified & published by Editor ' . $user->name,
+            ]);
         }
     }
 }
