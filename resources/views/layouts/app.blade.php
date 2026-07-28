@@ -183,22 +183,19 @@
                 </a>
 
                 <button type="button" @click="mobileMenu = !mobileMenu" class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-slate-800 transition-all border border-slate-700/80 focus:outline-none shadow-xs" aria-label="Toggle Navigation">
-                    <template x-if="!mobileMenu">
-                        <svg class="w-6 h-6 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </template>
-                    <template x-if="mobileMenu">
-                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </template>
+                    <svg x-show="!mobileMenu" class="w-6 h-6 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg x-show="mobileMenu" class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" x-cloak>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Drawer Navigation Overlay (Full Width 100% Mobile View) -->
+        <!-- Mobile Drawer Navigation Overlay (Closed by default, toggled on click) -->
         <div x-show="mobileMenu" 
+             :class="{ 'hidden': !mobileMenu, 'flex': mobileMenu }"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
@@ -206,8 +203,8 @@
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
              @click.away="mobileMenu = false"
-             class="mobile-drawer-menu md:hidden fixed left-0 right-0 top-[72px] sm:top-[80px] bottom-0 z-[999] w-full text-white overflow-y-auto px-5 py-6 flex flex-col justify-between shadow-2xl border-t border-slate-800" 
-             style="background-color: #0b0e18;"
+             class="mobile-drawer-menu hidden md:hidden fixed left-0 right-0 top-[72px] sm:top-[80px] bottom-0 z-[999] w-full text-white overflow-y-auto px-5 py-6 flex-col justify-between shadow-2xl border-t border-slate-800" 
+             style="background-color: #0b0e18; display: none;"
              x-cloak>
             
             <div class="space-y-6">
