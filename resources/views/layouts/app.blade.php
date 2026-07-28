@@ -34,6 +34,26 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @php
+        $gaId = trim(\App\Models\Setting::get('google_analytics_measurement_id', ''));
+    @endphp
+
+    @if(!empty($gaId))
+        @if(str_contains($gaId, '<script'))
+            {!! $gaId !!}
+        @else
+            <!-- Google tag (gtag.js) GA4 -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+            <script>
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', '{{ $gaId }}');
+            </script>
+        @endif
+    @endif
+
     <!-- Google Fonts & Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet"/>

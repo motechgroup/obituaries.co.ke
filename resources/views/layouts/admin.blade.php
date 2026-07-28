@@ -127,6 +127,12 @@
                         @endif
                     </a>
 
+                    <!-- Traffic Analytics -->
+                    <a href="{{ route('admin.analytics.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.analytics.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <span class="material-symbols-outlined text-[20px] {{ request()->routeIs('admin.analytics.*') ? 'text-white' : 'text-slate-400' }}">analytics</span>
+                        <span>Traffic Analytics</span>
+                    </a>
+
                     @if(Auth::guard('admin')->user()->isSuperAdmin())
                         <!-- M-Pesa Payments -->
                         <a href="{{ route('admin.payments.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.payments.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">

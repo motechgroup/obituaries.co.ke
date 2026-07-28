@@ -510,4 +510,34 @@ class ObituaryTest extends TestCase
         $this->assertStringNotContainsString('<script>', $visitorObituary->biography);
         $this->assertEquals('Bold Text alert("xss") Standard biography line here for testing.', $visitorObituary->biography);
     }
+
+    public function test_admin_analytics_and_google_analytics_integration()
+    {
+        $admin = Admin::create([
+            'name' => 'Analytics Super Admin',
+            'email' => 'analytics_admin@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        // 1. Visit homepage to generate a pageview record
+        $this->get(route('home'))->assertStatus(200);
+        $this->assertDatabaseHas('page_views', [
+            'route_name' => 'home',
+        ]);
+
+        // 2. Admin views analytics dashboard
+        $analyticsResponse = $this->actingAs($admin, 'admin')->get(route('admin.analytics.index'));
+        $analyticsResponse->assertStatus(200);
+        $analyticsResponse->assertSee('Traffic Analytics &amp; Audience Insights', false);
+
+        // 3. Configure Google Analytics GA4 Measurement ID in Settings
+        \App\Models\Setting::set('google_analytics_measurement_id', 'G-TEST123456');
+
+        // 4. Verify public page renders GA4 script tag in head
+        $homeResponse = $this->get(route('home'));
+        $homeResponse->assertStatus(200);
+        $homeResponse->assertSee('https://www.googletagmanager.com/gtag/js?id=G-TEST123456', false);
+        $homeResponse->assertSee("gtag('config', 'G-TEST123456');", false);
+    }
 }

@@ -16,7 +16,8 @@ class SettingController extends Controller
         $settings = [
             // Branding & General
             'site_title' => Setting::get('site_title', 'Obituaries.co.ke'),
-            'site_tagline' => Setting::get('site_tagline', 'A dignified space for remembrance, honouring loved ones across Kenya.'),
+            'site_tagline' => Setting::get('site_tagline', 'Kenya\'s Premier Digital Obituaries & Funeral Announcements Platform'),
+            'google_analytics_measurement_id' => Setting::get('google_analytics_measurement_id', ''),
             'logo' => Setting::get('logo'),
             'favicon' => Setting::get('favicon'),
             'footer_address' => Setting::get('footer_address', 'Nairobi, Kenya'),
@@ -73,6 +74,7 @@ class SettingController extends Controller
         $validated = $request->validate([
             'site_title' => ['nullable', 'string', 'max:255'],
             'site_tagline' => ['nullable', 'string', 'max:500'],
+            'google_analytics_measurement_id' => ['nullable', 'string', 'max:255'],
             'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,webp', 'max:2048'],
             'favicon' => ['nullable', 'image', 'mimes:jpeg,png,jpg,ico,svg,webp', 'max:1024'],
             'footer_address' => ['nullable', 'string', 'max:255'],

@@ -182,6 +182,21 @@
                     <input type="text" name="site_tagline" value="{{ old('site_tagline', $settings['site_tagline']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                 </div>
 
+                <!-- Google Analytics Integration Box -->
+                <div class="sm:col-span-2 p-5 bg-sky-50/80 border border-sky-200 rounded-xl space-y-3">
+                    <div class="flex items-center space-x-2 text-sky-900 font-bold text-sm">
+                        <span class="material-symbols-outlined text-[20px] text-sky-600">analytics</span>
+                        <span>Google Analytics (GA4) Integration</span>
+                    </div>
+                    <p class="text-xs text-sky-800 leading-relaxed">
+                        Enter your Google Analytics 4 Measurement ID (e.g. <code class="bg-white px-1.5 py-0.5 rounded border border-sky-200">G-XXXXXXXXXX</code>) or paste the full <code class="bg-white px-1.5 py-0.5 rounded border border-sky-200">&lt;script&gt;</code> tag. It will automatically inject the official Google Tag code into the website.
+                    </p>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Google Analytics Tag / Measurement ID</label>
+                        <input type="text" name="google_analytics_measurement_id" value="{{ old('google_analytics_measurement_id', $settings['google_analytics_measurement_id']) }}" placeholder="e.g. G-ABC123XYZ or <script>...</script>" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-mono">
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Site Logo Upload</label>
                     <div class="p-3 bg-slate-50 border border-slate-300 rounded-xl flex items-center space-x-3">
