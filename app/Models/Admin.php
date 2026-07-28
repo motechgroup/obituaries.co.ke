@@ -32,7 +32,7 @@ class Admin extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return empty($this->role) || in_array($this->role, ['super_admin', 'admin']);
     }
 
     public function isEditor(): bool

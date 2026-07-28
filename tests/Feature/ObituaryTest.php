@@ -376,4 +376,29 @@ class ObituaryTest extends TestCase
         $admin->refresh();
         $this->assertTrue(\Illuminate\Support\Facades\Hash::check('newpassword123', $admin->password));
     }
+
+    public function test_editor_cannot_access_super_admin_routes()
+    {
+        $editor = Admin::create([
+            'name' => 'Editor User',
+            'email' => 'editor@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'editor',
+        ]);
+
+        // Editor attempts to access Super Admin routes -> 403 Forbidden
+        $this->actingAs($editor, 'admin')->get(route('admin.users.index'))->assertStatus(403);
+        $this->actingAs($editor, 'admin')->get(route('admin.payments.index'))->assertStatus(403);
+        $this->actingAs($editor, 'admin')->get(route('admin.settings.index'))->assertStatus(403);
+        $this->actingAs($editor, 'admin')->post(route('admin.database.purge'), ['confirm_text' => 'PURGE'])->assertStatus(403);
+
+        // Editor CAN access Obituaries, Reports, Profile, and Dashboard
+        $this->actingAs($editor, 'admin')->get(route('admin.obituaries.index'))->assertStatus(200);
+        $this->actingAs($editor, 'admin')->get(route('admin.reports.index'))->assertStatus(200);
+        $this->actingAs($editor, 'admin')->get(route('admin.profile.edit'))->assertStatus(200);
+        
+        $dashboardResponse = $this->actingAs($editor, 'admin')->get(route('admin.dashboard'));
+        $dashboardResponse->assertStatus(200);
+        $dashboardResponse->assertDontSee('Total Revenue');
+    }
 }

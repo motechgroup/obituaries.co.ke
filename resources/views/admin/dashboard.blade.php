@@ -11,28 +11,36 @@
             <p class="text-slate-500 text-sm mt-1">Monitor all submissions, verify submitter contacts, and review M-Pesa payments.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-            <form action="{{ route('admin.system.git-pull') }}" method="POST" onsubmit="return confirm('Pull latest codebase from GitHub onto live server?')">
-                @csrf
-                <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-sky-400 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span class="material-symbols-outlined text-[16px]">sync</span>
-                    <span>Git Pull Code</span>
-                </button>
-            </form>
-            <form action="{{ route('admin.database.migrate') }}" method="POST" onsubmit="return confirm('Execute database migrations online?')">
-                @csrf
-                <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span class="material-symbols-outlined text-[16px]">bolt</span>
-                    <span>Run Migrations</span>
-                </button>
-            </form>
-            <form action="{{ route('admin.system.fix-storage') }}" method="POST" onsubmit="return confirm('Repair public storage symlink for uploaded images?')">
-                @csrf
-                <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-emerald-400 rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span class="material-symbols-outlined text-[16px]">image</span>
-                    <span>Fix Image Storage</span>
-                </button>
-            </form>
-            @if($pendingPaymentCount > 0)
+            @if($isSuperAdmin)
+                <form action="{{ route('admin.system.git-pull') }}" method="POST" onsubmit="return confirm('Pull latest codebase from GitHub onto live server?')">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-sky-400 rounded-xl text-xs font-bold transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-[16px]">sync</span>
+                        <span>Git Pull Code</span>
+                    </button>
+                </form>
+                <form action="{{ route('admin.database.migrate') }}" method="POST" onsubmit="return confirm('Execute database migrations online?')">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-xl text-xs font-bold transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-[16px]">bolt</span>
+                        <span>Run Migrations</span>
+                    </button>
+                </form>
+                <form action="{{ route('admin.system.fix-storage') }}" method="POST" onsubmit="return confirm('Repair public storage symlink for uploaded images?')">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-emerald-400 rounded-xl text-xs font-bold transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-[16px]">image</span>
+                        <span>Fix Image Storage</span>
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('admin.obituaries.create') }}" class="inline-flex items-center space-x-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[16px]">add</span>
+                    <span>Create Obituary</span>
+                </a>
+            @endif
+
+            @if($pendingPaymentCount > 0 && $isSuperAdmin)
                 <a href="{{ route('admin.obituaries.index', ['status' => 'pending_payment']) }}" class="inline-flex items-center px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl text-xs font-bold transition-colors">
                     <span>Pending Payment ({{ $pendingPaymentCount }})</span>
                 </a>
@@ -54,19 +62,6 @@
             <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14"/>
-                </svg>
-            </div>
-        </div>
-
-        <!-- Pending Payment -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
-            <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Pending Payment</span>
-                <span class="font-serif text-2xl font-bold text-slate-700">{{ number_format($pendingPaymentCount) }}</span>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
             </div>
         </div>
@@ -97,18 +92,42 @@
             </div>
         </div>
 
-        <!-- Total Revenue -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+        <!-- Pending Reports Card -->
+        <div class="bg-white rounded-2xl p-5 border border-rose-200 shadow-xs flex items-center justify-between">
             <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Revenue</span>
-                <span class="font-serif text-xl font-bold text-slate-900">KES {{ number_format($totalRevenue, 0) }}</span>
+                <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider block mb-1">Reported Issues</span>
+                <span class="font-serif text-2xl font-bold text-rose-600">{{ number_format($pendingReportsCount) }}</span>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">flag</span>
             </div>
         </div>
+
+        @if($isSuperAdmin)
+            <!-- Total Revenue (Super Admin Only) -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Total Revenue</span>
+                    <span class="font-serif text-xl font-bold text-slate-900">KES {{ number_format($totalRevenue, 0) }}</span>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+        @else
+            <!-- My Verified Tributes Card (Editor) -->
+            <div class="bg-white rounded-2xl p-5 border border-sky-200 shadow-xs flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold text-sky-700 uppercase tracking-wider block mb-1">My Approved</span>
+                    <span class="font-serif text-2xl font-bold text-sky-600">{{ number_format($myVerifiedCount) }}</span>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">verified</span>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- All Recent Submissions Table (Ensures ALL submitted obituaries appear on dashboard) -->
@@ -184,61 +203,63 @@
         @endif
     </div>
 
-    <!-- Recent Completed Payments -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div class="p-6 border-b border-slate-200 flex items-center justify-between">
-            <h2 class="font-serif text-lg font-bold text-slate-900">Recent M-Pesa Transactions</h2>
-            <a href="{{ route('admin.payments.index') }}" class="text-xs font-semibold text-amber-700 hover:text-amber-800">
-                View All Transactions &rarr;
-            </a>
-        </div>
+    @if($isSuperAdmin)
+        <!-- Recent Completed Payments (Super Admin Only) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+                <h2 class="font-serif text-lg font-bold text-slate-900">Recent M-Pesa Transactions</h2>
+                <a href="{{ route('admin.payments.index') }}" class="text-xs font-semibold text-amber-700 hover:text-amber-800">
+                    View All Transactions &rarr;
+                </a>
+            </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-700">
-                <thead class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase text-slate-500">
-                    <tr>
-                        <th class="px-6 py-3.5">M-Pesa Receipt</th>
-                        <th class="px-6 py-3.5">Phone Number</th>
-                        <th class="px-6 py-3.5">Obituary Notice</th>
-                        <th class="px-6 py-3.5">Amount</th>
-                        <th class="px-6 py-3.5">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                    @forelse($recentPayments as $pay)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-mono font-bold text-slate-900 text-xs">
-                                {{ $pay->mpesa_receipt_number }}
-                            </td>
-                            <td class="px-6 py-4 text-xs font-medium text-slate-800">
-                                {{ $pay->phone_number }}
-                            </td>
-                            <td class="px-6 py-4 text-xs">
-                                @if($pay->obituary)
-                                    <a href="{{ route('admin.obituaries.show', $pay->obituary->id) }}" class="text-amber-700 font-semibold hover:underline">
-                                        {{ $pay->obituary->full_name }}
-                                    </a>
-                                @else
-                                    <span class="text-slate-400">N/A</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-xs font-bold text-slate-900">
-                                KES {{ number_format($pay->amount, 2) }}
-                            </td>
-                            <td class="px-6 py-4 text-xs text-slate-500">
-                                {{ $pay->created_at->format('M d, Y H:i') }}
-                            </td>
-                        </tr>
-                    @empty
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-700">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase text-slate-500">
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400 text-sm">
-                                No payment transactions recorded yet.
-                            </td>
+                            <th class="px-6 py-3.5">M-Pesa Receipt</th>
+                            <th class="px-6 py-3.5">Phone Number</th>
+                            <th class="px-6 py-3.5">Obituary Notice</th>
+                            <th class="px-6 py-3.5">Amount</th>
+                            <th class="px-6 py-3.5">Date</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        @forelse($recentPayments as $pay)
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-bold text-slate-900 text-xs">
+                                    {{ $pay->mpesa_receipt_number }}
+                                </td>
+                                <td class="px-6 py-4 text-xs font-medium text-slate-800">
+                                    {{ $pay->phone_number }}
+                                </td>
+                                <td class="px-6 py-4 text-xs">
+                                    @if($pay->obituary)
+                                        <a href="{{ route('admin.obituaries.show', $pay->obituary->id) }}" class="text-amber-700 font-semibold hover:underline">
+                                            {{ $pay->obituary->full_name }}
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-900">
+                                    KES {{ number_format($pay->amount, 2) }}
+                                </td>
+                                <td class="px-6 py-4 text-xs text-slate-500">
+                                    {{ $pay->created_at->format('M d, Y H:i') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-xs text-slate-500">
+                                    No completed M-Pesa payment transactions logged yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    @endif
 </div>
 @endsection

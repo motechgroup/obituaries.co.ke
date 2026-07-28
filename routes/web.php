@@ -111,23 +111,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/reports/{report}/resolve', [AdminReportController::class, 'resolve'])->name('reports.resolve');
         Route::delete('/reports/{report}', [AdminReportController::class, 'destroy'])->name('reports.destroy');
 
-        // Admin Payment Audit Logs & Finance Reports
-        Route::get('/payments/export', [AdminPaymentController::class, 'export'])->name('payments.export');
-        Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+        // Super Admin Only Restricted Operations
+        Route::middleware([\App\Http\Middleware\EnsureSuperAdmin::class])->group(function () {
+            // Admin Staff & Roles Management
+            Route::resource('/users', AdminUserController::class)->except(['create', 'edit', 'show']);
 
-        // Admin Staff & Roles Management
-        Route::resource('/users', AdminUserController::class)->except(['create', 'edit', 'show']);
+            // Admin Payment Audit Logs & Finance Reports
+            Route::get('/payments/export', [AdminPaymentController::class, 'export'])->name('payments.export');
+            Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
 
-        // Admin General Settings & Gateways
-        Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
-        Route::post('/settings/test-mail', [AdminSettingController::class, 'sendTestMail'])->name('settings.test-mail');
-        Route::post('/settings/test-sms', [AdminSettingController::class, 'sendTestSms'])->name('settings.test-sms');
+            // Admin General Settings & Gateways
+            Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
+            Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+            Route::post('/settings/test-mail', [AdminSettingController::class, 'sendTestMail'])->name('settings.test-mail');
+            Route::post('/settings/test-sms', [AdminSettingController::class, 'sendTestSms'])->name('settings.test-sms');
 
-        // Admin Database Maintenance & System Code Operations
-        Route::post('/database/migrate', [AdminSettingController::class, 'runMigrations'])->name('database.migrate');
-        Route::post('/database/seed', [AdminSettingController::class, 'runSeeders'])->name('database.seed');
-        Route::post('/database/purge', [AdminSettingController::class, 'purgeDatabase'])->name('database.purge');
+            // Admin Database Maintenance & System Code Operations
+            Route::post('/database/migrate', [AdminSettingController::class, 'runMigrations'])->name('database.migrate');
+            Route::post('/database/seed', [AdminSettingController::class, 'runSeeders'])->name('database.seed');
+            Route::post('/database/purge', [AdminSettingController::class, 'purgeDatabase'])->name('database.purge');
+        });
         Route::post('/system/git-pull', [AdminSettingController::class, 'gitPull'])->name('system.git-pull');
         Route::post('/system/fix-storage', [AdminSettingController::class, 'fixStorage'])->name('system.fix-storage');
     });
