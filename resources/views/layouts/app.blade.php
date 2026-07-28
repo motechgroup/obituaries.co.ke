@@ -66,6 +66,12 @@
             font-style: italic;
             color: #44474e;
         }
+        [x-cloak] { display: none !important; }
+        @media (min-width: 768px) {
+            .mobile-drawer-menu {
+                display: none !important;
+            }
+        }
     </style>
 
     @php
@@ -183,7 +189,7 @@
         </div>
 
         <!-- Mobile Drawer Navigation Overlay -->
-        <div x-show="mobileMenu && window.innerWidth < 768" 
+        <div x-show="mobileMenu" 
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-4"
              x-transition:enter-end="opacity-100 translate-y-0"
@@ -191,7 +197,7 @@
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-4"
              @click.away="mobileMenu = false"
-             class="fixed inset-x-0 top-[72px] sm:top-[80px] bottom-0 z-50 text-white overflow-y-auto px-5 py-6 flex flex-col justify-between shadow-2xl border-t border-slate-800/80" 
+             class="mobile-drawer-menu md:hidden fixed inset-x-0 top-[72px] sm:top-[80px] bottom-0 z-50 text-white overflow-y-auto px-5 py-6 flex flex-col justify-between shadow-2xl border-t border-slate-800/80" 
              style="background-color: #0b0e18;"
              x-cloak>
             
