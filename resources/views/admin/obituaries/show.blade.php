@@ -34,6 +34,15 @@
             <a href="{{ route('admin.obituaries.edit', $obituary->id) }}" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-bold transition-all">
                 Edit Notice
             </a>
+
+            <form action="{{ route('admin.obituaries.destroy', $obituary->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to PERMANENTLY delete obituary notice for {{ e($obituary->full_name) }}? This action cannot be undone!')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-1 shadow-xs">
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                    <span>Delete Notice</span>
+                </button>
+            </form>
         </div>
     </div>
 
