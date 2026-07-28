@@ -720,4 +720,40 @@ class ObituaryTest extends TestCase
         $this->assertLessThanOrEqual(255, mb_strlen($formatted));
         $this->assertEquals('kw1, kw2, kw3, kw4, kw5, kw6, kw7, kw8, kw9, kw10', $formatted);
     }
+
+    public function test_system_seeds_1000_unique_memorial_quotes_and_assigns_them_dynamically()
+    {
+        $allQuotes = \App\Helpers\MemorialQuoteHelper::getAllQuotes();
+        $this->assertCount(1000, $allQuotes);
+
+        $obituary1 = Obituary::create([
+            'slug' => 'quote-test-1',
+            'full_name' => 'Mama Grace Njeri',
+            'date_of_death' => '2026-07-01',
+            'county' => 'Kiambu',
+            'town' => 'Githunguri',
+            'biography' => 'Beloved mother and community elder.',
+            'submitter_name' => 'John Njeri',
+            'submitter_phone' => '0700000001',
+            'relationship' => 'Child',
+            'status' => 'published',
+        ]);
+
+        $obituary2 = Obituary::create([
+            'slug' => 'quote-test-2',
+            'full_name' => 'Mzee Peter Omwamba',
+            'date_of_death' => '2026-07-02',
+            'county' => 'Kisii',
+            'town' => 'Ogembo',
+            'biography' => 'Dedicated teacher and father.',
+            'submitter_name' => 'Mary Omwamba',
+            'submitter_phone' => '0700000002',
+            'relationship' => 'Spouse',
+            'status' => 'published',
+        ]);
+
+        $this->assertNotEmpty($obituary1->memorial_quote);
+        $this->assertNotEmpty($obituary2->memorial_quote);
+        $this->assertNotEquals($obituary1->memorial_quote, $obituary2->memorial_quote);
+    }
 }

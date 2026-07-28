@@ -146,6 +146,11 @@ class Obituary extends Model
         return static::formatAndTruncateSeoKeywords($rawString);
     }
 
+    public function getMemorialQuoteAttribute(): string
+    {
+        return \App\Helpers\MemorialQuoteHelper::getQuoteForObituary($this);
+    }
+
     public static function generateUniqueSlug(string $name): string
     {
         $baseSlug = Str::slug($name);

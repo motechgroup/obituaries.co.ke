@@ -143,7 +143,7 @@
             <!-- Featured Pull Quote Box -->
             <div class="my-8 sm:my-10 p-6 sm:p-8 bg-surface-container-low rounded-xl border-l-4 border-secondary italic shadow-xs">
                 <p class="font-serif text-base sm:text-xl text-on-surface-variant">
-                    "A tree is known by its fruit, and a man by his deeds. A forest of kindness."
+                    "{{ $obituary->memorial_quote }}"
                 </p>
             </div>
         </section>
