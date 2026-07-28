@@ -9,6 +9,11 @@
     <meta name="keywords" content="@yield('seo_keywords', 'obituary Kenya, Kenya obituaries, death notices Kenya, Kenyan obituaries, online obituary Kenya, funeral announcements Kenya, Nairobi obituaries, Kisii obituaries')">
     <link rel="canonical" href="@yield('canonical_url', url()->current())">
 
+    <!-- Favicon & Site Icons -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
+
     @hasSection('noindex')
         <meta name="robots" content="noindex, nofollow">
     @endif
@@ -84,12 +89,9 @@
     <!-- Fixed Header matching Stitch Design -->
     <header class="fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-outline-variant/30">
         <div class="h-20 max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
-            <!-- Logo & Brand -->
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 flex-shrink-0 group">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
-                    <span class="material-symbols-outlined text-[18px] sm:text-[20px]">church</span>
-                </div>
-                <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary">Obituaries<span class="text-secondary">.co.ke</span></span>
+            <!-- Official Site Logo -->
+            <a href="{{ route('home') }}" class="flex items-center flex-shrink-0 group">
+                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" class="h-10 sm:h-12 w-auto object-contain">
             </a>
 
             <!-- Quick Header Search (Desktop) -->
@@ -199,7 +201,10 @@
     <!-- Footer matching Stitch Design -->
     <footer class="w-full bg-surface-container-low mt-16 sm:mt-20 border-t border-surface-container-high">
         <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-10 sm:py-12 flex flex-col items-center text-center">
-            <div class="w-10 h-[1px] bg-secondary mb-6 sm:mb-8 mx-auto"></div>
+            <!-- Official Site Logo in Footer -->
+            <a href="{{ route('home') }}" class="mb-4 inline-block">
+                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" class="h-10 sm:h-12 w-auto object-contain">
+            </a>
             <p class="font-serif text-xl sm:text-2xl font-bold text-on-surface mb-2">Remembering Lives. Sharing Memories.</p>
             <p class="text-xs text-on-surface-variant mb-6 sm:mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
             

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <circle cx="256" cy="256" r="240" fill="#0f172a"/>
+  <!-- Cross on top -->
+  <path d="M 256 100 V 160 M 230 125 H 282" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
+  <!-- Main Roof -->
+  <path d="M 170 230 L 256 160 L 342 230" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Main Building Walls -->
+  <path d="M 190 225 V 390 H 322 V 225" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Arch Door -->
+  <path d="M 230 390 V 320 C 230 300 282 300 282 320 V 390" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round"/>
+  <!-- Left Side Wing -->
+  <path d="M 130 290 L 190 240 V 390 H 130 Z" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Right Side Wing -->
+  <path d="M 382 290 L 322 240 V 390 H 382 Z" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

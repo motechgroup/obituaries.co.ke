@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password | Obituaries.co.ke Admin</title>
+
+    <!-- Favicon & Site Icons -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -11,11 +17,9 @@
 
 <div class="w-full max-w-md space-y-8 bg-slate-900/80 p-8 rounded-3xl border border-slate-800 shadow-2xl backdrop-blur-md">
     <div class="text-center space-y-2">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 mb-2">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-            </svg>
-        </div>
+        <a href="{{ route('home') }}" class="inline-block mb-3">
+            <img src="{{ asset('images/logo-light.svg') }}" alt="Obituaries.co.ke" class="h-12 w-auto mx-auto object-contain">
+        </a>
         <h1 class="font-serif text-2xl font-bold tracking-tight text-white">Reset Admin Password</h1>
         <p class="text-slate-400 text-xs">Enter your registered admin email address to receive a secure password reset link.</p>
     </div>

@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | Obituaries.co.ke</title>
+
+    <!-- Favicon & Site Icons -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 antialiased selection:bg-amber-500 selection:text-white">
 
     <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-slate-200">
-        <!-- Logo -->
+        <!-- Official Logo -->
         <div class="text-center mb-8">
-            <a href="{{ route('home') }}" class="font-serif text-2xl font-bold text-slate-900 block">
-                Obituaries<span class="text-amber-600">.co.ke</span>
+            <a href="{{ route('home') }}" class="inline-block mb-1">
+                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke" class="h-12 w-auto mx-auto object-contain">
             </a>
-            <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1 block">Administrator Sign In</span>
+            <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold block">Administrator Sign In</span>
         </div>
 
         @if ($errors->any())

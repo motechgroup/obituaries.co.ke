@@ -292,9 +292,9 @@
             <div x-show="reportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
                 <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-surface-container space-y-6" @click.away="reportModal = false">
                     <div class="flex items-center justify-between border-b border-surface-container pb-4">
-                        <div class="flex items-center space-x-2 text-rose-600">
-                            <span class="material-symbols-outlined text-[24px]">flag</span>
-                            <h3 class="font-serif text-lg font-bold text-primary">Report Obituary Notice</h3>
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke" class="h-8 w-auto object-contain">
+                            <span class="bg-rose-500/10 text-rose-600 text-[10px] uppercase font-sans font-bold px-2 py-0.5 rounded border border-rose-500/20">Report Notice</span>
                         </div>
                         <button type="button" @click="reportModal = false" class="text-on-surface-variant text-sm font-bold hover:text-primary">&times;</button>
                     </div>

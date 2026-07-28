@@ -94,8 +94,8 @@
     <div class="wrapper">
         <div class="main">
             <div class="header">
-                <a href="{{ config('app.url') }}" class="logo">
-                    Obituaries<span class="logo-gold">.co.ke</span>
+                <a href="{{ config('app.url') }}" style="display: inline-block;">
+                    <img src="{{ asset('images/logo-light.png') }}" alt="Obituaries.co.ke Logo" style="height: 48px; width: auto; border: 0; display: block; margin: 0 auto;">
                 </a>
                 <div class="tagline">Kenya's Dignified Memorial Platform</div>
             </div>
