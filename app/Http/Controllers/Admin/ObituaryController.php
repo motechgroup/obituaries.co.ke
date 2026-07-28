@@ -51,8 +51,8 @@ class ObituaryController extends Controller
     {
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['required', 'date'],
-            'date_of_death' => ['required', 'date', 'after_or_equal:date_of_birth'],
+            'date_of_birth' => ['nullable', 'date'],
+            'date_of_death' => ['required', 'date'],
             'county' => ['required', 'string'],
             'town' => ['required', 'string'],
             'biography' => ['required', 'string'],
@@ -146,7 +146,7 @@ class ObituaryController extends Controller
     {
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['required', 'date'],
+            'date_of_birth' => ['nullable', 'date'],
             'date_of_death' => ['required', 'date'],
             'county' => ['required', 'string'],
             'town' => ['required', 'string'],

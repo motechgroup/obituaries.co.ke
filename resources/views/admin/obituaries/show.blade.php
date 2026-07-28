@@ -73,7 +73,7 @@
                     <div class="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
                             <span class="text-slate-400 font-semibold uppercase block">Date of Birth</span>
-                            <span class="font-bold text-slate-900 text-sm">{{ $obituary->date_of_birth->format('M d, Y') }}</span>
+                            <span class="font-bold text-slate-900 text-sm">{{ $obituary->date_of_birth ? $obituary->date_of_birth->format('M d, Y') : 'Not Specified' }}</span>
                         </div>
 
                         <div>

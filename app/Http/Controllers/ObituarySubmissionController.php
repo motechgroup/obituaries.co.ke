@@ -44,8 +44,8 @@ class ObituarySubmissionController extends Controller
             // Step 1: Deceased Info
             'full_name' => ['required', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB max
-            'date_of_birth' => ['required', 'date', 'before_or_equal:today'],
-            'date_of_death' => ['required', 'date', 'after_or_equal:date_of_birth', 'before_or_equal:today'],
+            'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
+            'date_of_death' => ['required', 'date', 'before_or_equal:today'],
             'county' => ['required', 'string', 'max:100'],
             'town' => ['required', 'string', 'max:100'],
             'biography' => ['required', 'string', 'min:20'],
@@ -68,7 +68,6 @@ class ObituarySubmissionController extends Controller
             'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ], [
             'family_permission_confirmed.accepted' => 'You must confirm that you have permission from the family to submit this obituary.',
-            'date_of_death.after_or_equal' => 'Date of death cannot be prior to date of birth.',
         ]);
 
         // Upload Profile Photo if provided

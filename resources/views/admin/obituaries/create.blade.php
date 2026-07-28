@@ -54,8 +54,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Date of Birth <span class="text-rose-500">*</span></label>
-                        <input type="date" name="date_of_birth" value="{{ old('date_of_birth') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Date of Birth <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                        <input type="date" name="date_of_birth" value="{{ old('date_of_birth') }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                     </div>
 
                     <div>

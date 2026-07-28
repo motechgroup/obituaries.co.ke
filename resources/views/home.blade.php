@@ -153,8 +153,12 @@
                                 <span class="text-[9px] sm:text-[10px] font-semibold text-secondary tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
                                 <h3 class="font-serif text-xs sm:text-base font-bold text-primary mb-0.5 group-hover:text-secondary transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
                                 <p class="text-[10px] text-on-surface-variant/70 italic">
-                                    {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
-                                    @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
+                                    @if($obituary->date_of_birth)
+                                        {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
+                                        @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
+                                    @else
+                                        Passed Away: {{ $obituary->date_of_death->format('M j, Y') }}
+                                    @endif
                                 </p>
                             </div>
                         </div>

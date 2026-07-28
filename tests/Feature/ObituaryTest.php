@@ -437,4 +437,29 @@ class ObituaryTest extends TestCase
             'verification_status' => 'pending',
         ]);
     }
+
+    public function test_obituary_can_be_created_without_date_of_birth_and_generates_seo_keywords()
+    {
+        $obituary = Obituary::create([
+            'slug' => 'optional-dob-test',
+            'full_name' => 'Mzee Daniel Kipruto',
+            'date_of_birth' => null,
+            'date_of_death' => '2026-06-15',
+            'county' => 'Uasin Gishu',
+            'town' => 'Eldoret',
+            'biography' => 'Elder Mzee Daniel Kipruto was a beloved father and grandfather in Eldoret.',
+            'submitter_name' => 'Kipruto Family',
+            'submitter_phone' => '0711223344',
+            'relationship' => 'Child',
+            'status' => 'published',
+        ]);
+
+        $this->assertNull($obituary->date_of_birth);
+        $this->assertNotEmpty($obituary->seo_keywords);
+        $this->assertStringContainsString('Mzee Daniel Kipruto obituary', $obituary->seo_keywords);
+        $this->assertStringContainsString('Uasin Gishu', $obituary->seo_keywords);
+        $this->assertStringContainsString('Eldoret', $obituary->seo_keywords);
+        $this->assertStringContainsString('father', $obituary->seo_keywords);
+        $this->assertStringContainsString('Mzee Daniel Kipruto Obituary & Death Notice | Obituaries.co.ke', $obituary->meta_title);
+    }
 }

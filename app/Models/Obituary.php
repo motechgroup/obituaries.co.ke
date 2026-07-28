@@ -49,6 +49,66 @@ class Obituary extends Model
         'gallery_images' => 'array',
     ];
 
+    protected static function booted(): void
+    {
+        static::saving(function (Obituary $obituary) {
+            if (empty($obituary->seo_keywords)) {
+                $obituary->seo_keywords = $obituary->generateSeoKeywords();
+            }
+            if (empty($obituary->meta_title)) {
+                $obituary->meta_title = "{$obituary->full_name} Obituary & Death Notice | Obituaries.co.ke";
+            }
+            if (empty($obituary->meta_description)) {
+                $deathDate = $obituary->date_of_death ? $obituary->date_of_death->format('M j, Y') : '';
+                $obituary->meta_description = "In loving memory of {$obituary->full_name} from {$obituary->town}, {$obituary->county} Kenya. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.";
+            }
+        });
+    }
+
+    public function generateSeoKeywords(): string
+    {
+        $keywords = [];
+
+        $name = trim($this->full_name);
+        $keywords[] = "{$name} obituary";
+        $keywords[] = "{$name} death notice";
+        $keywords[] = "{$name} funeral";
+        $keywords[] = "{$name} Kenya";
+
+        if (!empty($this->county)) {
+            $keywords[] = "{$name} {$this->county}";
+            $keywords[] = "obituary {$this->county} county";
+        }
+
+        if (!empty($this->town)) {
+            $keywords[] = "{$name} {$this->town}";
+        }
+
+        if (!empty($this->burial_location)) {
+            $keywords[] = "{$this->burial_location} funeral";
+        }
+
+        if (!empty($this->church_service_location)) {
+            $keywords[] = "{$this->church_service_location}";
+        }
+
+        $keywords[] = "Kenya obituaries";
+        $keywords[] = "Kenyan death announcements";
+        $keywords[] = "online memorial Kenya";
+
+        if (!empty($this->biography)) {
+            $bioText = strtolower($this->biography);
+            $familyTerms = ['father', 'mother', 'husband', 'wife', 'son', 'daughter', 'brother', 'sister', 'grandfather', 'grandmother', 'mzee', 'mama', 'elder', 'dr', 'prof', 'hon'];
+            foreach ($familyTerms as $term) {
+                if (str_contains($bioText, $term)) {
+                    $keywords[] = "{$name} {$term}";
+                }
+            }
+        }
+
+        return implode(', ', array_unique($keywords));
+    }
+
     public static function generateUniqueSlug(string $name): string
     {
         $baseSlug = Str::slug($name);
