@@ -334,7 +334,6 @@
                     </div>
                 </div>
             </div>
-        </div>
 
         <!-- TAB 3: SMTP MAIL & TEMPLATES -->
         <div x-show="activeTab === 'smtp'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
