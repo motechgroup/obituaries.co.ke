@@ -144,4 +144,34 @@ class ObituaryTest extends TestCase
             'reason' => 'inaccurate_info',
         ]);
     }
+
+    public function test_auto_publish_and_hide_poster_details_settings()
+    {
+        // 1. Verify poster details are hidden when show_poster_details = 0
+        \App\Models\Setting::set('show_poster_details', '0');
+
+        $obituary = Obituary::create([
+            'slug' => 'poster-test-mzee',
+            'full_name' => 'Poster Test Mzee',
+            'date_of_birth' => '1950-01-01',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Bio for Poster Test Mzee.',
+            'submitter_name' => 'Secret Submitter Name',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Spouse',
+            'status' => 'published',
+            'verification_status' => 'verified',
+        ]);
+
+        $response = $this->get('/obituary/' . $obituary->slug);
+        $response->assertStatus(200);
+        $response->assertDontSee('Submitted with love by Secret Submitter Name');
+
+        // 2. Enable show_poster_details = 1
+        \App\Models\Setting::set('show_poster_details', '1');
+        $response2 = $this->get('/obituary/' . $obituary->slug);
+        $response2->assertSee('Submitted with love by Secret Submitter Name');
+    }
 }

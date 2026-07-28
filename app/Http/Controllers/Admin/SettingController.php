@@ -25,6 +25,8 @@ class SettingController extends Controller
 
             // Publishing & M-Pesa
             'obituary_publishing_cost' => Setting::get('obituary_publishing_cost', '500'),
+            'auto_publish_obituaries' => Setting::get('auto_publish_obituaries', '0'),
+            'show_poster_details' => Setting::get('show_poster_details', '0'),
             'mpesa_env' => Setting::get('mpesa_env', 'sandbox'),
             'mpesa_shortcode' => Setting::get('mpesa_shortcode', '174379'),
             'mpesa_passkey' => Setting::get('mpesa_passkey', ''),
@@ -74,6 +76,8 @@ class SettingController extends Controller
             'copyright_text' => ['nullable', 'string', 'max:255'],
 
             'obituary_publishing_cost' => ['required', 'numeric', 'min:0'],
+            'auto_publish_obituaries' => ['nullable', 'string', 'in:0,1'],
+            'show_poster_details' => ['nullable', 'string', 'in:0,1'],
             'mpesa_env' => ['nullable', 'string', 'in:sandbox,live'],
             'mpesa_shortcode' => ['nullable', 'string', 'max:50'],
             'mpesa_passkey' => ['nullable', 'string'],

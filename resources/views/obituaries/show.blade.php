@@ -257,14 +257,16 @@
             </div>
         </section>
 
-        <!-- Family Submitter Note -->
-        <div class="p-4 sm:p-6 bg-surface-container-low rounded-xl border-l-4 border-secondary text-xs text-on-surface-variant flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-                <span class="font-bold text-primary block text-xs sm:text-sm">Submitted with love by {{ $obituary->submitter_name }}</span>
-                <span>Relationship: {{ $obituary->relationship }}</span>
+        <!-- Family Submitter Note (Only shown if enabled in Admin Settings) -->
+        @if((string)\App\Models\Setting::get('show_poster_details', '0') === '1')
+            <div class="p-4 sm:p-6 bg-surface-container-low rounded-xl border-l-4 border-secondary text-xs text-on-surface-variant flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <span class="font-bold text-primary block text-xs sm:text-sm">Submitted with love by {{ $obituary->submitter_name }}</span>
+                    <span>Relationship: {{ $obituary->relationship }}</span>
+                </div>
+                <span class="font-serif italic text-secondary font-bold text-xs">Obituaries.co.ke</span>
             </div>
-            <span class="font-serif italic text-secondary font-bold text-xs">Obituaries.co.ke</span>
-        </div>
+        @endif
 
         <div class="pt-4 flex items-center justify-between" x-data="{ reportModal: false }">
             <a href="{{ route('obituaries.search') }}" class="text-xs font-bold text-primary hover:text-secondary inline-flex items-center space-x-1">

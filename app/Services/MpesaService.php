@@ -258,13 +258,22 @@ class MpesaService
                 'raw_callback_payload' => $payload,
             ]);
 
-            // Update Obituary Status: payment_confirmed -> pending_verification
+            // Update Obituary Status: if auto-publish is enabled, publish immediately; otherwise keep pending_verification
             $obituary = $payment->obituary;
             if ($obituary) {
-                $obituary->update([
-                    'status' => 'pending_verification',
-                    'verification_status' => 'pending',
-                ]);
+                $autoPublish = (string) \App\Models\Setting::get('auto_publish_obituaries', '0') === '1';
+                if ($autoPublish) {
+                    $obituary->update([
+                        'status' => 'published',
+                        'verification_status' => 'verified',
+                        'verified_at' => now(),
+                    ]);
+                } else {
+                    $obituary->update([
+                        'status' => 'pending_verification',
+                        'verification_status' => 'pending',
+                    ]);
+                }
             }
 
             return true;
@@ -293,10 +302,19 @@ class MpesaService
         ]);
 
         if ($payment->obituary) {
-            $payment->obituary->update([
-                'status' => 'pending_verification',
-                'verification_status' => 'pending',
-            ]);
+            $autoPublish = (string) \App\Models\Setting::get('auto_publish_obituaries', '0') === '1';
+            if ($autoPublish) {
+                $payment->obituary->update([
+                    'status' => 'published',
+                    'verification_status' => 'verified',
+                    'verified_at' => now(),
+                ]);
+            } else {
+                $payment->obituary->update([
+                    'status' => 'pending_verification',
+                    'verification_status' => 'pending',
+                ]);
+            }
         }
 
         return true;

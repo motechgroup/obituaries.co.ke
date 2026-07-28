@@ -183,10 +183,30 @@
         <div x-show="activeTab === 'payment'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
             <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">M-Pesa STK Push Payment Gateway & Publishing Pricing</h3>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Publishing Fee (KES)</label>
-                    <input type="number" step="0.01" min="0" name="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $settings['obituary_publishing_cost']) }}" required class="w-full max-w-xs px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold">
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Publishing Fee (KES)</label>
+                        <input type="number" step="0.01" min="0" name="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $settings['obituary_publishing_cost']) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Post Approval Mode</label>
+                        <select name="auto_publish_obituaries" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
+                            <option value="0" {{ (string)$settings['auto_publish_obituaries'] === '0' ? 'selected' : '' }}>🔒 Require Admin Approval (Default)</option>
+                            <option value="1" {{ (string)$settings['auto_publish_obituaries'] === '1' ? 'selected' : '' }}>⚡ Auto-Publish Immediately Upon Payment</option>
+                        </select>
+                        <p class="text-[11px] text-slate-500 mt-1">When set to require approval, obituaries stay pending until verified by admin.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Public Poster Details</label>
+                        <select name="show_poster_details" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
+                            <option value="0" {{ (string)$settings['show_poster_details'] === '0' ? 'selected' : '' }}>🙈 Hide Poster/Submitter Details (Default)</option>
+                            <option value="1" {{ (string)$settings['show_poster_details'] === '1' ? 'selected' : '' }}>👁️ Show Poster/Submitter Details Publicly</option>
+                        </select>
+                        <p class="text-[11px] text-slate-500 mt-1">Controls whether "Submitted by {Name}" appears on public obituary pages.</p>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-200">
