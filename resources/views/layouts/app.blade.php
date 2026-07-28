@@ -138,7 +138,7 @@
 
     @yield('structured_data')
 </head>
-<body class="bg-background font-sans text-on-surface flex flex-col min-h-screen antialiased selection:bg-secondary-container selection:text-on-secondary-container" x-data="{ mobileMenu: false }">
+<body class="bg-background font-sans text-on-surface flex flex-col min-h-screen antialiased selection:bg-secondary-container selection:text-on-secondary-container" x-data="{ mobileMenu: false }" @resize.window="if (window.innerWidth >= 768) mobileMenu = false">
 
     <!-- Fixed Header matching Stitch Design -->
     <header class="fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-outline-variant/30">
@@ -183,7 +183,7 @@
         </div>
 
         <!-- Mobile Drawer Navigation Overlay -->
-        <div x-show="mobileMenu" 
+        <div x-show="mobileMenu && window.innerWidth < 768" 
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-4"
              x-transition:enter-end="opacity-100 translate-y-0"
