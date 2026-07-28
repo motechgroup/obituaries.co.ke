@@ -253,49 +253,52 @@
         @yield('content')
     </main>
 
-    <!-- Footer matching Stitch Design -->
-    <footer class="w-full bg-surface-container-low mt-16 sm:mt-20 border-t border-surface-container-high">
-        <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-10 sm:py-12 flex flex-col items-center text-center">
+    <!-- Footer with Rich Dark Background & Amber Accents -->
+    <footer class="w-full bg-[#070C18] text-white mt-16 sm:mt-20 border-t border-slate-800/80 relative overflow-hidden">
+        <!-- Background Subtle Glow Accent -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[250px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none"></div>
+
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16 flex flex-col items-center text-center relative z-10">
             <!-- Official Site Logo in Footer -->
-            <a href="{{ route('home') }}" class="mb-4 inline-block">
-                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" class="h-10 sm:h-12 w-auto object-contain">
+            <a href="{{ route('home') }}" class="mb-4 inline-block group transition-transform hover:scale-105">
+                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" class="h-10 sm:h-12 w-auto object-contain brightness-0 invert filter">
             </a>
-            <p class="font-serif text-xl sm:text-2xl font-bold text-on-surface mb-2">Remembering Lives. Sharing Memories.</p>
-            <p class="text-xs text-on-surface-variant mb-6 sm:mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
+            <p class="font-serif text-xl sm:text-2xl font-bold text-white mb-2">Remembering Lives. Sharing Memories.</p>
+            <p class="text-xs sm:text-sm text-slate-400 mb-6 sm:mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
             
-            <nav class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-6 text-xs font-semibold">
-                <a href="{{ route('home') }}" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
-                <a href="{{ route('obituaries.search') }}" class="text-on-surface-variant hover:text-primary transition-colors">Search Directory</a>
-                <a href="{{ route('pages.about') }}" class="text-on-surface-variant hover:text-primary transition-colors">About</a>
-                <a href="{{ route('pages.contact') }}" class="text-on-surface-variant hover:text-primary transition-colors">Contact</a>
-                <a href="{{ route('pages.privacy') }}" class="text-on-surface-variant hover:text-primary transition-colors">Privacy</a>
-                <a href="{{ route('pages.terms') }}" class="text-on-surface-variant hover:text-primary transition-colors">Terms</a>
-                <a href="{{ route('obituaries.submit') }}" class="text-on-surface-variant hover:text-primary transition-colors">Submit Obituary</a>
+            <nav class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-8 text-xs sm:text-sm font-semibold">
+                <a href="{{ route('home') }}" class="text-slate-300 hover:text-amber-400 transition-colors">Home</a>
+                <a href="{{ route('obituaries.search') }}" class="text-slate-300 hover:text-amber-400 transition-colors">Search Directory</a>
+                <a href="{{ route('pages.about') }}" class="text-slate-300 hover:text-amber-400 transition-colors">About</a>
+                <a href="{{ route('pages.contact') }}" class="text-slate-300 hover:text-amber-400 transition-colors">Contact</a>
+                <a href="{{ route('pages.privacy') }}" class="text-slate-300 hover:text-amber-400 transition-colors">Privacy</a>
+                <a href="{{ route('pages.terms') }}" class="text-slate-300 hover:text-amber-400 transition-colors">Terms</a>
+                <a href="{{ route('obituaries.submit') }}" class="text-amber-400 hover:text-amber-300 transition-colors font-bold">Submit Obituary</a>
             </nav>
 
             <!-- Major County SEO Footer Links -->
-            <div class="border-t border-outline-variant/20 pt-6 mb-8 w-full">
-                <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant/70 block mb-3">Obituaries by County</span>
-                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] text-on-surface-variant/80">
-                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-primary font-medium">Nairobi Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-primary font-medium">Kisii Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-primary font-medium">Kisumu Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-primary font-medium">Mombasa Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-primary font-medium">Nakuru Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-primary font-medium">Kiambu Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-primary font-medium">Eldoret Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-primary font-medium">Machakos Obituaries</a>
+            <div class="border-t border-slate-800/80 pt-6 mb-8 w-full">
+                <span class="text-[10px] uppercase font-bold tracking-widest text-amber-400/90 block mb-3">Obituaries by County</span>
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] sm:text-xs text-slate-400">
+                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-amber-400 transition-colors">Nairobi Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-amber-400 transition-colors">Kisii Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-amber-400 transition-colors">Kisumu Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-amber-400 transition-colors">Mombasa Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-amber-400 transition-colors">Nakuru Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-amber-400 transition-colors">Kiambu Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-amber-400 transition-colors">Eldoret Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-amber-400 transition-colors">Machakos Obituaries</a>
                 </div>
             </div>
             
-            <p class="text-[11px] text-on-tertiary-container">&copy; {{ date('Y') }} Obituaries.co.ke. A dignified space for remembrance.</p>
+            <p class="text-[11px] sm:text-xs text-slate-500">&copy; {{ date('Y') }} Obituaries.co.ke. A dignified space for remembrance.</p>
         </div>
     </footer>
 
