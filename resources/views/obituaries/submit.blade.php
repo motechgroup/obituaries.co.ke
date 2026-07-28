@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12" x-data="submissionForm()">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12" x-data="{ step: 1, goToStep(targetStep) { this.step = targetStep; }, nextStep(next) { this.step = next; window.scrollTo({ top: 180, behavior: 'smooth' }); } }">
     <!-- Step Indicator Progress Bar -->
     <div class="mb-8 sm:mb-10">
         <div class="flex items-center justify-between relative mb-2">
