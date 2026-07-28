@@ -182,48 +182,63 @@
             </div>
         </div>
 
-        <!-- Mobile Drawer Navigation -->
+        <!-- Mobile Drawer Navigation Overlay -->
         <div x-show="mobileMenu" 
-             @click.away="mobileMenu = false"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-4"
              x-transition:enter-end="opacity-100 translate-y-0"
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-4"
-             class="md:hidden bg-surface/98 backdrop-blur-xl border-b border-outline-variant/30 px-4 pt-3 pb-6 shadow-2xl space-y-4" 
+             @click.away="mobileMenu = false"
+             class="fixed inset-x-0 top-[72px] sm:top-[80px] bottom-0 z-50 text-white overflow-y-auto px-5 py-6 flex flex-col justify-between shadow-2xl border-t border-slate-800/80" 
+             style="background-color: #0b0e18;"
              x-cloak>
             
-            <!-- Mobile Search Bar -->
-            <form action="{{ route('obituaries.search') }}" method="GET" class="w-full">
-                <div class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-2.5 border border-outline-variant focus-within:border-primary w-full">
-                    <span class="material-symbols-outlined text-on-surface-variant mr-2 text-[20px]">search</span>
-                    <input type="text" name="name" placeholder="Search obituary by name..." value="{{ request('name') }}" class="bg-transparent border-none outline-none w-full text-sm text-on-surface placeholder-on-surface-variant/60">
-                </div>
-            </form>
+            <div class="space-y-6">
+                <!-- Mobile Search Bar -->
+                <form action="{{ route('obituaries.search') }}" method="GET" class="w-full">
+                    <div class="relative flex items-center bg-slate-900 rounded-xl px-4 py-3 border border-slate-700/80 focus-within:border-amber-500 w-full shadow-inner">
+                        <span class="material-symbols-outlined text-amber-400 mr-2 text-[20px]">search</span>
+                        <input type="text" name="name" placeholder="Search obituary by name..." value="{{ request('name') }}" class="bg-transparent border-none outline-none w-full text-sm text-white placeholder-slate-400">
+                    </div>
+                </form>
 
-            <nav class="flex flex-col space-y-3 font-semibold text-sm">
-                <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
-                    <span class="material-symbols-outlined text-[18px]">home</span>
-                    <span>Home</span>
+                <nav class="flex flex-col space-y-2.5 font-semibold text-sm">
+                    <a href="{{ route('home') }}" @click="mobileMenu = false" class="px-4 py-3 rounded-xl text-slate-100 hover:bg-slate-800/80 hover:text-amber-400 flex items-center space-x-3 transition-colors border border-slate-800/50">
+                        <span class="material-symbols-outlined text-amber-400 text-[20px]">home</span>
+                        <span>Home</span>
+                    </a>
+                    <a href="{{ route('obituaries.search') }}" @click="mobileMenu = false" class="px-4 py-3 rounded-xl text-slate-100 hover:bg-slate-800/80 hover:text-amber-400 flex items-center space-x-3 transition-colors border border-slate-800/50">
+                        <span class="material-symbols-outlined text-amber-400 text-[20px]">menu_book</span>
+                        <span>Search Directory</span>
+                    </a>
+                    <a href="{{ url('/county/nairobi-obituaries') }}" @click="mobileMenu = false" class="px-4 py-3 rounded-xl text-slate-100 hover:bg-slate-800/80 hover:text-amber-400 flex items-center space-x-3 transition-colors border border-slate-800/50">
+                        <span class="material-symbols-outlined text-amber-400 text-[20px]">location_on</span>
+                        <span>Browse Counties</span>
+                    </a>
+                    <a href="{{ route('pages.about') }}" @click="mobileMenu = false" class="px-4 py-3 rounded-xl text-slate-100 hover:bg-slate-800/80 hover:text-amber-400 flex items-center space-x-3 transition-colors border border-slate-800/50">
+                        <span class="material-symbols-outlined text-amber-400 text-[20px]">info</span>
+                        <span>About Us</span>
+                    </a>
+                    <a href="{{ route('pages.contact') }}" @click="mobileMenu = false" class="px-4 py-3 rounded-xl text-slate-100 hover:bg-slate-800/80 hover:text-amber-400 flex items-center space-x-3 transition-colors border border-slate-800/50">
+                        <span class="material-symbols-outlined text-amber-400 text-[20px]">mail</span>
+                        <span>Contact Us</span>
+                    </a>
+                    <a href="{{ route('admin.login') }}" @click="mobileMenu = false" class="px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800/80 hover:text-amber-400 flex items-center space-x-3 transition-colors border border-slate-800/50">
+                        <span class="material-symbols-outlined text-slate-400 text-[20px]">admin_panel_settings</span>
+                        <span>Admin Portal</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Mobile Drawer Bottom CTA -->
+            <div class="pt-6 border-t border-slate-800/80 mt-6">
+                <a href="{{ route('obituaries.submit') }}" @click="mobileMenu = false" class="w-full bg-[#FF9800] hover:bg-[#FFA726] text-black font-extrabold px-6 py-3.5 rounded-xl text-sm transition-all shadow-lg flex items-center justify-center space-x-2">
+                    <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                    <span>Submit Obituary Notice</span>
                 </a>
-                <a href="{{ route('obituaries.search') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
-                    <span class="material-symbols-outlined text-[18px]">menu_book</span>
-                    <span>Search Directory</span>
-                </a>
-                <a href="{{ route('pages.about') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
-                    <span class="material-symbols-outlined text-[18px]">info</span>
-                    <span>About Us</span>
-                </a>
-                <a href="{{ route('pages.contact') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
-                    <span class="material-symbols-outlined text-[18px]">mail</span>
-                    <span>Contact Us</span>
-                </a>
-                <a href="{{ route('admin.login') }}" class="px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container flex items-center space-x-2 border-t border-outline-variant/30 pt-3">
-                    <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                    <span>Admin Portal</span>
-                </a>
-            </nav>
+            </div>
         </div>
     </header>
 
@@ -254,7 +269,7 @@
     </main>
 
     <!-- Footer with Rich Dark Background & Amber Accents -->
-    <footer class="w-full bg-[#0B0E18] text-white mt-16 sm:mt-20 border-t border-slate-800/80 relative overflow-hidden">
+    <footer class="w-full text-white mt-16 sm:mt-20 border-t border-slate-800/80 relative overflow-hidden" style="background-color: #0b0e18;">
         <!-- Background Subtle Glow Accent -->
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[250px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none"></div>
 
