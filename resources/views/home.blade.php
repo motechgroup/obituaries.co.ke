@@ -257,43 +257,43 @@
                 No obituaries available in directory.
             </div>
         @else
-            <!-- 3 Items Per Line Grid (Equal Size Cards) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 16 Compact Cards Grid (4 per row on desktop) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 @foreach($randomNotices as $obituary)
-                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-slate-900/90 p-4 rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-slate-800/90 hover:border-amber-500/40 cursor-pointer">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-slate-900/90 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-slate-800/90 hover:border-amber-500/40 cursor-pointer">
                         <div>
-                            <!-- Uniform Square Aspect Image Container -->
-                            <div class="relative aspect-square mb-4 overflow-hidden rounded-xl bg-slate-800 select-none">
+                            <!-- Compact Square Aspect Image Container -->
+                            <div class="relative aspect-square mb-2.5 overflow-hidden rounded-lg sm:rounded-xl bg-slate-800 select-none">
                                 @if($obituary->photo)
                                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
                                     
                                     <!-- Translucent Glass Watermark Overlay -->
-                                    <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
-                                        <span class="font-serif font-black text-[9px] sm:text-[11px] tracking-[0.14em] select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.65); -webkit-text-fill-color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">Obituaries.co.ke</span>
+                                    <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 12%;">
+                                        <span class="font-serif font-black text-[7px] sm:text-[9px] tracking-[0.12em] select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.65); -webkit-text-fill-color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">Obituaries.co.ke</span>
                                     </div>
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-b from-amber-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center text-amber-100">
-                                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-amber-300 mb-2">
-                                            <span class="material-symbols-outlined text-[24px]">church</span>
+                                    <div class="w-full h-full bg-gradient-to-b from-amber-950 to-slate-900 flex flex-col items-center justify-center p-2 text-center text-amber-100">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center text-amber-300 mb-1">
+                                            <span class="material-symbols-outlined text-[16px] sm:text-[18px]">church</span>
                                         </div>
-                                        <span class="font-serif text-xs italic">In Loving Memory</span>
+                                        <span class="font-serif text-[8px] sm:text-[9px] italic">In Loving Memory</span>
                                     </div>
                                 @endif
 
-                                <div class="absolute top-2.5 right-2.5 z-10 select-none pointer-events-none" title="Verified Notice">
-                                    <span class="material-symbols-outlined text-amber-400 text-[20px] drop-shadow-md leading-none">verified</span>
+                                <div class="absolute top-2 right-2 z-10 select-none pointer-events-none" title="Verified Notice">
+                                    <span class="material-symbols-outlined text-amber-400 text-[16px] sm:text-[18px] drop-shadow-md leading-none">verified</span>
                                 </div>
                             </div>
 
                             <div class="text-center">
-                                <span class="text-[10px] font-bold text-amber-400 tracking-widest uppercase mb-1 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                <h3 class="font-serif text-base sm:text-lg font-bold text-white mb-1 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
-                                <p class="text-xs text-slate-400 italic">
+                                <span class="text-[8px] sm:text-[9px] font-bold text-amber-400 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-xs sm:text-sm font-bold text-white mb-0.5 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                                <p class="text-[9px] sm:text-[10px] text-slate-400 italic truncate">
                                     @if($obituary->date_of_birth)
                                         {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
                                         @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
                                     @else
-                                        Passed Away: {{ $obituary->date_of_death->format('M j, Y') }}
+                                        Passed: {{ $obituary->date_of_death->format('M j, Y') }}
                                     @endif
                                 </p>
                             </div>

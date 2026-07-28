@@ -45,10 +45,10 @@ class HomeController extends Controller
             }
         }
 
-        // 3. Random Notices Directory (3 Cards Per Line Grid)
+        // 3. Random Notices Directory (16 Compact Cards Grid)
         $randomNotices = Obituary::published()
             ->inRandomOrder()
-            ->take(6)
+            ->take(16)
             ->get();
 
         $todayAnniversaries = Obituary::todayAnniversaries()
