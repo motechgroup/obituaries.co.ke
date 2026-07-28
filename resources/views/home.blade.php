@@ -232,56 +232,57 @@
 </section>
 
 <!-- Obituaries Directory Section (Random Notices Cards Grid Replaces Search) -->
-<section class="w-full py-14 sm:py-20 bg-slate-950 text-white overflow-hidden relative border-t border-slate-800/80" id="obituaries-directory">
+<section class="w-full py-10 sm:py-16 bg-slate-950 text-white overflow-hidden relative border-t border-slate-800/80" id="obituaries-directory">
     <!-- Background Accents -->
     <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-amber-500/5 to-transparent pointer-events-none"></div>
     <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]"></div>
 
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10">
-        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-12 gap-4 border-b border-slate-800/80 pb-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-5 sm:mb-8 gap-3 sm:gap-4 border-b border-slate-800/80 pb-4 sm:pb-6">
             <div>
-                <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider mb-2.5 border border-amber-500/20">
-                    <span class="material-symbols-outlined text-[16px]">church</span>
+                <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 bg-amber-500/10 text-amber-400 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2 border border-amber-500/20">
+                    <span class="material-symbols-outlined text-[14px]">church</span>
                     <span>Obituaries Directory</span>
                 </div>
-                <h2 class="font-serif text-2xl sm:text-4xl font-bold text-white mb-2">Explore Memorial Directory</h2>
-                <p class="text-xs sm:text-sm text-slate-400">Discover and honor memorial notices & tributes across Kenya.</p>
+                <h2 class="font-serif text-xl sm:text-3xl font-bold text-white mb-1 leading-tight">Explore Memorial Directory</h2>
+                <p class="text-[11px] sm:text-sm text-slate-400">Discover and honor memorial notices & tributes across Kenya.</p>
             </div>
-            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-1 sm:gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors">
-                <span>View Full Archives &rarr;</span>
+            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-1 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors whitespace-nowrap pt-1 sm:pt-0">
+                <span>View Full Archives</span>
+                <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
             </a>
         </div>
 
         @if($randomNotices->isEmpty())
-            <div class="text-center py-12 text-slate-400 text-xs italic">
+            <div class="text-center py-10 text-slate-400 text-xs italic">
                 No obituaries available in directory.
             </div>
         @else
-            <!-- 16 Sleek Compact Mini-Cards Grid (4 per row on desktop) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <!-- 16 Sleek Compact Mini-Cards Grid (2 per row on mobile, 4 per row on desktop) -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3.5">
                 @foreach($randomNotices as $obituary)
-                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group bg-slate-900/90 hover:bg-slate-900 p-2.5 rounded-xl border border-slate-800 hover:border-amber-500/40 transition-all duration-300 flex items-center space-x-3 cursor-pointer shadow-xs min-w-0">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group bg-slate-900/90 hover:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-800 hover:border-amber-500/40 transition-all duration-300 flex items-center space-x-2 sm:space-x-3 cursor-pointer shadow-xs min-w-0">
                         <!-- Compact Avatar -->
-                        <div class="relative w-12 h-12 sm:w-13 sm:h-13 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 select-none">
+                        <div class="relative w-10 h-10 sm:w-13 sm:h-13 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 select-none">
                             @if($obituary->photo)
                                 <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-transform duration-300 group-hover:scale-105">
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-amber-950 to-slate-900 flex items-center justify-center text-amber-300">
-                                    <span class="material-symbols-outlined text-[18px]">church</span>
+                                    <span class="material-symbols-outlined text-[16px] sm:text-[18px]">church</span>
                                 </div>
                             @endif
                         </div>
 
                         <!-- Details -->
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center justify-between gap-1">
+                            <div class="flex items-center justify-between gap-0.5">
                                 <span class="text-[8px] sm:text-[9px] font-bold text-amber-400 tracking-wider uppercase truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                <span class="material-symbols-outlined text-amber-400 text-[14px] flex-shrink-0" title="Verified">verified</span>
+                                <span class="material-symbols-outlined text-amber-400 text-[12px] sm:text-[14px] flex-shrink-0" title="Verified">verified</span>
                             </div>
-                            <h3 class="font-serif text-xs sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors leading-tight truncate mt-0.5">
+                            <h3 class="font-serif text-[11px] sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors leading-tight truncate mt-0.5">
                                 {{ $obituary->full_name }}
                             </h3>
-                            <span class="text-[9px] sm:text-[10px] text-slate-400 block truncate mt-0.5 font-medium">
+                            <span class="text-[8px] sm:text-[10px] text-slate-400 block truncate mt-0.5 font-medium">
                                 {{ $obituary->date_of_death->format('M d, Y') }}
                             </span>
                         </div>
