@@ -117,7 +117,7 @@ class ObituaryController extends Controller
         $validated['biography'] = \App\Helpers\StorageHelper::sanitizeHtml($validated['biography']);
 
         $user = Auth::guard('admin')->user();
-        if ($user->isEditor() && $validated['status'] === 'published') {
+        if ($user->isEditor()) {
             $error = $this->verifyEditorMpesaPayment($request, new Obituary(), $user);
             if ($error) {
                 return back()->withInput()->withErrors(['mpesa_transaction_code' => $error]);

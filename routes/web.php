@@ -110,23 +110,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/obituaries/{obituary}/unpublish', [AdminObituaryController::class, 'unpublish'])->name('obituaries.unpublish');
         Route::delete('/obituaries/{obituary}', [AdminObituaryController::class, 'destroy'])->name('obituaries.destroy');
 
-        // Contributors Directory Module
-        Route::get('/contributors', [AdminContributorController::class, 'index'])->name('contributors.index');
-        Route::get('/contributors/export', [AdminContributorController::class, 'export'])->name('contributors.export');
-
-        // Security Audit Logs Module
-        Route::get('/security-logs', [AdminSecurityLogController::class, 'index'])->name('security-logs.index');
-        Route::post('/security-logs/block-ip', [AdminSecurityLogController::class, 'blockIp'])->name('security-logs.block-ip');
-
-        // Fraud & Threat Monitoring Module
-        Route::get('/fraud-alerts', [AdminFraudController::class, 'index'])->name('fraud.index');
-        Route::post('/fraud-alerts/{alert}/dismiss', [AdminFraudController::class, 'dismiss'])->name('fraud.dismiss');
-        Route::post('/fraud-alerts/{alert}/block', [AdminFraudController::class, 'blockIpAndUnpublish'])->name('fraud.block');
-        Route::delete('/fraud-alerts/unblock/{ip}', [AdminFraudController::class, 'unblockIp'])->name('fraud.unblock');
-
-        // Admin Traffic Analytics & Audience Insights
-        Route::get('/analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
-
         // Admin & Editor Reports Moderation
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
         Route::post('/reports/{report}/resolve', [AdminReportController::class, 'resolve'])->name('reports.resolve');
@@ -134,6 +117,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Super Admin Only Restricted Operations
         Route::middleware([\App\Http\Middleware\EnsureSuperAdmin::class])->group(function () {
+            // Contributors Directory Module
+            Route::get('/contributors', [AdminContributorController::class, 'index'])->name('contributors.index');
+            Route::get('/contributors/export', [AdminContributorController::class, 'export'])->name('contributors.export');
+
+            // Security Audit Logs Module
+            Route::get('/security-logs', [AdminSecurityLogController::class, 'index'])->name('security-logs.index');
+            Route::post('/security-logs/block-ip', [AdminSecurityLogController::class, 'blockIp'])->name('security-logs.block-ip');
+
+            // Fraud & Threat Monitoring Module
+            Route::get('/fraud-alerts', [AdminFraudController::class, 'index'])->name('fraud.index');
+            Route::post('/fraud-alerts/{alert}/dismiss', [AdminFraudController::class, 'dismiss'])->name('fraud.dismiss');
+            Route::post('/fraud-alerts/{alert}/block', [AdminFraudController::class, 'blockIpAndUnpublish'])->name('fraud.block');
+            Route::delete('/fraud-alerts/unblock/{ip}', [AdminFraudController::class, 'unblockIp'])->name('fraud.unblock');
+
+            // Admin Traffic Analytics & Audience Insights
+            Route::get('/analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
+
             // Admin Staff & Roles Management
             Route::resource('/users', AdminUserController::class)->except(['create', 'edit', 'show']);
 
