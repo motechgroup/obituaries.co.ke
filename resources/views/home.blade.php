@@ -292,68 +292,68 @@
     </div>
 </section>
 
-<!-- Virtual Candles Lit Today Section (Matching User Directive: After Search Section) -->
-<section class="w-full py-12 sm:py-16 bg-slate-950 text-white relative overflow-hidden border-b border-amber-950/40">
-    <!-- Subtle Golden Glow Background Accent -->
-    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- Virtual Candles Lit Today Section (Light White Background & Mobile Friendly) -->
+<section class="w-full py-12 sm:py-16 bg-white text-slate-900 relative overflow-hidden border-b border-slate-200/80" id="virtual-candles">
+    <!-- Subtle Warm Golden Glow Background Accent -->
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-400/10 rounded-full blur-[120px] pointer-events-none"></div>
 
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10">
-        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-6 sm:mb-8 gap-4 border-b border-slate-100 pb-4 sm:pb-6">
             <div>
-                <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider mb-2.5 border border-amber-500/20">
-                    <span class="animate-pulse text-amber-400">🕯️</span>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2 sm:mb-2.5 border border-amber-200/80 shadow-2xs">
+                    <span class="animate-pulse text-amber-600">🕯️</span>
                     <span>Virtual Candles Lit Today</span>
                 </div>
-                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-white">Candles Lit in Memory</h2>
-                <p class="text-xs sm:text-sm text-slate-400">Tributes and prayers offered by visitors for their loved ones.</p>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Candles Lit in Memory</h2>
+                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Tributes and prayers offered by visitors for their loved ones.</p>
             </div>
-            <a href="{{ route('obituaries.search') }}" class="text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors flex items-center space-x-1">
+            <a href="{{ route('obituaries.search') }}" class="text-xs sm:text-sm font-bold text-amber-800 hover:text-amber-950 transition-colors flex items-center space-x-1 whitespace-nowrap bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl border border-amber-200/80">
                 <span>Light a Candle for Someone</span>
                 <span>&rarr;</span>
             </a>
         </div>
 
         @if($todayCandlesObituaries->isEmpty())
-            <div class="text-slate-400 text-xs py-4 italic text-center">
+            <div class="text-slate-500 text-xs py-8 italic text-center bg-slate-50/80 rounded-2xl border border-slate-100">
                 No virtual candles lit yet today. Be the first to light a candle on an obituary memorial.
             </div>
         @else
-            <div class="divide-y divide-slate-800/80">
+            <div class="divide-y divide-slate-100">
                 @foreach($todayCandlesObituaries as $obituary)
-                    <a href="{{ route('obituaries.show', $obituary->slug) }}#candles" class="group flex flex-col sm:flex-row sm:items-center justify-between py-4 sm:py-5 hover:bg-slate-900/50 px-2 rounded-xl transition-all duration-300 gap-4">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}#candles" class="group flex flex-col sm:flex-row sm:items-center justify-between py-3.5 sm:py-4 px-3 sm:px-4 rounded-2xl hover:bg-amber-50/60 transition-all duration-300 gap-3 sm:gap-4 border border-transparent hover:border-amber-200/60">
                         <!-- Left Avatar & Details -->
-                        <div class="flex items-center space-x-3.5 sm:space-x-4 min-w-0">
+                        <div class="flex items-center space-x-3 sm:space-x-4 min-w-0">
                             <!-- Thumbnail Avatar -->
-                            <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200 shadow-2xs">
                                 @if($obituary->photo)
                                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-amber-950 to-slate-900 flex items-center justify-center text-amber-300">
-                                        <span class="text-lg animate-pulse">🕯️</span>
+                                    <div class="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center text-amber-700">
+                                        <span class="text-xl animate-pulse">🕯️</span>
                                     </div>
                                 @endif
                             </div>
 
                             <!-- Deceased Info & Location -->
-                            <div class="text-left min-w-0">
-                                <span class="text-[9px] sm:text-[10px] font-semibold text-amber-400 tracking-widest uppercase block mb-0.5">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                <h3 class="font-bold text-white text-sm sm:text-base group-hover:text-amber-400 transition-colors leading-tight truncate">
+                            <div class="text-left min-w-0 flex-1">
+                                <span class="text-[9px] sm:text-[10px] font-bold text-amber-800 tracking-widest uppercase block mb-0.5">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-sm sm:text-base font-bold text-slate-900 group-hover:text-amber-900 transition-colors leading-snug truncate">
                                     {{ $obituary->full_name }}
                                 </h3>
-                                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">
-                                    Passed {{ $obituary->date_of_death->format('M d, Y') }} &bull; <span class="italic text-slate-300">In Loving Memory</span>
+                                <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate">
+                                    Passed {{ $obituary->date_of_death->format('M d, Y') }} &bull; <span class="italic text-slate-600">In Loving Memory</span>
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Right: Candle Count Badge & CTA -->
-                        <div class="flex items-center justify-between sm:justify-end space-x-4 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/50">
-                            <div class="bg-amber-500/10 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center space-x-1.5 shadow-xs">
-                                <span class="animate-pulse text-amber-400 text-sm">🕯️</span>
+                        <!-- Right: Candle Count Badge & CTA (Mobile Friendly Layout) -->
+                        <div class="flex items-center justify-between sm:justify-end space-x-3 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                            <div class="bg-amber-100/90 text-amber-950 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-300/80 flex items-center space-x-1.5 shadow-2xs">
+                                <span class="animate-pulse text-amber-600 text-sm">🕯️</span>
                                 <span>{{ $obituary->candles_count }} {{ Str::plural('Candle', $obituary->candles_count) }} Lit</span>
                             </div>
 
-                            <span class="text-xs font-bold text-amber-400 group-hover:text-amber-300 transition-colors flex items-center space-x-1 whitespace-nowrap">
+                            <span class="text-xs font-bold text-amber-800 group-hover:text-amber-950 transition-colors flex items-center space-x-1 whitespace-nowrap bg-amber-50 group-hover:bg-amber-100/80 px-3 py-1.5 rounded-xl border border-amber-200/80">
                                 <span>Light Candle</span>
                                 <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
                             </span>
