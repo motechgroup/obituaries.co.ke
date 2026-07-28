@@ -29,9 +29,10 @@ class ObituaryController extends Controller
             });
         }
 
-        $obituaries = $query->latest('id')->paginate(15)->withQueryString();
+        $perPage = (int)$request->input('per_page', 10);
+        $obituaries = $query->latest('id')->paginate($perPage)->withQueryString();
 
-        return view('admin.obituaries.index', compact('obituaries', 'status', 'search'));
+        return view('admin.obituaries.index', compact('obituaries', 'status', 'search', 'perPage'));
     }
 
     public function create()

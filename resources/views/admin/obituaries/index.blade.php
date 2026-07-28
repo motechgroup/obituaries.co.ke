@@ -228,11 +228,32 @@
             </table>
         </div>
 
-        @if($obituaries->hasPages())
-            <div class="p-4 border-t border-slate-200 bg-slate-50">
-                {{ $obituaries->links() }}
+        <!-- Pagination Footer & Per-Page Controls -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <div class="text-slate-500 font-medium">
+                Showing <strong class="text-slate-900 font-bold">{{ $obituaries->firstItem() ?: 0 }}</strong> to <strong class="text-slate-900 font-bold">{{ $obituaries->lastItem() ?: 0 }}</strong> of <strong class="text-slate-900 font-bold">{{ $obituaries->total() }}</strong> obituary notices
             </div>
-        @endif
+
+            <div class="flex items-center space-x-4">
+                <form action="{{ route('admin.obituaries.index') }}" method="GET" class="flex items-center space-x-2">
+                    @if($status) <input type="hidden" name="status" value="{{ $status }}"> @endif
+                    @if($search) <input type="hidden" name="search" value="{{ $search }}"> @endif
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Per Page:</label>
+                    <select name="per_page" onchange="this.form.submit()" class="px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-amber-500">
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                </form>
+
+                @if($obituaries->hasPages())
+                    <div class="flex items-center">
+                        {{ $obituaries->links() }}
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 @endsection

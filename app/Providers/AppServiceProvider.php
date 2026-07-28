@@ -23,5 +23,7 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production' || isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
             URL::forceScheme('https');
         }
+
+        \Illuminate\Pagination\Paginator::useTailwind();
     }
 }
