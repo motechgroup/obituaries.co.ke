@@ -257,29 +257,38 @@
                 No obituaries available in directory.
             </div>
         @else
-            <div class="divide-y divide-slate-800/80 border-y border-slate-800/80">
+            <!-- 3 Items Per Line Grid (Equal Size Cards) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($randomNotices as $obituary)
-                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group flex flex-col sm:flex-row sm:items-center justify-between py-3.5 sm:py-4 px-3 sm:px-4 rounded-xl hover:bg-slate-900/80 transition-all duration-300 gap-3">
-                        <!-- Left Avatar & Details -->
-                        <div class="flex items-center space-x-3.5 sm:space-x-4 min-w-0">
-                            <!-- Thumbnail Avatar -->
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-slate-900/90 p-4 rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-slate-800/90 hover:border-amber-500/40 cursor-pointer">
+                        <div>
+                            <!-- Uniform Square Aspect Image Container -->
+                            <div class="relative aspect-square mb-4 overflow-hidden rounded-xl bg-slate-800 select-none">
                                 @if($obituary->photo)
-                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
+                                    
+                                    <!-- Translucent Glass Watermark Overlay -->
+                                    <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
+                                        <span class="font-serif font-black text-[9px] sm:text-[11px] tracking-[0.14em] select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.65); -webkit-text-fill-color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">Obituaries.co.ke</span>
+                                    </div>
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-amber-950 to-slate-900 flex items-center justify-center text-amber-300">
-                                        <span class="material-symbols-outlined text-[20px] sm:text-[24px]">church</span>
+                                    <div class="w-full h-full bg-gradient-to-b from-amber-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center text-amber-100">
+                                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-amber-300 mb-2">
+                                            <span class="material-symbols-outlined text-[24px]">church</span>
+                                        </div>
+                                        <span class="font-serif text-xs italic">In Loving Memory</span>
                                     </div>
                                 @endif
+
+                                <div class="absolute top-2.5 right-2.5 z-10 select-none pointer-events-none" title="Verified Notice">
+                                    <span class="material-symbols-outlined text-amber-400 text-[20px] drop-shadow-md leading-none">verified</span>
+                                </div>
                             </div>
 
-                            <!-- Deceased Info & Location -->
-                            <div class="text-left min-w-0">
-                                <span class="text-[9px] sm:text-[10px] font-semibold text-amber-400 tracking-widest uppercase block mb-0.5">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                                <h3 class="font-serif text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors leading-tight truncate">
-                                    {{ $obituary->full_name }}
-                                </h3>
-                                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">
+                            <div class="text-center">
+                                <span class="text-[10px] font-bold text-amber-400 tracking-widest uppercase mb-1 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-base sm:text-lg font-bold text-white mb-1 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                                <p class="text-xs text-slate-400 italic">
                                     @if($obituary->date_of_birth)
                                         {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
                                         @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
@@ -288,19 +297,6 @@
                                     @endif
                                 </p>
                             </div>
-                        </div>
-
-                        <!-- Right: Verified Badge & CTA -->
-                        <div class="flex items-center justify-between sm:justify-end space-x-3 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/50">
-                            <span class="inline-flex items-center space-x-1 px-2.5 py-1 bg-amber-500/10 text-amber-400 text-[11px] font-bold rounded-full border border-amber-500/20">
-                                <span class="material-symbols-outlined text-[14px]">verified</span>
-                                <span>Verified</span>
-                            </span>
-
-                            <span class="text-xs font-bold text-amber-400 group-hover:text-amber-300 transition-colors flex items-center space-x-1 whitespace-nowrap">
-                                <span>View Tribute</span>
-                                <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
-                            </span>
                         </div>
                     </a>
                 @endforeach
