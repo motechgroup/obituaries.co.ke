@@ -11,6 +11,10 @@ class ObituarySubmissionController extends Controller
 {
     public function create()
     {
+        if (\App\Models\Setting::get('enable_public_submissions', '1') == '0') {
+            return response()->view('obituaries.disabled', [], 403);
+        }
+
         $counties = [
             'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
             'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
@@ -29,6 +33,10 @@ class ObituarySubmissionController extends Controller
 
     public function store(Request $request)
     {
+        if (\App\Models\Setting::get('enable_public_submissions', '1') == '0') {
+            return redirect()->route('home')->with('error', 'Public obituary submissions are currently disabled by administration.');
+        }
+
         // Parse flexible Date of Birth (e.g. DD/MM/YYYY, DD-MM-YYYY, or YYYY)
         if ($request->filled('date_of_birth')) {
             $dobInput = trim($request->input('date_of_birth'));

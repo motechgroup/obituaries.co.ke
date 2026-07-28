@@ -540,4 +540,29 @@ class ObituaryTest extends TestCase
         $homeResponse->assertSee('https://www.googletagmanager.com/gtag/js?id=G-TEST123456', false);
         $homeResponse->assertSee("gtag('config', 'G-TEST123456');", false);
     }
+
+    public function test_admin_can_toggle_public_submissions()
+    {
+        // 1. Default state: Public submissions enabled -> GET returns 200 OK
+        $this->get(route('obituaries.submit'))->assertStatus(200);
+
+        // 2. Admin disables public submissions
+        \App\Models\Setting::set('enable_public_submissions', '0');
+
+        // 3. Visitor GET submission page -> Returns 403 Paused Notice
+        $disabledGet = $this->get(route('obituaries.submit'));
+        $disabledGet->assertStatus(403);
+        $disabledGet->assertSee('Public Submissions Paused');
+
+        // 4. Visitor POST submission -> Redirects to home with error message
+        $disabledPost = $this->post(route('obituaries.store'), [
+            'full_name' => 'Attempted Submission',
+        ]);
+        $disabledPost->assertRedirect(route('home'));
+        $disabledPost->assertSessionHas('error');
+
+        // 5. Re-enable public submissions
+        \App\Models\Setting::set('enable_public_submissions', '1');
+        $this->get(route('obituaries.submit'))->assertStatus(200);
+    }
 }

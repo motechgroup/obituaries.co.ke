@@ -243,8 +243,16 @@
         <div x-show="activeTab === 'payment'" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
             <h3 class="font-serif text-xl font-bold text-slate-900 border-b border-slate-200 pb-3">M-Pesa STK Push Payment Gateway & Publishing Pricing</h3>
 
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Public Submissions Status</label>
+                        <select name="enable_public_submissions" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
+                            <option value="1" {{ (string)$settings['enable_public_submissions'] === '1' ? 'selected' : '' }}>✅ Public Submissions Enabled (Allow Visitors)</option>
+                            <option value="0" {{ (string)$settings['enable_public_submissions'] === '0' ? 'selected' : '' }}>⛔ Disable Public Submissions (Pause Visitors)</option>
+                        </select>
+                        <p class="text-[11px] text-slate-500 mt-1">Controls whether visitors can submit obituaries online.</p>
+                    </div>
+
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Publishing Fee (KES)</label>
                         <input type="number" step="0.01" min="0" name="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $settings['obituary_publishing_cost']) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold">

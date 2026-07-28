@@ -26,6 +26,7 @@ class SettingController extends Controller
             'copyright_text' => Setting::get('copyright_text', '© ' . date('Y') . ' Obituaries.co.ke. All rights reserved.'),
 
             // Publishing & M-Pesa
+            'enable_public_submissions' => Setting::get('enable_public_submissions', '1'),
             'obituary_publishing_cost' => Setting::get('obituary_publishing_cost', '500'),
             'auto_publish_obituaries' => Setting::get('auto_publish_obituaries', '0'),
             'show_poster_details' => Setting::get('show_poster_details', '0'),
@@ -82,6 +83,7 @@ class SettingController extends Controller
             'footer_email' => ['nullable', 'email', 'max:255'],
             'copyright_text' => ['nullable', 'string', 'max:255'],
 
+            'enable_public_submissions' => ['nullable', 'string', 'in:0,1'],
             'obituary_publishing_cost' => ['required', 'numeric', 'min:0'],
             'auto_publish_obituaries' => ['nullable', 'string', 'in:0,1'],
             'show_poster_details' => ['nullable', 'string', 'in:0,1'],
