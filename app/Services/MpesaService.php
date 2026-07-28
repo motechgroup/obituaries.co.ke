@@ -274,6 +274,7 @@ class MpesaService
                         'verification_status' => 'pending',
                     ]);
                 }
+                $this->sendPaymentAndPublishNotification($payment);
             }
 
             return true;
@@ -315,6 +316,7 @@ class MpesaService
                     'verification_status' => 'pending',
                 ]);
             }
+            $this->sendPaymentAndPublishNotification($payment);
         }
 
         return true;
@@ -387,6 +389,7 @@ class MpesaService
                                 'verification_status' => 'pending',
                             ]);
                         }
+                        $this->sendPaymentAndPublishNotification($payment);
                     }
 
                     return ['success' => true, 'is_completed' => true, 'status' => 'completed'];
@@ -406,6 +409,59 @@ class MpesaService
         } catch (\Throwable $e) {
             Log::error('STK Query Exception', ['message' => $e->getMessage()]);
             return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Send email notification to submitter when payment completes and obituary is published/verified
+     */
+    public function sendPaymentAndPublishNotification(Payment $payment): void
+    {
+        $obituary = $payment->obituary;
+        if (!$obituary || empty($obituary->submitter_email)) {
+            return;
+        }
+
+        try {
+            if ($obituary->status === 'published') {
+                $tmpl = \App\Models\Setting::get(
+                    'mail_template_verification',
+                    "Dear {NAME},\n\nYour obituary notice for {DECEASED_NAME} has been published live.\n\nView Live: {LINK}"
+                );
+                $link = route('obituaries.show', $obituary->slug);
+                $body = str_replace(
+                    ['{NAME}', '{DECEASED_NAME}', '{LINK}'],
+                    [$obituary->submitter_name, $obituary->full_name, $link],
+                    $tmpl
+                );
+
+                \App\Services\MailService::sendHtmlEmail(
+                    $obituary->submitter_email,
+                    "Obituary Published & Payment Receipt - {$obituary->full_name}",
+                    $body,
+                    $link,
+                    'View Live Obituary Notice'
+                );
+            } else {
+                $subject = "Payment Received & Obituary Under Verification - {$obituary->full_name}";
+                $body = "Dear {$obituary->submitter_name},\n\nWe have received your payment of KES " . number_format($payment->amount, 2) . " (M-Pesa Receipt: {$payment->mpesa_receipt_number}) for the obituary notice of {$obituary->full_name}.\n\nYour notice is currently undergoing standard administrative verification and will be published live shortly.\n\nWarm regards,\nObituaries.co.ke Team";
+                $actionUrl = route('payments.success', $obituary->id);
+                $actionText = "View Payment Receipt";
+
+                \App\Services\MailService::sendHtmlEmail(
+                    $obituary->submitter_email,
+                    $subject,
+                    $body,
+                    $actionUrl,
+                    $actionText
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send obituary payment notification email', [
+                'obituary_id' => $obituary->id,
+                'email' => $obituary->submitter_email,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 }

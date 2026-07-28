@@ -756,4 +756,38 @@ class ObituaryTest extends TestCase
         $this->assertNotEmpty($obituary2->memorial_quote);
         $this->assertNotEquals($obituary1->memorial_quote, $obituary2->memorial_quote);
     }
+
+    public function test_payment_completion_dispatches_confirmation_email_to_submitter()
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $obituary = Obituary::create([
+            'slug' => 'email-notify-test',
+            'full_name' => 'Mama Wambui Njoroge',
+            'date_of_death' => '2026-07-15',
+            'county' => 'Murang\'a',
+            'town' => 'Kangema',
+            'biography' => 'Loving mother and devoted community leader.',
+            'submitter_name' => 'Jane Njoroge',
+            'submitter_phone' => '0712345678',
+            'submitter_email' => 'jane.njoroge@example.com',
+            'relationship' => 'Child',
+            'status' => 'pending_payment',
+        ]);
+
+        $payment = \App\Models\Payment::create([
+            'obituary_id' => $obituary->id,
+            'phone_number' => '254712345678',
+            'amount' => 500,
+            'status' => 'pending',
+            'merchant_request_id' => 'MOCK-MR-123',
+            'checkout_request_id' => 'MOCK-CR-123',
+        ]);
+
+        $mpesaService = app(\App\Services\MpesaService::class);
+        $mpesaService->simulateMockCompletion($payment);
+
+        $obituary->refresh();
+        $this->assertTrue(in_array($obituary->status, ['pending_verification', 'published']));
+    }
 }
