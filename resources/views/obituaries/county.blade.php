@@ -64,9 +64,7 @@
                                 
                                 <!-- Translucent Glass Watermark Overlay (Chest Level) -->
                                 <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
-                                    <span class="font-serif font-black text-[9px] sm:text-[11px] tracking-[0.16em] uppercase select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.55); -webkit-text-fill-color: rgba(255, 255, 255, 0.55); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">
-                                        Obituaries<span style="color: rgba(254, 243, 199, 0.7); -webkit-text-fill-color: rgba(254, 243, 199, 0.7);">.co.ke</span>
-                                    </span>
+                                    <span class="font-serif font-black text-[9px] sm:text-[11px] tracking-[0.16em] uppercase select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.65); -webkit-text-fill-color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">Obituaries.co.ke</span>
                                 </div>
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-amber-900 to-amber-950 flex flex-col items-center justify-center p-4 text-center text-amber-100">
