@@ -15,17 +15,27 @@ class MpesaService
     protected string $shortcode;
     protected string $passkey;
     protected string $callbackUrl;
+    protected string $transactionType;
     protected bool $mockMode;
 
     public function __construct()
     {
-        $this->env = config('mpesa.env', 'sandbox');
-        $this->consumerKey = config('mpesa.consumer_key', '');
-        $this->consumerSecret = config('mpesa.consumer_secret', '');
-        $this->shortcode = config('mpesa.shortcode', '174379');
-        $this->passkey = config('mpesa.passkey', '');
-        $this->callbackUrl = config('mpesa.callback_url');
-        $this->mockMode = (bool) config('mpesa.mock_mode', true);
+        $this->env = \App\Models\Setting::get('mpesa_env', config('mpesa.env', 'sandbox'));
+        $this->consumerKey = trim(\App\Models\Setting::get('mpesa_consumer_key', config('mpesa.consumer_key', '')));
+        $this->consumerSecret = trim(\App\Models\Setting::get('mpesa_consumer_secret', config('mpesa.consumer_secret', '')));
+        $this->shortcode = trim(\App\Models\Setting::get('mpesa_shortcode', config('mpesa.shortcode', '174379')));
+        $this->passkey = trim(\App\Models\Setting::get('mpesa_passkey', config('mpesa.passkey', '')));
+        $this->callbackUrl = \App\Models\Setting::get('mpesa_callback_url', config('mpesa.callback_url', url('/api/v1/mpesa/callback')));
+        $this->transactionType = \App\Models\Setting::get('mpesa_transaction_type', 'CustomerPayBillOnline');
+
+        // Check if mock mode is explicitly turned on/off in Admin Settings
+        $dbMock = \App\Models\Setting::get('mpesa_mock_mode', null);
+        if ($dbMock !== null) {
+            $this->mockMode = (bool) $dbMock;
+        } else {
+            // Default to mock mode only if credentials are not configured
+            $this->mockMode = empty($this->consumerKey) || empty($this->consumerSecret);
+        }
     }
 
     /**
@@ -47,10 +57,13 @@ class MpesaService
     /**
      * Get OAuth Access Token from Safaricom Daraja
      */
-    public function getAccessToken(): ?string
+    public function getAccessToken(): array
     {
         if ($this->mockMode) {
-            return 'mock_access_token_' . time();
+            return [
+                'success' => true,
+                'token' => 'mock_access_token_' . time(),
+            ];
         }
 
         $url = config("mpesa.urls.{$this->env}.oauth");
@@ -59,15 +72,29 @@ class MpesaService
             $response = Http::withBasicAuth($this->consumerKey, $this->consumerSecret)->get($url);
 
             if ($response->successful()) {
-                return $response->json('access_token');
+                return [
+                    'success' => true,
+                    'token' => $response->json('access_token'),
+                ];
             }
 
-            Log::error('M-Pesa Token Error', ['body' => $response->body()]);
+            $errorBody = $response->json();
+            $errorMessage = $errorBody['errorMessage'] ?? $errorBody['error_description'] ?? $response->body();
+
+            Log::error('M-Pesa Token Error', ['status' => $response->status(), 'body' => $response->body()]);
+
+            return [
+                'success' => false,
+                'message' => 'M-Pesa OAuth Failed: ' . $errorMessage . ' (Check Consumer Key, Consumer Secret & Environment)',
+            ];
         } catch (\Throwable $e) {
             Log::error('M-Pesa Token Exception', ['message' => $e->getMessage()]);
-        }
 
-        return null;
+            return [
+                'success' => false,
+                'message' => 'M-Pesa OAuth Exception: ' . $e->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -106,21 +133,23 @@ class MpesaService
             ];
         }
 
-        $accessToken = $this->getAccessToken();
-        if (!$accessToken) {
+        $tokenResult = $this->getAccessToken();
+        if (!$tokenResult['success']) {
+            $payment->update(['status' => 'failed']);
             return [
                 'success' => false,
-                'message' => 'Unable to authenticate with M-Pesa Gateway.',
+                'message' => $tokenResult['message'],
             ];
         }
 
+        $accessToken = $tokenResult['token'];
         $stkUrl = config("mpesa.urls.{$this->env}.stkpush");
 
         $payload = [
             'BusinessShortCode' => $this->shortcode,
             'Password' => $password,
             'Timestamp' => $timestamp,
-            'TransactionType' => 'CustomerPayBillOnline',
+            'TransactionType' => $this->transactionType,
             'Amount' => (int) $amount,
             'PartyA' => $formattedPhone,
             'PartyB' => $this->shortcode,
@@ -151,9 +180,12 @@ class MpesaService
             }
 
             $payment->update(['status' => 'failed']);
+            $errorMessage = $data['errorMessage'] ?? $data['CustomerMessage'] ?? $data['ResponseDescription'] ?? 'M-Pesa STK push failed.';
+            Log::error('M-Pesa STK Push Failed', ['response' => $data, 'payload' => $payload]);
+
             return [
                 'success' => false,
-                'message' => $data['CustomerMessage'] ?? $data['ResponseDescription'] ?? 'M-Pesa STK push failed.',
+                'message' => 'STK Push Failed: ' . $errorMessage,
             ];
         } catch (\Throwable $e) {
             Log::error('STK Push Exception', ['message' => $e->getMessage()]);

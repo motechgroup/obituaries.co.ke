@@ -191,31 +191,53 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-200">
                     <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Gateway Mode</label>
+                        <select name="mpesa_mock_mode" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-amber-900">
+                            <option value="0" {{ (string)$settings['mpesa_mock_mode'] === '0' ? 'selected' : '' }}>🟢 Live STK Push (Sends real STK prompt to phone)</option>
+                            <option value="1" {{ (string)$settings['mpesa_mock_mode'] === '1' ? 'selected' : '' }}>🧪 Mock Simulation Mode (For offline testing)</option>
+                        </select>
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">M-Pesa Environment</label>
                         <select name="mpesa_env" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
                             <option value="sandbox" {{ $settings['mpesa_env'] === 'sandbox' ? 'selected' : '' }}>Sandbox (Developer Testing)</option>
-                            <option value="live" {{ $settings['mpesa_env'] === 'live' ? 'selected' : '' }}>Live Production</option>
+                            <option value="live" {{ $settings['mpesa_env'] === 'live' ? 'selected' : '' }}>Live Production (api.safaricom.co.ke)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Transaction Type</label>
+                        <select name="mpesa_transaction_type" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
+                            <option value="CustomerPayBillOnline" {{ $settings['mpesa_transaction_type'] === 'CustomerPayBillOnline' ? 'selected' : '' }}>PayBill Number (CustomerPayBillOnline)</option>
+                            <option value="CustomerBuyGoodsOnline" {{ $settings['mpesa_transaction_type'] === 'CustomerBuyGoodsOnline' ? 'selected' : '' }}>Buy Goods / Till Number (CustomerBuyGoodsOnline)</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Paybill / Shortcode</label>
-                        <input type="text" name="mpesa_shortcode" value="{{ old('mpesa_shortcode', $settings['mpesa_shortcode']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        <input type="text" name="mpesa_shortcode" value="{{ old('mpesa_shortcode', $settings['mpesa_shortcode']) }}" placeholder="e.g. 174379 or Paybill" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Consumer Key</label>
-                        <input type="text" name="mpesa_consumer_key" value="{{ old('mpesa_consumer_key', $settings['mpesa_consumer_key']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                        <input type="text" name="mpesa_consumer_key" value="{{ old('mpesa_consumer_key', $settings['mpesa_consumer_key']) }}" placeholder="Daraja Consumer Key" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Consumer Secret</label>
-                        <input type="password" name="mpesa_consumer_secret" value="{{ old('mpesa_consumer_secret', $settings['mpesa_consumer_secret']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                        <input type="password" name="mpesa_consumer_secret" value="{{ old('mpesa_consumer_secret', $settings['mpesa_consumer_secret']) }}" placeholder="Daraja Consumer Secret" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
                     </div>
 
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Lipa Na M-Pesa Passkey</label>
-                        <input type="password" name="mpesa_passkey" value="{{ old('mpesa_passkey', $settings['mpesa_passkey']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                        <input type="password" name="mpesa_passkey" value="{{ old('mpesa_passkey', $settings['mpesa_passkey']) }}" placeholder="Lipa Na M-Pesa Online Passkey" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">M-Pesa Callback URL</label>
+                        <input type="text" name="mpesa_callback_url" value="{{ old('mpesa_callback_url', $settings['mpesa_callback_url']) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">
+                        <p class="text-[11px] text-slate-500 mt-1">Set this exact URL on your Safaricom Daraja Developer portal for instant payment verification.</p>
                     </div>
                 </div>
             </div>

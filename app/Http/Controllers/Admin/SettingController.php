@@ -30,6 +30,9 @@ class SettingController extends Controller
             'mpesa_passkey' => Setting::get('mpesa_passkey', ''),
             'mpesa_consumer_key' => Setting::get('mpesa_consumer_key', ''),
             'mpesa_consumer_secret' => Setting::get('mpesa_consumer_secret', ''),
+            'mpesa_mock_mode' => Setting::get('mpesa_mock_mode', '0'),
+            'mpesa_transaction_type' => Setting::get('mpesa_transaction_type', 'CustomerPayBillOnline'),
+            'mpesa_callback_url' => Setting::get('mpesa_callback_url', url('/api/v1/mpesa/callback')),
 
             // SMTP Mail & Templates
             'mail_host' => Setting::get('mail_host', 'smtp.mailtrap.io'),
@@ -76,6 +79,9 @@ class SettingController extends Controller
             'mpesa_passkey' => ['nullable', 'string'],
             'mpesa_consumer_key' => ['nullable', 'string'],
             'mpesa_consumer_secret' => ['nullable', 'string'],
+            'mpesa_mock_mode' => ['nullable', 'string', 'in:0,1'],
+            'mpesa_transaction_type' => ['nullable', 'string', 'in:CustomerPayBillOnline,CustomerBuyGoodsOnline'],
+            'mpesa_callback_url' => ['nullable', 'url'],
 
             'mail_host' => ['nullable', 'string'],
             'mail_port' => ['nullable', 'numeric'],
