@@ -254,7 +254,7 @@
     </main>
 
     <!-- Footer with Rich Dark Background & Amber Accents -->
-    <footer class="w-full bg-[#070C18] text-white mt-16 sm:mt-20 border-t border-slate-800/80 relative overflow-hidden">
+    <footer class="w-full bg-[#0B0E18] text-white mt-16 sm:mt-20 border-t border-slate-800/80 relative overflow-hidden">
         <!-- Background Subtle Glow Accent -->
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[250px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none"></div>
 

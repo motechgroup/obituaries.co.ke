@@ -378,18 +378,18 @@
 </section>
 
 <!-- Submit Obituary Call-To-Action (CTA) Section -->
-<section class="w-full bg-slate-950 text-white py-16 sm:py-20 relative overflow-hidden border-t border-slate-800">
-    <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-slate-900/50 to-primary/20 pointer-events-none"></div>
+<section class="w-full bg-[#0B0E18] text-white py-16 sm:py-20 relative overflow-hidden border-t border-slate-800/80">
+    <div class="absolute inset-0 bg-gradient-to-r from-[#14101b] via-[#0B0E18] to-[#040712] pointer-events-none"></div>
     <div class="max-w-[1000px] mx-auto px-4 sm:px-6 text-center relative z-10">
-        <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-amber-500/20">
-            <span class="material-symbols-outlined text-[16px]">edit_document</span>
-            <span>Preserve Their Memory</span>
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 bg-[#1a1510] text-[#FF9800] rounded-full text-xs font-bold uppercase tracking-wider mb-5 border border-[#FF9800]/40 shadow-xs">
+            <span class="material-symbols-outlined text-[16px]">edit_note</span>
+            <span>PRESERVE THEIR MEMORY</span>
         </div>
         <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight">
             Honoring Lives With Grace & Dignity
         </h2>
         <div class="flex items-center justify-center">
-            <a href="{{ route('obituaries.submit') }}" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-8 py-4 rounded-xl text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-amber-500/25 flex items-center justify-center space-x-2">
+            <a href="{{ route('obituaries.submit') }}" class="w-full sm:w-auto bg-[#FF9800] hover:bg-[#FFA726] text-black font-extrabold px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-amber-500/25 flex items-center justify-center space-x-2">
                 <span class="material-symbols-outlined text-[20px]">add_circle</span>
                 <span>Submit Obituary Notice</span>
             </a>
