@@ -111,14 +111,14 @@
 
                         <!-- Formatting Toolbar Buttons -->
                         <div class="bg-slate-100 border border-slate-300 border-b-0 rounded-t-xl p-2 flex flex-wrap items-center gap-1.5 text-xs select-none">
-                            <button type="button" @click="applyTag('b')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded font-bold text-slate-900 shadow-2xs" title="Bold Text">B</button>
-                            <button type="button" @click="applyTag('i')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded italic text-slate-900 shadow-2xs" title="Italic Text">I</button>
-                            <button type="button" @click="applyTag('u')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded underline text-slate-900 shadow-2xs" title="Underline Text">U</button>
+                            <button type="button" @mousedown.prevent @click="applyTag('b')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded font-bold text-slate-900 shadow-2xs" title="Bold Text">B</button>
+                            <button type="button" @mousedown.prevent @click="applyTag('i')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded italic text-slate-900 shadow-2xs" title="Italic Text">I</button>
+                            <button type="button" @mousedown.prevent @click="applyTag('u')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded underline text-slate-900 shadow-2xs" title="Underline Text">U</button>
                             <span class="w-[1px] h-5 bg-slate-300 mx-1"></span>
-                            <button type="button" @click="applyTag('h3')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded font-bold text-amber-800 shadow-2xs" title="Section Heading">Heading 3</button>
-                            <button type="button" @click="applyTag('p')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded text-slate-800 shadow-2xs" title="Paragraph">&lt;p&gt; Para</button>
-                            <button type="button" @click="applyList()" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded text-slate-800 shadow-2xs" title="Bullet List">&bull; Bullet List</button>
-                            <button type="button" @click="applyTag('blockquote')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded italic text-slate-700 shadow-2xs" title="Quote">“Quote”</button>
+                            <button type="button" @mousedown.prevent @click="applyTag('h3')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded font-bold text-amber-800 shadow-2xs" title="Section Heading">Heading 3</button>
+                            <button type="button" @mousedown.prevent @click="applyTag('p')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded text-slate-800 shadow-2xs" title="Paragraph">&lt;p&gt; Para</button>
+                            <button type="button" @mousedown.prevent @click="applyList()" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded text-slate-800 shadow-2xs" title="Bullet List">&bull; Bullet List</button>
+                            <button type="button" @mousedown.prevent @click="applyTag('blockquote')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded italic text-slate-700 shadow-2xs" title="Quote">“Quote”</button>
                             <span class="w-[1px] h-5 bg-slate-300 mx-1"></span>
                             <button type="button" @click="previewMode = !previewMode" class="ml-auto px-3 py-1 bg-slate-800 text-white rounded font-bold text-[11px] shadow-2xs flex items-center space-x-1" x-text="previewMode ? '✍️ Edit Text' : '👁️ Live Formatted Preview'"></button>
                         </div>
