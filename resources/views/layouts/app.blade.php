@@ -35,42 +35,37 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
-        window.biographyEditor = function(initialContent = '') {
-            return {
-                content: initialContent || '',
-                previewMode: false,
-                applyTag(tag) {
-                    const textarea = document.getElementById('admin_biography') || document.getElementById('biography');
-                    if (!textarea) return;
-                    const start = textarea.selectionStart || 0;
-                    const end = textarea.selectionEnd || 0;
-                    const val = textarea.value || '';
-                    const selected = val.substring(start, end) || 'Sample Text';
-                    const replacement = `<${tag}>${selected}</${tag}>`;
-                    if (typeof textarea.setRangeText === 'function') {
-                        textarea.setRangeText(replacement, start, end, 'select');
-                    } else {
-                        textarea.value = val.substring(0, start) + replacement + val.substring(end);
-                    }
-                    this.content = textarea.value;
-                },
-                applyList() {
-                    const textarea = document.getElementById('admin_biography') || document.getElementById('biography');
-                    if (!textarea) return;
-                    const start = textarea.selectionStart || 0;
-                    const end = textarea.selectionEnd || 0;
-                    const val = textarea.value || '';
-                    const selected = val.substring(start, end) || 'First item\nSecond item';
-                    const items = selected.split('\n').map(item => `  <li>${item.trim()}</li>`).join('\n');
-                    const replacement = `<ul>\n${items}\n</ul>`;
-                    if (typeof textarea.setRangeText === 'function') {
-                        textarea.setRangeText(replacement, start, end, 'select');
-                    } else {
-                        textarea.value = val.substring(0, start) + replacement + val.substring(end);
-                    }
-                    this.content = textarea.value;
-                }
-            };
+        window.applyTag = function(tag, targetId = 'admin_biography') {
+            const textarea = document.getElementById(targetId) || document.getElementById('admin_biography') || document.getElementById('biography');
+            if (!textarea) return;
+            const start = textarea.selectionStart || 0;
+            const end = textarea.selectionEnd || 0;
+            const val = textarea.value || '';
+            const selected = val.substring(start, end) || 'Sample Text';
+            const replacement = `<${tag}>${selected}</${tag}>`;
+            if (typeof textarea.setRangeText === 'function') {
+                textarea.setRangeText(replacement, start, end, 'select');
+            } else {
+                textarea.value = val.substring(0, start) + replacement + val.substring(end);
+            }
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+
+        window.applyList = function(targetId = 'admin_biography') {
+            const textarea = document.getElementById(targetId) || document.getElementById('admin_biography') || document.getElementById('biography');
+            if (!textarea) return;
+            const start = textarea.selectionStart || 0;
+            const end = textarea.selectionEnd || 0;
+            const val = textarea.value || '';
+            const selected = val.substring(start, end) || 'First item\nSecond item';
+            const items = selected.split('\n').map(item => `  <li>${item.trim()}</li>`).join('\n');
+            const replacement = `<ul>\n${items}\n</ul>`;
+            if (typeof textarea.setRangeText === 'function') {
+                textarea.setRangeText(replacement, start, end, 'select');
+            } else {
+                textarea.value = val.substring(0, start) + replacement + val.substring(end);
+            }
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
         };
     </script>
 

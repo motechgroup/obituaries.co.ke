@@ -103,7 +103,7 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-2" x-data="biographyEditor({{ json_encode(old('biography', $obituary->biography)) }})">
+                    <div class="sm:col-span-2" x-data="{ content: '', previewMode: false }">
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-semibold uppercase text-slate-700">Biography & Life Story <span class="text-rose-500">*</span></label>
                             <span class="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">⚡ Editor Formatting Toolbar</span>
@@ -125,7 +125,7 @@
 
                         <!-- Editor Textarea -->
                         <div x-show="!previewMode">
-                            <textarea id="admin_biography" name="biography" rows="8" required x-model="content" placeholder="Write the full tribute, life history, and family notices here..." class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-b-xl text-sm leading-relaxed font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">{{ old('biography', $obituary->biography) }}</textarea>
+                            <textarea id="admin_biography" name="biography" rows="8" required x-init="content = $el.value" @input="content = $el.value" placeholder="Write the full tribute, life history, and family notices here..." class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-b-xl text-sm leading-relaxed font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">{{ old('biography', $obituary->biography) }}</textarea>
                         </div>
 
                         <!-- Formatted Preview -->
