@@ -225,4 +225,56 @@ class ObituaryTest extends TestCase
         $csvContent = ob_get_clean();
         $this->assertStringContainsString('QGH1234567', $csvContent);
     }
+
+    public function test_admin_can_purge_database_mock_data()
+    {
+        $admin = Admin::create([
+            'name' => 'Purge Admin',
+            'email' => 'purge@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $obituary = Obituary::create([
+            'slug' => 'mock-to-be-purged',
+            'full_name' => 'Mock To Be Purged',
+            'date_of_birth' => '1950-01-01',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Bio content.',
+            'submitter_name' => 'Jane Submitter',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Spouse',
+            'status' => 'published',
+            'verification_status' => 'verified',
+        ]);
+
+        Payment::create([
+            'obituary_id' => $obituary->id,
+            'phone_number' => '254712345678',
+            'amount' => 500.00,
+            'mpesa_receipt_number' => 'QGH9999999',
+            'checkout_request_id' => 'ws_CO_99999',
+            'status' => 'completed',
+        ]);
+
+        // Rejection when confirmation text is incorrect
+        $failResponse = $this->actingAs($admin, 'admin')->post(route('admin.database.purge'), [
+            'target' => 'all',
+            'confirm_text' => 'WRONG_TEXT',
+        ]);
+        $failResponse->assertSessionHas('error');
+        $this->assertDatabaseHas('obituaries', ['slug' => 'mock-to-be-purged']);
+
+        // Successful Purge when confirmation text is PURGE
+        $successResponse = $this->actingAs($admin, 'admin')->post(route('admin.database.purge'), [
+            'target' => 'all',
+            'confirm_text' => 'PURGE',
+        ]);
+        $successResponse->assertSessionHas('success');
+        $this->assertDatabaseMissing('obituaries', ['slug' => 'mock-to-be-purged']);
+        $this->assertDatabaseMissing('payments', ['mpesa_receipt_number' => 'QGH9999999']);
+        // Ensure Admin user remains intact!
+        $this->assertDatabaseHas('admins', ['email' => 'purge@obituaries.co.ke']);
+    }
 }

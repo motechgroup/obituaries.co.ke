@@ -120,6 +120,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Admin Database Maintenance & System Code Operations
         Route::post('/database/migrate', [AdminSettingController::class, 'runMigrations'])->name('database.migrate');
         Route::post('/database/seed', [AdminSettingController::class, 'runSeeders'])->name('database.seed');
+        Route::post('/database/purge', [AdminSettingController::class, 'purgeDatabase'])->name('database.purge');
         Route::post('/system/git-pull', [AdminSettingController::class, 'gitPull'])->name('system.git-pull');
         Route::post('/system/fix-storage', [AdminSettingController::class, 'fixStorage'])->name('system.fix-storage');
     });

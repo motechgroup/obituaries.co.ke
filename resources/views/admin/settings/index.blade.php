@@ -116,6 +116,51 @@
                 </form>
             </div>
         </div>
+
+        <!-- Database Cleanup & Purge Section -->
+        <div class="mt-8 p-6 bg-rose-950/20 border border-rose-200 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-rose-200 pb-3">
+                <div class="flex items-center space-x-2 text-rose-800 font-bold">
+                    <span class="material-symbols-outlined text-[24px]">delete_forever</span>
+                    <h4 class="font-serif text-lg">Clean & Purge Database (Prepare Live Production)</h4>
+                </div>
+                <span class="text-[10px] uppercase font-bold px-2.5 py-1 bg-rose-100 text-rose-900 rounded-full border border-rose-300">
+                    High Privileged Action
+                </span>
+            </div>
+
+            <p class="text-xs text-rose-900 leading-relaxed">
+                Use this tool before launching online to wipe mock test data (mock obituaries, test M-Pesa payments, flag reports, and uploaded photos). <strong>Note: Your Admin logins and Platform Settings will NOT be deleted.</strong>
+            </p>
+
+            <form action="{{ route('admin.database.purge') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2" onsubmit="return confirm('⚠️ ARE YOU ABSOLUTELY SURE?\nThis will permanently delete selected database records and uploads.')">
+                @csrf
+                <input type="hidden" name="active_tab" value="database">
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-rose-900 mb-1.5">Cleanup Target</label>
+                    <select name="target" required class="w-full px-3.5 py-2.5 bg-white border border-rose-300 rounded-xl text-xs font-bold text-slate-900">
+                        <option value="all">🧹 Wipe All Test Data (Obituaries + Payments + Reports + Uploads)</option>
+                        <option value="obituaries">⚰️ Wipe Obituaries & Uploaded Photos Only</option>
+                        <option value="payments">💳 Wipe M-Pesa Payment Logs Only</option>
+                        <option value="reports">🚩 Wipe Obituary Flag Reports Only</option>
+                        <option value="candles">🕯️ Wipe Tribute Candles & Condolences Only</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-rose-900 mb-1.5">Type "PURGE" to Confirm</label>
+                    <input type="text" name="confirm_text" placeholder="Type PURGE" required class="w-full px-3.5 py-2.5 bg-white border border-rose-300 rounded-xl text-xs font-mono font-bold text-rose-900 tracking-widest placeholder:text-rose-300">
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" class="w-full py-2.5 px-4 bg-rose-700 hover:bg-rose-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                        <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                        <span>Purge Selected Data</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">

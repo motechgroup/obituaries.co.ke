@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
 {
@@ -299,6 +300,88 @@ class SettingController extends Controller
             return back()
                 ->with('active_tab', $request->input('active_tab', 'database'))
                 ->with('error', "❌ Storage Repair Error: " . $e->getMessage());
+        }
+    }
+
+    public function purgeDatabase(Request $request)
+    {
+        $validated = $request->validate([
+            'target' => ['required', 'string', 'in:all,obituaries,payments,reports,candles'],
+            'confirm_text' => ['required', 'string'],
+        ]);
+
+        if (strtoupper(trim($validated['confirm_text'])) !== 'PURGE') {
+            return back()
+                ->with('active_tab', 'database')
+                ->with('error', '❌ Confirmation text did not match. Please type PURGE in capital letters to confirm database cleanup.');
+        }
+
+        $driver = DB::connection()->getDriverName();
+
+        try {
+            if ($driver === 'sqlite') {
+                DB::statement('PRAGMA foreign_keys = OFF;');
+            } else {
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            }
+
+            $target = $validated['target'];
+            $messages = [];
+
+            if ($target === 'all' || $target === 'obituaries') {
+                // Delete all obituaries and related records
+                DB::table('candles')->truncate();
+                DB::table('obituary_reports')->truncate();
+                DB::table('payments')->truncate();
+                DB::table('obituaries')->truncate();
+
+                // Clean up media storage files in storage/app/public/obituaries
+                $storageDir = storage_path('app/public/obituaries');
+                if (file_exists($storageDir)) {
+                    $files = glob($storageDir . '/*');
+                    foreach ($files as $file) {
+                        if (is_file($file)) {
+                            @unlink($file);
+                        }
+                    }
+                }
+
+                $messages[] = "Obituaries, Candles, Reports, Payments & Storage Uploads";
+            } elseif ($target === 'payments') {
+                DB::table('payments')->truncate();
+                $messages[] = "Payment Transactions & Audit Logs";
+            } elseif ($target === 'reports') {
+                DB::table('obituary_reports')->truncate();
+                $messages[] = "Obituary Flag Reports";
+            } elseif ($target === 'candles') {
+                DB::table('candles')->truncate();
+                $messages[] = "Tribute Candles & Condolences";
+            }
+
+            if ($driver === 'sqlite') {
+                DB::statement('PRAGMA foreign_keys = ON;');
+            } else {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            }
+
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+            \Illuminate\Support\Facades\Artisan::call('cache:clear');
+
+            $summary = implode(', ', $messages);
+            return back()
+                ->with('active_tab', 'database')
+                ->with('success', "🧹 Database Cleanup Successful! Wiped: {$summary}. The platform is clean and ready for live production.");
+
+        } catch (\Throwable $e) {
+            if ($driver === 'sqlite') {
+                DB::statement('PRAGMA foreign_keys = ON;');
+            } else {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            }
+
+            return back()
+                ->with('active_tab', 'database')
+                ->with('error', "❌ Database Cleanup Error: " . $e->getMessage());
         }
     }
 }
