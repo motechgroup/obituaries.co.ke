@@ -237,7 +237,7 @@
             @endif
 
             <!-- Light Candle Modal -->
-            <div x-show="candleModal" x-cloak style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" x-transition>
+            <div x-show="candleModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" x-transition>
                 <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-surface-container space-y-6" @click.away="candleModal = false">
                     <div class="flex items-center justify-between border-b border-surface-container pb-4">
                         <div class="flex items-center space-x-2">
@@ -293,7 +293,7 @@
             </button>
 
             <!-- Report Modal -->
-            <div x-show="reportModal" x-cloak style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+            <div x-show="reportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
                 <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-surface-container space-y-6" @click.away="reportModal = false">
                     <div class="flex items-center justify-between border-b border-surface-container pb-4">
                         <div class="flex items-center space-x-3">

@@ -12,44 +12,6 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
-        window.applyTag = function(tag, targetId = 'admin_biography') {
-            const textarea = document.getElementById(targetId) || document.getElementById('admin_biography') || document.getElementById('biography');
-            if (!textarea) return;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const val = textarea.value || '';
-            const selected = val.substring(start, end);
-            const textToWrap = selected.length > 0 ? selected : 'Sample Text';
-            const replacement = `<${tag}>${textToWrap}</${tag}>`;
-            if (typeof textarea.setRangeText === 'function') {
-                textarea.setRangeText(replacement, start, end, 'select');
-            } else {
-                textarea.value = val.substring(0, start) + replacement + val.substring(end);
-            }
-            textarea.focus();
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        };
-
-        window.applyList = function(targetId = 'admin_biography') {
-            const textarea = document.getElementById(targetId) || document.getElementById('admin_biography') || document.getElementById('biography');
-            if (!textarea) return;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const val = textarea.value || '';
-            const selected = val.substring(start, end);
-            const textToWrap = selected.length > 0 ? selected : 'First item\nSecond item';
-            const items = textToWrap.split('\n').map(item => `  <li>${item.trim()}</li>`).join('\n');
-            const replacement = `<ul>\n${items}\n</ul>`;
-            if (typeof textarea.setRangeText === 'function') {
-                textarea.setRangeText(replacement, start, end, 'select');
-            } else {
-                textarea.value = val.substring(0, start) + replacement + val.substring(end);
-            }
-            textarea.focus();
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        };
-    </script>
     <style>
         .obituary-biography p {
             margin-bottom: 1.5rem !important;
@@ -192,13 +154,14 @@
                                 {{ $pendingReportsCount }}
                             </span>
                         @endif
-                    <!-- Public Contributors Directory (Super Admin & Editors) -->
-                    <a href="{{ route('admin.contributors.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.contributors.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                        <span class="material-symbols-outlined text-[20px] {{ request()->routeIs('admin.contributors.*') ? 'text-white' : 'text-slate-400' }}">groups</span>
-                        <span>Submitters & Contributors</span>
                     </a>
 
                     @if(Auth::guard('admin')->user()->isSuperAdmin())
+                        <!-- Public Contributors Directory -->
+                        <a href="{{ route('admin.contributors.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.contributors.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="material-symbols-outlined text-[20px] {{ request()->routeIs('admin.contributors.*') ? 'text-white' : 'text-slate-400' }}">groups</span>
+                            <span>Submitters & Contributors</span>
+                        </a>
 
                         <!-- Security Audit Logs -->
                         <a href="{{ route('admin.security-logs.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.security-logs.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">

@@ -31,9 +31,9 @@ class SecurityHeadersMiddleware
         // 5. HTTP Strict Transport Security (HSTS)
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
-        // 6. Content Security Policy (CSP) - Optimized for A+ Grade on SecurityHeaders.com
+        // 6. Content Security Policy (CSP)
         $csp = "default-src 'self'; " .
-               "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com https://cdn.jsdelivr.net; " .
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com; " .
                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " .
                "font-src 'self' https://fonts.gstatic.com data:; " .
                "img-src 'self' data: https: blob:; " .

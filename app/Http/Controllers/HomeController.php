@@ -9,47 +9,20 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // 1. Latest Notices (Posted Today / within last 24 hours) for section right after Hero
-        $todayNotices = Obituary::published()
+        // Recent Tributes: Only show obituaries posted within the last 24 hours (< 1 day old)
+        $latestObituaries = Obituary::published()
             ->where('created_at', '>=', now()->subHours(24))
             ->latest('id')
             ->take(8)
             ->get();
 
-        if ($todayNotices->isEmpty()) {
-            $todayNotices = Obituary::published()
+        // Fallback: If no notices were posted in the last 24 hours, show latest published notices
+        if ($latestObituaries->isEmpty()) {
+            $latestObituaries = Obituary::published()
                 ->latest('id')
                 ->take(8)
                 ->get();
         }
-
-        // 2. Recent Tributes: Notices at least 2 days old (posted 48+ hours ago)
-        $recentNotices = Obituary::published()
-            ->where('created_at', '<=', now()->subDays(2))
-            ->latest('id')
-            ->take(8)
-            ->get();
-
-        if ($recentNotices->isEmpty()) {
-            $recentNotices = Obituary::published()
-                ->where('created_at', '<=', now()->subHours(24))
-                ->latest('id')
-                ->take(8)
-                ->get();
-
-            if ($recentNotices->isEmpty()) {
-                $recentNotices = Obituary::published()
-                    ->latest('id')
-                    ->take(8)
-                    ->get();
-            }
-        }
-
-        // 3. Random Notices Directory (16 Compact Cards Grid)
-        $randomNotices = Obituary::published()
-            ->inRandomOrder()
-            ->take(16)
-            ->get();
 
         $todayAnniversaries = Obituary::todayAnniversaries()
             ->latest('date_of_death')
@@ -110,6 +83,6 @@ class HomeController extends Controller
         $dayIndex = (date('z') + date('Y')) % count($quotes);
         $dailyQuote = $quotes[$dayIndex];
 
-        return view('home', compact('todayNotices', 'recentNotices', 'randomNotices', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties', 'dailyQuote'));
+        return view('home', compact('latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties', 'dailyQuote'));
     }
 }

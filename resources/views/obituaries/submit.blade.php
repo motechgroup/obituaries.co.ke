@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12" x-data="{ step: 1, goToStep(targetStep) { this.step = targetStep; }, nextStep(next) { this.step = next; window.scrollTo({ top: 180, behavior: 'smooth' }); } }">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12" x-data="submissionForm()">
     <!-- Step Indicator Progress Bar -->
     <div class="mb-8 sm:mb-10">
         <div class="flex items-center justify-between relative mb-2">
@@ -154,38 +154,12 @@
                     </div>
                 </div>
 
-                <!-- Biography with Formatting Toolbar -->
-                <div x-data="{ content: '', previewMode: false }">
-                    <div class="flex items-center justify-between mb-2">
-                        <label for="biography" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                            Biography / Life Tribute Announcement <span class="text-rose-500">*</span>
-                        </label>
-                        <span class="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">⚡ Formatting Toolbar</span>
-                    </div>
-
-                    <!-- Formatting Toolbar Buttons -->
-                    <div class="bg-slate-100 border border-slate-300 border-b-0 rounded-t-xl p-2 flex flex-wrap items-center gap-1.5 text-xs select-none">
-                        <button type="button" @mousedown.prevent @click="applyTag('b', 'biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded font-bold text-slate-900 shadow-2xs" title="Bold Text">B</button>
-                        <button type="button" @mousedown.prevent @click="applyTag('i', 'biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded italic text-slate-900 shadow-2xs" title="Italic Text">I</button>
-                        <button type="button" @mousedown.prevent @click="applyTag('u', 'biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded underline text-slate-900 shadow-2xs" title="Underline Text">U</button>
-                        <span class="w-[1px] h-5 bg-slate-300 mx-1"></span>
-                        <button type="button" @mousedown.prevent @click="applyTag('h3', 'biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded font-bold text-amber-800 shadow-2xs" title="Section Heading">Heading 3</button>
-                        <button type="button" @mousedown.prevent @click="applyTag('p', 'biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded text-slate-800 shadow-2xs" title="Paragraph">&lt;p&gt; Para</button>
-                        <button type="button" @mousedown.prevent @click="applyList('biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded text-slate-800 shadow-2xs" title="Bullet List">&bull; Bullet List</button>
-                        <button type="button" @mousedown.prevent @click="applyTag('blockquote', 'biography')" class="px-2.5 py-1 bg-white hover:bg-slate-200 border border-slate-300 rounded italic text-slate-700 shadow-2xs" title="Quote">“Quote”</button>
-                        <span class="w-[1px] h-5 bg-slate-300 mx-1"></span>
-                        <button type="button" @click="previewMode = !previewMode" class="ml-auto px-3 py-1 bg-slate-800 text-white rounded font-bold text-[11px] shadow-2xs flex items-center space-x-1" x-text="previewMode ? '✍️ Edit Text' : '👁️ Live Formatted Preview'"></button>
-                    </div>
-
-                    <!-- Editor Textarea -->
-                    <div x-show="!previewMode">
-                        <textarea name="biography" id="biography" rows="6" required x-init="content = $el.value" @input="content = $el.value" placeholder="Write a respectful summary of their life journey, survivors, career, and legacy..." class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-b-xl text-on-surface text-sm focus:outline-none focus:border-primary leading-relaxed font-mono">{{ old('biography') }}</textarea>
-                    </div>
-
-                    <!-- Formatted Preview -->
-                    <div x-show="previewMode" class="p-5 bg-white border border-slate-300 rounded-b-xl min-h-[160px] prose prose-slate max-w-none text-sm leading-relaxed font-sans shadow-inner">
-                        <div x-html="content || '<span class=\'text-slate-400 italic\'>Nothing to preview...</span>'"></div>
-                    </div>
+                <!-- Biography -->
+                <div>
+                    <label for="biography" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
+                        Biography / Life Tribute Announcement <span class="text-rose-500">*</span>
+                    </label>
+                    <textarea name="biography" id="biography" rows="5" required placeholder="Write a respectful summary of their life journey, survivors, career, and legacy..." class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary leading-relaxed">{{ old('biography') }}</textarea>
                 </div>
 
                 <!-- Step 1 Nav -->

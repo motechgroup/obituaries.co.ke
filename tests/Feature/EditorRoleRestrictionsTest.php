@@ -11,7 +11,7 @@ class EditorRoleRestrictionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_editor_can_access_contributors_directory_but_not_super_admin_routes()
+    public function test_editor_cannot_access_advanced_admin_menu_items()
     {
         $editor = Admin::create([
             'name' => 'Editor User',
@@ -20,12 +20,8 @@ class EditorRoleRestrictionsTest extends TestCase
             'role' => 'editor',
         ]);
 
-        // Editor CAN access Contributors Directory
-        $contributorResponse = $this->actingAs($editor, 'admin')->get(route('admin.contributors.index'));
-        $contributorResponse->assertStatus(200);
-
-        // Editor CANNOT access Super Admin Only operations
         $restrictedRoutes = [
+            'admin.contributors.index',
             'admin.security-logs.index',
             'admin.fraud.index',
             'admin.analytics.index',
