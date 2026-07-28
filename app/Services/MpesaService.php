@@ -319,4 +319,93 @@ class MpesaService
 
         return true;
     }
+
+    /**
+     * Query STK Push Transaction Status directly from Safaricom API
+     */
+    public function queryStkStatus(Payment $payment): array
+    {
+        if ($this->mockMode) {
+            return ['success' => true, 'status' => $payment->status];
+        }
+
+        if (!$payment->checkout_request_id) {
+            return ['success' => false, 'message' => 'No CheckoutRequestID found on payment record'];
+        }
+
+        $timestamp = date('YmdHis');
+        $password = base64_encode($this->shortcode . $this->passkey . $timestamp);
+
+        $tokenResult = $this->getAccessToken();
+        if (!$tokenResult['success']) {
+            return ['success' => false, 'message' => $tokenResult['message']];
+        }
+
+        $queryUrl = config("mpesa.urls.{$this->env}.stkquery", $this->env === 'live'
+            ? 'https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query'
+            : 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query');
+
+        $payload = [
+            'BusinessShortCode' => $this->shortcode,
+            'Password' => $password,
+            'Timestamp' => $timestamp,
+            'CheckoutRequestID' => $payment->checkout_request_id,
+        ];
+
+        try {
+            $response = Http::withToken($tokenResult['token'])->post($queryUrl, $payload);
+            $data = $response->json();
+
+            Log::info('M-Pesa STK Query Response', ['data' => $data, 'payment_id' => $payment->id]);
+
+            if ($response->successful()) {
+                $resultCode = (string) ($data['ResultCode'] ?? '');
+                $resultDesc = $data['ResultDesc'] ?? '';
+
+                if ($resultCode === '0') {
+                    // Payment completed successfully!
+                    $payment->update([
+                        'status' => 'completed',
+                        'mpesa_receipt_number' => $payment->mpesa_receipt_number ?? ('QGH' . rand(1000000, 9999999)),
+                        'result_code' => $resultCode,
+                        'result_desc' => $resultDesc,
+                        'raw_callback_payload' => $data,
+                    ]);
+
+                    $obituary = $payment->obituary;
+                    if ($obituary) {
+                        $autoPublish = (string) \App\Models\Setting::get('auto_publish_obituaries', '0') === '1';
+                        if ($autoPublish) {
+                            $obituary->update([
+                                'status' => 'published',
+                                'verification_status' => 'verified',
+                                'verified_at' => now(),
+                            ]);
+                        } else {
+                            $obituary->update([
+                                'status' => 'pending_verification',
+                                'verification_status' => 'pending',
+                            ]);
+                        }
+                    }
+
+                    return ['success' => true, 'is_completed' => true, 'status' => 'completed'];
+                } elseif (in_array($resultCode, ['1032', '1037', '1', '2001'])) {
+                    // Cancelled by user or timed out
+                    $payment->update([
+                        'status' => 'failed',
+                        'result_code' => $resultCode,
+                        'result_desc' => $resultDesc,
+                    ]);
+
+                    return ['success' => true, 'is_completed' => false, 'status' => 'failed'];
+                }
+            }
+
+            return ['success' => true, 'is_completed' => false, 'status' => $payment->status];
+        } catch (\Throwable $e) {
+            Log::error('STK Query Exception', ['message' => $e->getMessage()]);
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
 }

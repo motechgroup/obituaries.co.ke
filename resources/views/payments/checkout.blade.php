@@ -17,7 +17,29 @@
     </div>
 </div>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="paymentChecker('{{ route('payments.status', $obituary->id) }}', '{{ route('payments.success', $obituary->id) }}')">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12" 
+     x-data="{ 
+         statusUrl: '{{ route('payments.status', $obituary->id) }}', 
+         redirectUrl: '{{ route('payments.success', $obituary->id) }}',
+         statusText: 'Awaiting Payment Confirmation',
+         isFailed: false,
+         init() {
+             setInterval(() => {
+                 fetch(this.statusUrl)
+                     .then(res => res.json())
+                     .then(data => {
+                         if (data.is_completed) {
+                             this.statusText = 'Payment Received! Redirecting...';
+                             window.location.href = this.redirectUrl;
+                         } else if (data.status === 'failed') {
+                             this.isFailed = true;
+                             this.statusText = 'Payment prompt was cancelled or timed out. Please try sending prompt again.';
+                         }
+                     })
+                     .catch(err => console.error(err));
+             }, 3000);
+         } 
+     }">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
         <!-- Order Summary Top Banner -->
         <div class="p-6 sm:p-8 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -83,33 +105,14 @@
             <!-- Status Indicator -->
             <div class="p-6 bg-slate-50 rounded-xl border border-slate-200 text-center space-y-3">
                 <div class="flex items-center justify-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-amber-500 animate-ping"></div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-600">Awaiting Payment Confirmation</span>
+                    <div class="w-3 h-3 rounded-full" :class="isFailed ? 'bg-rose-500' : 'bg-amber-500 animate-ping'"></div>
+                    <span class="text-xs font-semibold uppercase tracking-wider" :class="isFailed ? 'text-rose-700 font-bold' : 'text-slate-600'" x-text="statusText"></span>
                 </div>
-                <p class="text-xs text-slate-500">
-                    Once you enter your PIN, this page will automatically redirect to your confirmation receipt.
+                <p class="text-xs text-slate-500" x-show="!isFailed">
+                    Once you enter your PIN on your Safaricom phone, this page will automatically reconcile and redirect to your receipt.
                 </p>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    function paymentChecker(statusUrl, redirectUrl) {
-        return {
-            init() {
-                setInterval(() => {
-                    fetch(statusUrl)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.is_completed) {
-                                window.location.href = redirectUrl;
-                            }
-                        })
-                        .catch(err => console.error(err));
-                }, 3000);
-            }
-        }
-    }
-</script>
 @endsection

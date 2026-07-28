@@ -58,11 +58,19 @@ class PaymentController extends Controller
     {
         $payment = $obituary->latestPayment;
 
+        if ($payment && $payment->status === 'pending' && $payment->checkout_request_id) {
+            $this->mpesaService->queryStkStatus($payment);
+            $payment->refresh();
+            $obituary->refresh();
+        }
+
+        $isCompleted = in_array($obituary->status, ['pending_verification', 'published']) || ($payment && $payment->status === 'completed');
+
         return response()->json([
             'status' => $payment ? $payment->status : 'pending',
             'obituary_status' => $obituary->status,
             'receipt' => $payment ? $payment->mpesa_receipt_number : null,
-            'is_completed' => in_array($obituary->status, ['pending_verification', 'published']),
+            'is_completed' => $isCompleted,
         ]);
     }
 

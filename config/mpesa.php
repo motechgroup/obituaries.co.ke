@@ -13,10 +13,12 @@ return [
         'sandbox' => [
             'oauth' => 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
             'stkpush' => 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+            'stkquery' => 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query',
         ],
         'live' => [
             'oauth' => 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
             'stkpush' => 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+            'stkquery' => 'https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query',
         ],
     ],
 ];
