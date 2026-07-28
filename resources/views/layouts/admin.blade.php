@@ -60,28 +60,49 @@
 
                     <!-- Obituaries Directory Dropdown / Group -->
                     <div x-data="{ open: true }">
-                        <a href="{{ route('admin.obituaries.index') }}" class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.obituaries.*') ? 'bg-slate-800 text-white font-semibold border border-slate-700' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <div class="flex items-center space-x-3">
+                        <div class="flex items-center justify-between px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.obituaries.*') ? 'bg-slate-800 text-white font-semibold border border-slate-700' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <a href="{{ route('admin.obituaries.index') }}" class="flex items-center space-x-3 flex-grow">
                                 <svg class="w-5 h-5 {{ request()->routeIs('admin.obituaries.*') ? 'text-amber-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14"/>
                                 </svg>
                                 <span>Obituaries Directory</span>
+                            </a>
+                            <div class="flex items-center space-x-2">
+                                @php
+                                    $pendingVerCount = \App\Models\Obituary::where('status', 'pending_verification')->count();
+                                @endphp
+                                @if($pendingVerCount > 0)
+                                    <span class="text-xs bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+                                        {{ $pendingVerCount }}
+                                    </span>
+                                @endif
+                                <button type="button" @click="open = !open" class="text-slate-400 hover:text-white p-1 focus:outline-none">
+                                    <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
                             </div>
-                            <span class="text-xs bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
-                                {{ \App\Models\Obituary::where('status', 'pending_verification')->count() }}
-                            </span>
-                        </a>
+                        </div>
 
-                        <!-- Sub-menu Filters -->
-                        <div class="pl-11 pr-2 py-1.5 space-y-1 text-xs font-normal">
-                            <a href="{{ route('admin.obituaries.index', ['status' => 'pending_verification']) }}" class="block py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'pending_verification' ? 'text-amber-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
-                                &bull; Pending Verification
+                        <!-- Sub-menu Filters with Live Counters -->
+                        <div x-show="open" class="pl-9 pr-2 py-1.5 space-y-1 text-xs font-normal">
+                            <a href="{{ route('admin.obituaries.index', ['status' => 'pending_verification']) }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'pending_verification' ? 'text-amber-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Pending Verification</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    {{ \App\Models\Obituary::where('status', 'pending_verification')->count() }}
+                                </span>
                             </a>
-                            <a href="{{ route('admin.obituaries.index', ['status' => 'published']) }}" class="block py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'published' ? 'text-emerald-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
-                                &bull; Published Notices
+                            <a href="{{ route('admin.obituaries.index', ['status' => 'published']) }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'published' ? 'text-emerald-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Published Notices</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    {{ \App\Models\Obituary::where('status', 'published')->count() }}
+                                </span>
                             </a>
-                            <a href="{{ route('admin.obituaries.index', ['status' => 'pending_payment']) }}" class="block py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'pending_payment' ? 'text-slate-200 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
-                                &bull; Pending Payment
+                            <a href="{{ route('admin.obituaries.index', ['status' => 'pending_payment']) }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request('status') === 'pending_payment' ? 'text-slate-200 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Pending Payment</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                                    {{ \App\Models\Obituary::where('status', 'pending_payment')->count() }}
+                                </span>
                             </a>
                         </div>
                     </div>
