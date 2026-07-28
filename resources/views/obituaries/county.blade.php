@@ -73,9 +73,8 @@
                                 </div>
                             @endif
 
-                            <div class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-xs text-primary text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-outline-variant/30 flex items-center space-x-1">
-                                <span class="material-symbols-outlined text-[12px] text-amber-600">verified</span>
-                                <span>Verified</span>
+                            <div class="absolute top-2.5 right-2.5 z-10 select-none pointer-events-none" title="Verified Notice">
+                                <span class="material-symbols-outlined text-amber-400 text-[18px] sm:text-[20px] drop-shadow-md leading-none">verified</span>
                             </div>
                         </div>
 
