@@ -25,6 +25,13 @@ class BlockedIp extends Model
         $ip = $ip ?: request()->ip();
         if (empty($ip)) return false;
 
-        return self::where('ip_address', $ip)->exists();
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('blocked_ips')) {
+                return false;
+            }
+            return self::where('ip_address', $ip)->exists();
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }
