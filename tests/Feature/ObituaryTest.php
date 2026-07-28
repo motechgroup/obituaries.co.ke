@@ -147,6 +147,33 @@ class ObituaryTest extends TestCase
         ]);
     }
 
+    public function test_report_requires_reporter_email_and_phone()
+    {
+        $obituary = Obituary::create([
+            'slug' => 'report-req-test',
+            'full_name' => 'Report Req Test',
+            'date_of_birth' => '1950-01-01',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Bio for Report Req Test.',
+            'submitter_name' => 'Jane Doe',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Spouse',
+            'status' => 'published',
+            'verification_status' => 'verified',
+        ]);
+
+        $response = $this->post(route('obituaries.report', $obituary->id), [
+            'reporter_name' => 'Peter Ochieng',
+            // Missing email and phone
+            'reason' => 'inaccurate_info',
+            'details' => 'The date of birth listed is incorrect.',
+        ]);
+
+        $response->assertSessionHasErrors(['reporter_email', 'reporter_phone']);
+    }
+
     public function test_auto_publish_and_hide_poster_details_settings()
     {
         // 1. Verify poster details are hidden when show_poster_details = 0

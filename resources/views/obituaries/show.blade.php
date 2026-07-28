@@ -317,6 +317,11 @@
                         </div>
 
                         <div>
+                            <label class="block font-semibold uppercase text-on-surface-variant mb-1">Your Phone Number <span class="text-rose-500">*</span></label>
+                            <input type="tel" name="reporter_phone" required placeholder="e.g. 0712345678" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
+                        </div>
+
+                        <div>
                             <label class="block font-semibold uppercase text-on-surface-variant mb-1">Reason for Reporting <span class="text-rose-500">*</span></label>
                             <select name="reason" required class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface font-semibold">
                                 <option value="inaccurate_info">Inaccurate Dates or Details</option>

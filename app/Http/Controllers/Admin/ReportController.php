@@ -41,15 +41,17 @@ class ReportController extends Controller
         // Notify reporter via Email if email is available
         if (!empty($report->reporter_email)) {
             try {
-                $tmpl = \App\Models\Setting::get('mail_template_report_resolved', "Dear {REPORTER_NAME},\n\nYour report concerning the obituary for {DECEASED_NAME} has been reviewed and updated by our moderation team.\n\nStatus: {STATUS}\nResolution Notes: {NOTES}\n\nThank you for helping us maintain accuracy and dignity on Obituaries.co.ke.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
+                $obituaryLink = $report->obituary ? route('obituaries.show', $report->obituary->slug) : config('app.url');
+                $tmpl = \App\Models\Setting::get('mail_template_report_resolved', "Dear {REPORTER_NAME},\n\nYour report concerning the obituary notice for {DECEASED_NAME} has been reviewed and updated by our moderation team.\n\nReported Obituary Link: {LINK}\nStatus: {STATUS}\nResolution Notes: {NOTES}\n\nThank you for helping us maintain accuracy and dignity on Obituaries.co.ke.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
 
                 $body = str_replace(
-                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{STATUS}', '{NOTES}'],
+                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{STATUS}', '{NOTES}', '{LINK}'],
                     [
                         $report->reporter_name,
                         $report->obituary->full_name ?? 'Obituary Notice',
                         strtoupper($validated['status']),
-                        $validated['resolution_notes'] ?: 'Reviewed by moderation team.'
+                        $validated['resolution_notes'] ?: 'Reviewed by moderation team.',
+                        $obituaryLink
                     ],
                     $tmpl
                 );
@@ -57,7 +59,9 @@ class ReportController extends Controller
                 \App\Services\MailService::sendHtmlEmail(
                     $report->reporter_email,
                     "Report Status Update: Obituary Notice #{$report->obituary_id}",
-                    $body
+                    $body,
+                    $obituaryLink,
+                    'View Reported Obituary Notice'
                 );
             } catch (\Throwable $e) {}
         }

@@ -15,7 +15,7 @@ class ReportController extends Controller
         $validated = $request->validate([
             'reporter_name' => ['required', 'string', 'max:255'],
             'reporter_email' => ['required', 'email', 'max:255'],
-            'reporter_phone' => ['nullable', 'string', 'max:50'],
+            'reporter_phone' => ['required', 'string', 'max:50'],
             'reason' => ['required', 'string', 'in:inaccurate_info,impersonation,unauthorized_post,copyright_violation,offensive_content,other'],
             'details' => ['required', 'string', 'min:3', 'max:2000'],
         ]);
@@ -31,7 +31,7 @@ class ReportController extends Controller
             'obituary_id' => $obituary->id,
             'reporter_name' => $validated['reporter_name'],
             'reporter_email' => $validated['reporter_email'],
-            'reporter_phone' => $validated['reporter_phone'] ?? null,
+            'reporter_phone' => $validated['reporter_phone'],
             'reason' => $validated['reason'],
             'details' => $validated['details'],
             'status' => 'pending',
@@ -40,18 +40,19 @@ class ReportController extends Controller
         // Dispatch Confirmation Email to Reporter
         if (!empty($validated['reporter_email'])) {
             try {
-                $tmpl = \App\Models\Setting::get('mail_template_report_ack', "Dear {REPORTER_NAME},\n\nThank you for submitting a report regarding the obituary for {DECEASED_NAME}.\n\nOur editorial and moderation team has received your report regarding '{REASON}' and is actively investigating the matter. We will notify you once a determination is made.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
+                $obituaryLink = route('obituaries.show', $obituary->slug);
+                $tmpl = \App\Models\Setting::get('mail_template_report_ack', "Dear {REPORTER_NAME},\n\nThank you for submitting a report regarding the obituary notice for {DECEASED_NAME}.\n\nReported Obituary Link: {LINK}\n\nOur editorial and moderation team has received your report regarding '{REASON}' and is actively investigating the matter. We will notify you once a determination is made.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
                 $body = str_replace(
-                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{REASON}'],
-                    [$validated['reporter_name'], $obituary->full_name, ucfirst(str_replace('_', ' ', $validated['reason']))],
+                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{REASON}', '{LINK}'],
+                    [$validated['reporter_name'], $obituary->full_name, ucfirst(str_replace('_', ' ', $validated['reason'])), $obituaryLink],
                     $tmpl
                 );
                 \App\Services\MailService::sendHtmlEmail(
                     $validated['reporter_email'],
                     "Report Received: Obituary Notice for {$obituary->full_name}",
                     $body,
-                    route('obituaries.show', $obituary->slug),
-                    'View Obituary Notice'
+                    $obituaryLink,
+                    'View Reported Obituary Notice'
                 );
             } catch (\Throwable $e) {}
         }
