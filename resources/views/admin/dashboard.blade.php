@@ -34,9 +34,9 @@
                     </button>
                 </form>
             @else
-                <a href="{{ route('admin.obituaries.create') }}" class="inline-flex items-center space-x-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
-                    <span class="material-symbols-outlined text-[16px]">add</span>
-                    <span>Create Obituary</span>
+                <a href="{{ route('admin.obituaries.create') }}" style="background-color: #b45309 !important; color: #ffffff !important;" class="inline-flex items-center space-x-1.5 px-4 py-2.5 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm border border-amber-800">
+                    <span class="material-symbols-outlined text-[16px] text-amber-300">add</span>
+                    <span class="text-white font-extrabold">Create Obituary</span>
                 </a>
             @endif
 

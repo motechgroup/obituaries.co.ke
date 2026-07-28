@@ -11,9 +11,9 @@
             <p class="text-slate-500 text-sm mt-1">Filter, inspect, verify, publish, and manually create obituary notices.</p>
         </div>
 
-        <a href="{{ route('admin.obituaries.create') }}" class="px-5 py-2.5 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center space-x-2 self-start sm:self-auto">
-            <span class="text-base font-bold">+</span>
-            <span>Add New Obituary (No Payment)</span>
+        <a href="{{ route('admin.obituaries.create') }}" style="background-color: #b45309 !important; color: #ffffff !important;" class="px-6 py-3 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-extrabold shadow-md transition-all flex items-center space-x-2 self-start sm:self-auto border border-amber-800">
+            <span class="text-amber-300 text-base font-black">+</span>
+            <span class="text-white font-extrabold">Add New Obituary (No Payment)</span>
         </a>
     </div>
 
