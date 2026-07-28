@@ -104,7 +104,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/reports/{report}/resolve', [AdminReportController::class, 'resolve'])->name('reports.resolve');
         Route::delete('/reports/{report}', [AdminReportController::class, 'destroy'])->name('reports.destroy');
 
-        // Admin Payment Audit Logs
+        // Admin Payment Audit Logs & Finance Reports
+        Route::get('/payments/export', [AdminPaymentController::class, 'export'])->name('payments.export');
         Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
 
         // Admin Staff & Roles Management

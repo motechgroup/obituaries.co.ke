@@ -174,4 +174,53 @@ class ObituaryTest extends TestCase
         $response2 = $this->get('/obituary/' . $obituary->slug);
         $response2->assertSee('Submitted with love by Secret Submitter Name');
     }
+
+    public function test_admin_can_view_finance_reports_and_export_csv()
+    {
+        $admin = Admin::create([
+            'name' => 'Finance Admin',
+            'email' => 'finance@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $obituary = Obituary::create([
+            'slug' => 'finance-test-mzee',
+            'full_name' => 'Finance Test Mzee',
+            'date_of_birth' => '1950-01-01',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Bio for Finance Test Mzee.',
+            'submitter_name' => 'Jane Submitter',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Spouse',
+            'status' => 'published',
+            'verification_status' => 'verified',
+        ]);
+
+        Payment::create([
+            'obituary_id' => $obituary->id,
+            'phone_number' => '254712345678',
+            'amount' => 500.00,
+            'mpesa_receipt_number' => 'QGH1234567',
+            'checkout_request_id' => 'ws_CO_12345',
+            'status' => 'completed',
+        ]);
+
+        // Access Finance Reports Dashboard
+        $response = $this->actingAs($admin, 'admin')->get('/admin/payments');
+        $response->assertStatus(200);
+        $response->assertSee('Finance Reports, Analytics & Audit Log', false);
+        $response->assertSee('KES 500.00');
+
+        // Export CSV
+        $exportResponse = $this->actingAs($admin, 'admin')->get('/admin/payments/export');
+        $exportResponse->assertStatus(200);
+        $exportResponse->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+        
+        ob_start();
+        $exportResponse->sendContent();
+        $csvContent = ob_get_clean();
+        $this->assertStringContainsString('QGH1234567', $csvContent);
+    }
 }
