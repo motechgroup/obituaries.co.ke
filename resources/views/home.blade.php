@@ -42,7 +42,7 @@
     </div>
 </section>
 
-<!-- Dark Obituaries Directory Section (2 Rows, Clean Layout, Truncated Text) -->
+<!-- Dark Obituaries Directory Section (Posted Today / Latest Notices) -->
 <section class="w-full bg-[#0B101D] border-y border-slate-800/80 py-5 sm:py-6 overflow-hidden">
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
         <!-- Directory Header Badge -->
@@ -50,7 +50,7 @@
             <div class="flex items-center space-x-2">
                 <span class="px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-amber-500/20 flex items-center space-x-1.5">
                     <span class="material-symbols-outlined text-[14px]">church</span>
-                    <span>OBITUARIES DIRECTORY</span>
+                    <span>LATEST NOTICES (POSTED TODAY)</span>
                 </span>
             </div>
             <a href="{{ route('obituaries.search') }}" class="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-amber-400 transition-colors flex items-center space-x-1">
@@ -60,7 +60,7 @@
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 py-1">
-            @forelse($latestObituaries as $obituary)
+            @forelse($todayNotices as $obituary)
                 <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3 sm:space-x-3.5 group transition-opacity hover:opacity-90 min-w-0">
                     <!-- Thumbnail Avatar -->
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
@@ -84,13 +84,13 @@
                     </div>
                 </a>
             @empty
-                <div class="text-slate-400 text-xs py-2 italic">No published notices available in directory.</div>
+                <div class="text-slate-400 text-xs py-2 italic">No published notices posted today yet.</div>
             @endforelse
         </div>
     </div>
 </section>
 
-<!-- Latest Obituaries (Editorial Grid matching Stitch Design) -->
+<!-- Recent Tributes Section (Notices At Least 2 Days Old) -->
 <section class="w-full py-12 sm:py-20 bg-surface">
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div class="flex flex-row justify-between items-end mb-8 sm:mb-12">
@@ -105,7 +105,7 @@
             </a>
         </div>
 
-        @if($latestObituaries->isEmpty())
+        @if($recentNotices->isEmpty())
             <div class="bg-surface-container-lowest rounded-2xl p-8 sm:p-12 text-center border border-outline-variant/30 max-w-xl mx-auto">
                 <span class="material-symbols-outlined text-[40px] sm:text-[48px] text-on-surface-variant/40 mb-3">auto_stories</span>
                 <h3 class="font-serif text-lg sm:text-xl font-bold text-primary mb-2">No Published Obituaries Yet</h3>
@@ -116,7 +116,7 @@
             </div>
         @else
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-                @foreach($latestObituaries as $obituary)
+                @foreach($recentNotices as $obituary)
                     <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-surface-container-lowest p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-outline-variant/20 block cursor-pointer">
                         <div>
                             <!-- Compact Square Aspect Image Container -->
@@ -231,55 +231,76 @@
     </div>
 </section>
 
-<!-- Search & Filter Section matching Stitch Design -->
-<section class="w-full py-14 sm:py-20 bg-primary text-on-primary overflow-hidden relative" id="search-archives">
+<!-- Obituaries Directory Section (Random Notices Cards Grid Replaces Search) -->
+<section class="w-full py-14 sm:py-20 bg-slate-950 text-white overflow-hidden relative border-t border-slate-800/80" id="obituaries-directory">
     <!-- Background Accents -->
-    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-[100px]"></div>
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-amber-500/5 to-transparent pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]"></div>
 
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10">
-        <div class="max-w-4xl mx-auto text-center mb-8 sm:mb-12">
-            <h2 class="font-serif text-2xl sm:text-4xl font-bold mb-2 sm:mb-4">Search the Archives</h2>
-            <p class="text-xs sm:text-sm text-primary-fixed/70">Find and honor the legacies of those who have passed across Kenya.</p>
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-12 gap-4 border-b border-slate-800/80 pb-6">
+            <div>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider mb-2.5 border border-amber-500/20">
+                    <span class="material-symbols-outlined text-[16px]">church</span>
+                    <span>Obituaries Directory</span>
+                </div>
+                <h2 class="font-serif text-2xl sm:text-4xl font-bold text-white mb-2">Explore Memorial Directory</h2>
+                <p class="text-xs sm:text-sm text-slate-400">Discover and honor memorial notices & tributes across Kenya.</p>
+            </div>
+            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-1 sm:gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors">
+                <span>View Full Archives &rarr;</span>
+            </a>
         </div>
 
-        <div class="bg-surface-container-lowest/10 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-[2rem] shadow-2xl border border-white/10">
-            <form action="{{ route('obituaries.search') }}" method="GET" class="flex flex-col md:flex-row gap-2.5 sm:gap-3">
-                <!-- Name Search -->
-                <div class="flex-1 relative flex items-center px-4 py-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-                    <span class="material-symbols-outlined text-primary-fixed/40 mr-2.5 text-[20px]">search</span>
-                    <input type="text" name="name" value="{{ request('name') }}" placeholder="Search by name..." class="bg-transparent border-none outline-none w-full text-xs sm:text-sm text-on-primary placeholder-primary-fixed/40">
-                </div>
+        @if($randomNotices->isEmpty())
+            <div class="text-center py-12 text-slate-400 text-xs italic">
+                No obituaries available in directory.
+            </div>
+        @else
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                @foreach($randomNotices as $obituary)
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-slate-900/90 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-slate-800 cursor-pointer">
+                        <div>
+                            <!-- Compact Square Aspect Image Container -->
+                            <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-slate-800 select-none">
+                                @if($obituary->photo)
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
+                                    
+                                    <!-- Translucent Glass Watermark Overlay -->
+                                    <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
+                                        <span class="font-serif font-black text-[8px] sm:text-[10px] tracking-[0.14em] select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.65); -webkit-text-fill-color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">Obituaries.co.ke</span>
+                                    </div>
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-b from-amber-950 to-slate-900 flex flex-col items-center justify-center p-3 text-center text-amber-100">
+                                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex items-center justify-center text-amber-300 mb-1">
+                                            <span class="material-symbols-outlined text-[18px] sm:text-[22px]">church</span>
+                                        </div>
+                                        <span class="font-serif text-[9px] sm:text-[10px] italic">In Loving Memory</span>
+                                    </div>
+                                @endif
 
-                <!-- County Select -->
-                <div class="flex-1 relative flex items-center px-4 py-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-                    <span class="material-symbols-outlined text-primary-fixed/40 mr-2.5 text-[20px]">location_on</span>
-                    <select name="county" class="bg-transparent border-none outline-none w-full text-xs sm:text-sm text-on-primary appearance-none cursor-pointer">
-                        <option value="" class="bg-slate-900 text-white">All Counties</option>
-                        @foreach($counties as $c)
-                            <option value="{{ $c }}" class="bg-slate-900 text-white" {{ request('county') == $c ? 'selected' : '' }}>{{ $c }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                                <div class="absolute top-2 right-2 z-10 select-none pointer-events-none" title="Verified Notice">
+                                    <span class="material-symbols-outlined text-amber-400 text-[18px] sm:text-[20px] drop-shadow-md leading-none">verified</span>
+                                </div>
+                            </div>
 
-                <!-- Year Select -->
-                <div class="flex-1 relative flex items-center px-4 py-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-                    <span class="material-symbols-outlined text-primary-fixed/40 mr-2.5 text-[20px]">calendar_month</span>
-                    <select name="year" class="bg-transparent border-none outline-none w-full text-xs sm:text-sm text-on-primary appearance-none cursor-pointer">
-                        <option value="" class="bg-slate-900 text-white">All Years</option>
-                        @for($y = date('Y'); $y >= 2000; $y--)
-                            <option value="{{ $y }}" class="bg-slate-900 text-white" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
-                </div>
-
-                <!-- Submit Search -->
-                <button type="submit" class="bg-secondary-fixed text-on-secondary-fixed px-6 sm:px-8 py-3.5 rounded-xl md:rounded-2xl font-bold text-xs hover:bg-secondary hover:text-white transition-all flex items-center justify-center space-x-2 w-full md:w-auto">
-                    <span class="material-symbols-outlined text-[18px]">search</span>
-                    <span>Search Now</span>
-                </button>
-            </form>
-        </div>
+                            <div class="text-center">
+                                <span class="text-[9px] sm:text-[10px] font-semibold text-amber-400 tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-xs sm:text-base font-bold text-white mb-0.5 group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                                <p class="text-[10px] text-slate-400 italic">
+                                    @if($obituary->date_of_birth)
+                                        {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
+                                        @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
+                                    @else
+                                        Passed Away: {{ $obituary->date_of_death->format('M j, Y') }}
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @endif
     </div>
 </section>
 

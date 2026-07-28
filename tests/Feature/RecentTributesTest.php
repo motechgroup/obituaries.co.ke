@@ -10,9 +10,9 @@ class RecentTributesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_notices_older_than_one_day_do_not_appear_as_recent_when_newer_notices_exist()
+    public function test_today_notices_shows_notices_posted_today_and_recent_notices_shows_notices_at_least_two_days_old()
     {
-        // 1. Notice posted 2 days ago (1+ day old)
+        // 1. Notice posted 3 days ago (at least 2 days old)
         $oldNotice = Obituary::create([
             'slug' => 'old-notice-test',
             'full_name' => 'Old Notice Deceased',
@@ -25,17 +25,17 @@ class RecentTributesTest extends TestCase
             'relationship' => 'Son',
             'status' => 'published',
         ]);
-        $oldNotice->created_at = now()->subDays(2);
+        $oldNotice->created_at = now()->subDays(3);
         $oldNotice->save(['timestamps' => false]);
 
-        // 2. Notice posted 2 hours ago (< 1 day old)
-        $recentNotice = Obituary::create([
-            'slug' => 'recent-notice-test',
-            'full_name' => 'Recent Notice Deceased',
+        // 2. Notice posted 2 hours ago (posted today)
+        $todayNotice = Obituary::create([
+            'slug' => 'today-notice-test',
+            'full_name' => 'Today Notice Deceased',
             'date_of_death' => '2026-07-28',
             'county' => 'Nairobi',
             'town' => 'Kilimani',
-            'biography' => 'Biography for recent notice test.',
+            'biography' => 'Biography for today notice test.',
             'submitter_name' => 'Jane Submitter',
             'submitter_phone' => '0733000000',
             'relationship' => 'Daughter',
@@ -46,8 +46,10 @@ class RecentTributesTest extends TestCase
         $response = $this->get(route('home'));
         $response->assertStatus(200);
 
-        $latestObituaries = $response->viewData('latestObituaries');
-        $this->assertTrue($latestObituaries->contains($recentNotice));
-        $this->assertFalse($latestObituaries->contains($oldNotice));
+        $todayNotices = $response->viewData('todayNotices');
+        $recentNotices = $response->viewData('recentNotices');
+
+        $this->assertTrue($todayNotices->contains($todayNotice));
+        $this->assertTrue($recentNotices->contains($oldNotice));
     }
 }
