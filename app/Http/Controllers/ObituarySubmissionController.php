@@ -40,6 +40,10 @@ class ObituarySubmissionController extends Controller
             $request->merge(['date_of_birth' => $dobInput]);
         }
 
+        if ($request->has('biography')) {
+            $request->merge(['biography' => strip_tags($request->input('biography', ''))]);
+        }
+
         $validated = $request->validate([
             // Step 1: Deceased Info
             'full_name' => ['required', 'string', 'max:255'],
@@ -101,11 +105,11 @@ class ObituarySubmissionController extends Controller
             'full_name' => $validated['full_name'],
             'photo' => $photoPath,
             'gallery_images' => $galleryPaths,
-            'date_of_birth' => $validated['date_of_birth'],
+            'date_of_birth' => $validated['date_of_birth'] ?? null,
             'date_of_death' => $validated['date_of_death'],
             'county' => $validated['county'],
             'town' => $validated['town'],
-            'biography' => $validated['biography'],
+            'biography' => strip_tags($validated['biography']),
             'funeral_date' => $validated['funeral_date'] ?? null,
             'burial_location' => $validated['burial_location'] ?? null,
             'church_service_location' => $validated['church_service_location'] ?? null,

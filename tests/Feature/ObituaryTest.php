@@ -462,4 +462,52 @@ class ObituaryTest extends TestCase
         $this->assertStringContainsString('father', $obituary->seo_keywords);
         $this->assertStringContainsString('Mzee Daniel Kipruto Obituary & Death Notice | Obituaries.co.ke', $obituary->meta_title);
     }
+
+    public function test_visitor_cannot_format_biography_but_admin_and_editor_can()
+    {
+        $editor = Admin::create([
+            'name' => 'Formatting Editor',
+            'email' => 'formatting_editor@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'editor',
+        ]);
+
+        // 1. Admin/Editor creates obituary with HTML formatting -> Preserved safely
+        $adminBio = '<h3>Early Life</h3><p>Mzee was born in <b>1940</b>.</p><ul><li>Farmer</li></ul>';
+        $adminResponse = $this->actingAs($editor, 'admin')->post(route('admin.obituaries.store'), [
+            'full_name' => 'Mzee Formatted Bio',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Kiambu',
+            'town' => 'Thika',
+            'biography' => $adminBio,
+            'submitter_name' => 'Editor Team',
+            'submitter_phone' => '0700000000',
+            'relationship' => 'Family Representative',
+            'status' => 'published',
+        ]);
+
+        $obituary = Obituary::where('full_name', 'Mzee Formatted Bio')->first();
+        $this->assertStringContainsString('<h3>Early Life</h3>', $obituary->biography);
+        $this->assertStringContainsString('<b>1940</b>', $obituary->biography);
+
+        // 2. Public Visitor submits obituary with HTML tags -> HTML tags are stripped
+        auth('admin')->logout();
+        $visitorResponse = $this->post(route('obituaries.store'), [
+            'full_name' => 'Mzee Visitor Submission',
+            'date_of_death' => '2026-05-01',
+            'county' => 'Nairobi',
+            'town' => 'Kilimani',
+            'biography' => '<b>Bold Text</b> <script>alert("xss")</script> Standard biography line here for testing.',
+            'submitter_name' => 'Jane Visitor',
+            'submitter_phone' => '0712345678',
+            'relationship' => 'Child',
+            'family_permission_confirmed' => '1',
+        ]);
+        $visitorResponse->assertSessionHasNoErrors();
+
+        $visitorObituary = Obituary::where('full_name', 'Mzee Visitor Submission')->first();
+        $this->assertStringNotContainsString('<b>', $visitorObituary->biography);
+        $this->assertStringNotContainsString('<script>', $visitorObituary->biography);
+        $this->assertEquals('Bold Text alert("xss") Standard biography line here for testing.', $visitorObituary->biography);
+    }
 }

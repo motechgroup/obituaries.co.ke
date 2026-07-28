@@ -136,8 +136,12 @@
                 <span class="flex-1 h-[1px] bg-surface-container-high"></span>
             </h2>
 
-            <div class="prose max-w-none text-on-surface text-base sm:text-lg leading-relaxed font-serif break-words break-all overflow-hidden">
-                {!! nl2br(e($obituary->biography)) !!}
+            <div class="prose max-w-none text-on-surface text-base sm:text-lg leading-relaxed font-serif break-words overflow-hidden space-y-4">
+                @if(strip_tags($obituary->biography) !== $obituary->biography)
+                    {!! \App\Helpers\StorageHelper::sanitizeHtml($obituary->biography) !!}
+                @else
+                    {!! nl2br(e($obituary->biography)) !!}
+                @endif
             </div>
 
             <!-- Featured Pull Quote Box -->

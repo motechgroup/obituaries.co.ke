@@ -47,4 +47,25 @@ class StorageHelper
             // Silently handle exceptions
         }
     }
+
+    /**
+     * Sanitizes HTML content allowing safe formatting tags for Admin/Editor obituary tributes.
+     */
+    public static function sanitizeHtml(?string $html): string
+    {
+        if (empty($html)) {
+            return '';
+        }
+
+        // Allowed formatting tags: bold, italics, underline, headings, lists, quotes, breaks, paragraphs
+        $allowedTags = '<b><i><u><strong><em><p><br><ul><ol><li><h3><h4><h5><blockquote><span><div>';
+        
+        $cleaned = strip_tags($html, $allowedTags);
+        
+        // Remove dangerous inline JS attributes
+        $cleaned = preg_replace('/on[a-z]+\s*=\s*(["\']).*?\1/i', '', $cleaned);
+        $cleaned = preg_replace('/javascript\s*:/i', '', $cleaned);
+
+        return $cleaned;
+    }
 }

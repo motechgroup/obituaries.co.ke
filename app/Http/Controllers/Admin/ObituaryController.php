@@ -104,6 +104,9 @@ class ObituaryController extends Controller
             $validated['programme_file'] = \App\Helpers\StorageHelper::savePublicFile($request->file('programme_file'), 'obituaries/programmes');
         }
 
+        // Allow rich formatting for Admin/Editor biography
+        $validated['biography'] = \App\Helpers\StorageHelper::sanitizeHtml($validated['biography']);
+
         // Admin submissions auto-verify and skip payment completely
         $validated['verification_status'] = ($validated['status'] === 'published') ? 'verified' : 'pending';
         $validated['verified_by'] = Auth::guard('admin')->id();
@@ -186,6 +189,9 @@ class ObituaryController extends Controller
         if ($request->hasFile('programme_file')) {
             $validated['programme_file'] = \App\Helpers\StorageHelper::savePublicFile($request->file('programme_file'), 'obituaries/programmes');
         }
+
+        // Allow rich formatting for Admin/Editor biography
+        $validated['biography'] = \App\Helpers\StorageHelper::sanitizeHtml($validated['biography']);
 
         $obituary->update($validated);
 
