@@ -56,11 +56,15 @@ class Obituary extends Model
                 $obituary->seo_keywords = $obituary->generateSeoKeywords();
             }
             if (empty($obituary->meta_title)) {
-                $obituary->meta_title = "{$obituary->full_name} Obituary & Death Notice | Obituaries.co.ke";
+                $cleanName = strip_tags($obituary->full_name);
+                $obituary->meta_title = Str::limit("{$cleanName} Obituary & Death Notice | Obituaries.co.ke", 250, '');
             }
             if (empty($obituary->meta_description)) {
+                $cleanName = strip_tags($obituary->full_name);
+                $cleanTown = strip_tags($obituary->town);
+                $cleanCounty = strip_tags($obituary->county);
                 $deathDate = $obituary->date_of_death ? $obituary->date_of_death->format('M j, Y') : '';
-                $obituary->meta_description = "In loving memory of {$obituary->full_name} from {$obituary->town}, {$obituary->county} Kenya. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.";
+                $obituary->meta_description = Str::limit("In loving memory of {$cleanName} from {$cleanTown}, {$cleanCounty} Kenya. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.", 480, '');
             }
         });
     }
@@ -69,27 +73,31 @@ class Obituary extends Model
     {
         $keywords = [];
 
-        $name = trim($this->full_name);
+        $name = trim(strip_tags($this->full_name));
         $keywords[] = "{$name} obituary";
         $keywords[] = "{$name} death notice";
         $keywords[] = "{$name} funeral";
         $keywords[] = "{$name} Kenya";
 
         if (!empty($this->county)) {
-            $keywords[] = "{$name} {$this->county}";
-            $keywords[] = "obituary {$this->county} county";
+            $cleanCounty = strip_tags($this->county);
+            $keywords[] = "{$name} {$cleanCounty}";
+            $keywords[] = "obituary {$cleanCounty} county";
         }
 
         if (!empty($this->town)) {
-            $keywords[] = "{$name} {$this->town}";
+            $cleanTown = strip_tags($this->town);
+            $keywords[] = "{$name} {$cleanTown}";
         }
 
         if (!empty($this->burial_location)) {
-            $keywords[] = "{$this->burial_location} funeral";
+            $cleanBurial = strip_tags($this->burial_location);
+            $keywords[] = "{$cleanBurial} funeral";
         }
 
         if (!empty($this->church_service_location)) {
-            $keywords[] = "{$this->church_service_location}";
+            $cleanChurch = strip_tags($this->church_service_location);
+            $keywords[] = "{$cleanChurch}";
         }
 
         $keywords[] = "Kenya obituaries";
@@ -97,8 +105,8 @@ class Obituary extends Model
         $keywords[] = "online memorial Kenya";
 
         if (!empty($this->biography)) {
-            $bioText = strtolower($this->biography);
-            $familyTerms = ['father', 'mother', 'husband', 'wife', 'son', 'daughter', 'brother', 'sister', 'grandfather', 'grandmother', 'mzee', 'mama', 'elder', 'dr', 'prof', 'hon'];
+            $bioText = strtolower(strip_tags($this->biography));
+            $familyTerms = ['father', 'mother', 'husband', 'wife', 'son', 'daughter', 'brother', 'sister', 'grandfather', 'grandmother', 'mzee', 'mama', 'elder', 'dr', 'prof', 'hon', 'engineer', 'eng'];
             foreach ($familyTerms as $term) {
                 if (str_contains($bioText, $term)) {
                     $keywords[] = "{$name} {$term}";
