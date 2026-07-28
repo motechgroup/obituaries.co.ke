@@ -183,9 +183,10 @@
 
             <!-- Submit Buttons -->
             <div class="pt-6 border-t border-slate-200 flex items-center justify-end space-x-4">
-                <a href="{{ route('admin.obituaries.index') }}" class="px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 transition-all">Cancel</a>
-                <button type="submit" class="px-8 py-3 bg-amber-700 text-white rounded-xl text-xs font-bold hover:bg-amber-800 transition-all shadow-md flex items-center space-x-2">
-                    <span>⚡ Publish Obituary (Admin Submission)</span>
+                <a href="{{ route('admin.obituaries.index') }}" class="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 transition-all">Cancel</a>
+                <button type="submit" style="background-color: #b45309 !important; color: #ffffff !important;" class="px-8 py-3 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-sm font-extrabold transition-all shadow-md flex items-center space-x-2 border border-amber-800">
+                    <span class="text-amber-300 text-base font-black">⚡</span>
+                    <span class="text-white font-extrabold">Publish Obituary (Admin Submission)</span>
                 </button>
             </div>
         </form>
