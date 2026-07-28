@@ -62,10 +62,10 @@
                             @if($obituary->photo)
                                 <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} obituary photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none">
                                 
-                                <!-- Translucent Liquid Glass Watermark Overlay (Chest Level) -->
-                                <div class="absolute inset-x-0 bottom-2 sm:bottom-3 flex justify-center pointer-events-none z-10 select-none">
-                                    <span class="font-serif font-black text-[9px] sm:text-[11px] tracking-[0.16em] uppercase text-transparent bg-clip-text bg-gradient-to-b from-white via-white/70 to-white/90 opacity-70 transform -rotate-6 select-none pointer-events-none" style="text-shadow: 0 1px 2px rgba(255,255,255,0.9), 0 -1px 3px rgba(0,0,0,0.6), 0 0 6px rgba(255,255,255,0.7); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">
-                                        Obituaries<span class="text-amber-200/90">.co.ke</span>
+                                <!-- Translucent Glass Watermark Overlay (Chest Level) -->
+                                <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
+                                    <span class="font-serif font-black text-[9px] sm:text-[11px] tracking-[0.16em] uppercase select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.55); -webkit-text-fill-color: rgba(255, 255, 255, 0.55); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">
+                                        Obituaries<span style="color: rgba(254, 243, 199, 0.7); -webkit-text-fill-color: rgba(254, 243, 199, 0.7);">.co.ke</span>
                                     </span>
                                 </div>
                             @else
