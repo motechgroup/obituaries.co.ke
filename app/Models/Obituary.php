@@ -59,6 +59,8 @@ class Obituary extends Model
         static::saving(function (Obituary $obituary) {
             if (empty($obituary->seo_keywords)) {
                 $obituary->seo_keywords = $obituary->generateSeoKeywords();
+            } else {
+                $obituary->seo_keywords = static::formatAndTruncateSeoKeywords($obituary->seo_keywords);
             }
             if (empty($obituary->meta_title)) {
                 $cleanName = strip_tags($obituary->full_name);
@@ -72,6 +74,27 @@ class Obituary extends Model
                 $obituary->meta_description = Str::limit("In loving memory of {$cleanName} from {$cleanTown}, {$cleanCounty} Kenya. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.", 480, '');
             }
         });
+    }
+
+    public static function formatAndTruncateSeoKeywords(string $keywordsString): string
+    {
+        $keywords = array_filter(array_map('trim', explode(',', $keywordsString)));
+        $keywords = array_values(array_unique($keywords));
+
+        // Limit to maximum of 10 keywords
+        $keywords = array_slice($keywords, 0, 10);
+
+        $result = implode(', ', $keywords);
+
+        // Truncate to maximum of 255 characters
+        if (mb_strlen($result) > 255) {
+            $result = mb_substr($result, 0, 255);
+            if (str_contains($result, ',')) {
+                $result = substr($result, 0, strrpos($result, ','));
+            }
+        }
+
+        return trim($result);
     }
 
     public function generateSeoKeywords(): string
@@ -95,6 +118,16 @@ class Obituary extends Model
             $keywords[] = "{$name} {$cleanTown}";
         }
 
+        if (!empty($this->biography)) {
+            $bioText = strtolower(strip_tags($this->biography));
+            $familyTerms = ['father', 'mother', 'husband', 'wife', 'son', 'daughter', 'brother', 'sister', 'grandfather', 'grandmother', 'mzee', 'mama', 'elder', 'dr', 'prof', 'hon', 'engineer', 'eng'];
+            foreach ($familyTerms as $term) {
+                if (str_contains($bioText, $term)) {
+                    $keywords[] = "{$name} {$term}";
+                }
+            }
+        }
+
         if (!empty($this->burial_location)) {
             $cleanBurial = strip_tags($this->burial_location);
             $keywords[] = "{$cleanBurial} funeral";
@@ -109,17 +142,8 @@ class Obituary extends Model
         $keywords[] = "Kenyan death announcements";
         $keywords[] = "online memorial Kenya";
 
-        if (!empty($this->biography)) {
-            $bioText = strtolower(strip_tags($this->biography));
-            $familyTerms = ['father', 'mother', 'husband', 'wife', 'son', 'daughter', 'brother', 'sister', 'grandfather', 'grandmother', 'mzee', 'mama', 'elder', 'dr', 'prof', 'hon', 'engineer', 'eng'];
-            foreach ($familyTerms as $term) {
-                if (str_contains($bioText, $term)) {
-                    $keywords[] = "{$name} {$term}";
-                }
-            }
-        }
-
-        return implode(', ', array_unique($keywords));
+        $rawString = implode(', ', array_unique($keywords));
+        return static::formatAndTruncateSeoKeywords($rawString);
     }
 
     public static function generateUniqueSlug(string $name): string

@@ -709,4 +709,15 @@ class ObituaryTest extends TestCase
         $this->assertEquals('1995-04-15', $obituary->date_of_birth->format('Y-m-d'));
         $this->assertEquals('2026-07-20', $obituary->date_of_death->format('Y-m-d'));
     }
+
+    public function test_seo_keywords_are_truncated_to_max_10_items_and_255_chars()
+    {
+        $longKeywords = 'kw1, kw2, kw3, kw4, kw5, kw6, kw7, kw8, kw9, kw10, kw11, kw12, kw13, kw14, kw15';
+        $formatted = Obituary::formatAndTruncateSeoKeywords($longKeywords);
+
+        $items = explode(',', $formatted);
+        $this->assertLessThanOrEqual(10, count($items));
+        $this->assertLessThanOrEqual(255, mb_strlen($formatted));
+        $this->assertEquals('kw1, kw2, kw3, kw4, kw5, kw6, kw7, kw8, kw9, kw10', $formatted);
+    }
 }

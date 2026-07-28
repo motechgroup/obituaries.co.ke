@@ -71,7 +71,7 @@ class ObituaryController extends Controller
             'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
-            'seo_keywords' => ['nullable', 'string', 'max:255'],
+            'seo_keywords' => ['nullable', 'string'],
             'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -199,7 +199,7 @@ class ObituaryController extends Controller
             'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
-            'seo_keywords' => ['nullable', 'string', 'max:255'],
+            'seo_keywords' => ['nullable', 'string'],
             'canonical_url' => ['nullable', 'string', 'max:255'],
             'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
