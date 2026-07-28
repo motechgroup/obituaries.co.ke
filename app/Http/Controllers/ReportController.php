@@ -27,7 +27,7 @@ class ReportController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        ObituaryReport::create([
+        $report = ObituaryReport::create([
             'obituary_id' => $obituary->id,
             'reporter_name' => $validated['reporter_name'],
             'reporter_email' => $validated['reporter_email'],
@@ -41,7 +41,7 @@ class ReportController extends Controller
         if (!empty($validated['reporter_email'])) {
             try {
                 \App\Services\MailService::configure();
-                $tmpl = \App\Models\Setting::get('mail_template_report_ack', "Dear {REPORTER_NAME},\n\nThank you for submitting a report regarding the obituary for {DECEASED_NAME}.\n\nOur editorial and moderation team has received your report and is investigating the matter. We will notify you once a determination is made.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
+                $tmpl = \App\Models\Setting::get('mail_template_report_ack', "Dear {REPORTER_NAME},\n\nThank you for submitting a report regarding the obituary for {DECEASED_NAME}.\n\nOur editorial and moderation team has received your report regarding '{REASON}' and is actively investigating the matter. We will notify you once a determination is made.\n\nWarm regards,\nObituaries.co.ke Moderation Team");
                 $body = str_replace(
                     ['{REPORTER_NAME}', '{DECEASED_NAME}', '{REASON}'],
                     [$validated['reporter_name'], $obituary->full_name, ucfirst(str_replace('_', ' ', $validated['reason']))],
@@ -51,6 +51,19 @@ class ReportController extends Controller
                     $msg->to($validated['reporter_email'])
                         ->subject("Report Received: Obituary for {$obituary->full_name}");
                 });
+            } catch (\Throwable $e) {}
+        }
+
+        // Dispatch Confirmation SMS to Reporter if phone provided
+        if (!empty($validated['reporter_phone'])) {
+            try {
+                $smsTmpl = \App\Models\Setting::get('sms_template_report_ack', "Dear {REPORTER_NAME}, your report regarding {DECEASED_NAME}'s obituary notice has been received. Ref #{REPORT_ID}.");
+                $smsMessage = str_replace(
+                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{REPORT_ID}'],
+                    [$validated['reporter_name'], $obituary->full_name, $report->id],
+                    $smsTmpl
+                );
+                \App\Services\SmsService::send($validated['reporter_phone'], $smsMessage);
             } catch (\Throwable $e) {}
         }
 

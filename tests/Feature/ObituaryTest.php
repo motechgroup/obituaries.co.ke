@@ -132,6 +132,7 @@ class ObituaryTest extends TestCase
         $response = $this->post(route('obituaries.report', $obituary->id), [
             'reporter_name' => 'Peter Ochieng',
             'reporter_email' => 'peter@example.com',
+            'reporter_phone' => '0712345678',
             'reason' => 'inaccurate_info',
             'details' => 'The date of birth listed is incorrect.',
         ]);
@@ -141,6 +142,7 @@ class ObituaryTest extends TestCase
             'obituary_id' => $obituary->id,
             'reporter_name' => 'Peter Ochieng',
             'reporter_email' => 'peter@example.com',
+            'reporter_phone' => '0712345678',
             'reason' => 'inaccurate_info',
         ]);
     }

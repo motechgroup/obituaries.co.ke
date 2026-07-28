@@ -62,7 +62,25 @@ class ReportController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        return back()->with('success', "Report #{$report->id} has been marked as '{$validated['status']}' and notification email dispatched.");
+        // Notify reporter via SMS if phone is available
+        if (!empty($report->reporter_phone)) {
+            try {
+                $smsTmpl = \App\Models\Setting::get('sms_template_report_resolved', "Dear {REPORTER_NAME}, your report regarding {DECEASED_NAME}'s obituary has been updated to: {STATUS}. Notes: {NOTES}");
+                $smsMessage = str_replace(
+                    ['{REPORTER_NAME}', '{DECEASED_NAME}', '{STATUS}', '{NOTES}'],
+                    [
+                        $report->reporter_name,
+                        $report->obituary->full_name ?? 'Obituary',
+                        strtoupper($validated['status']),
+                        $validated['resolution_notes'] ?: 'Reviewed by team.'
+                    ],
+                    $smsTmpl
+                );
+                \App\Services\SmsService::send($report->reporter_phone, $smsMessage);
+            } catch (\Throwable $e) {}
+        }
+
+        return back()->with('success', "Report #{$report->id} has been marked as '{$validated['status']}' and notification dispatched.");
     }
 
     public function destroy(ObituaryReport $report)

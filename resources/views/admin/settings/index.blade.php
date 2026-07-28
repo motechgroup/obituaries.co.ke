@@ -325,6 +325,18 @@
                     <textarea name="mail_template_anniversary" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_anniversary', $settings['mail_template_anniversary']) }}</textarea>
                     <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {NAME}, {DECEASED_NAME}, {YEARS}, {LINK}</span>
                 </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Report Received Acknowledgment Email Template</label>
+                    <textarea name="mail_template_report_ack" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_report_ack', $settings['mail_template_report_ack']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {REPORTER_NAME}, {DECEASED_NAME}, {REASON}</span>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Report Status Resolution Email Template</label>
+                    <textarea name="mail_template_report_resolved" rows="4" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono leading-relaxed">{{ old('mail_template_report_resolved', $settings['mail_template_report_resolved']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {REPORTER_NAME}, {DECEASED_NAME}, {STATUS}, {NOTES}</span>
+                </div>
             </div>
         </div>
 
@@ -381,6 +393,18 @@
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Annual Anniversary Reminder SMS Template</label>
                     <textarea name="sms_template_anniversary" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_anniversary', $settings['sms_template_anniversary']) }}</textarea>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Report Received Acknowledgment SMS Template</label>
+                    <textarea name="sms_template_report_ack" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_report_ack', $settings['sms_template_report_ack']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {REPORTER_NAME}, {DECEASED_NAME}, {REPORT_ID}</span>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Obituary Report Status Resolution SMS Template</label>
+                    <textarea name="sms_template_report_resolved" rows="2" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">{{ old('sms_template_report_resolved', $settings['sms_template_report_resolved']) }}</textarea>
+                    <span class="text-[10px] text-slate-400 block mt-1">Available placeholders: {REPORTER_NAME}, {DECEASED_NAME}, {STATUS}, {NOTES}</span>
                 </div>
             </div>
         </div>
