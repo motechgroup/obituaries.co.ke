@@ -154,14 +154,13 @@
                                 {{ $pendingReportsCount }}
                             </span>
                         @endif
+                    <!-- Public Contributors Directory (Super Admin & Editors) -->
+                    <a href="{{ route('admin.contributors.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.contributors.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <span class="material-symbols-outlined text-[20px] {{ request()->routeIs('admin.contributors.*') ? 'text-white' : 'text-slate-400' }}">groups</span>
+                        <span>Submitters & Contributors</span>
                     </a>
 
                     @if(Auth::guard('admin')->user()->isSuperAdmin())
-                        <!-- Public Contributors Directory -->
-                        <a href="{{ route('admin.contributors.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.contributors.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <span class="material-symbols-outlined text-[20px] {{ request()->routeIs('admin.contributors.*') ? 'text-white' : 'text-slate-400' }}">groups</span>
-                            <span>Submitters & Contributors</span>
-                        </a>
 
                         <!-- Security Audit Logs -->
                         <a href="{{ route('admin.security-logs.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.security-logs.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">

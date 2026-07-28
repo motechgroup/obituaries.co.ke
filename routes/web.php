@@ -115,12 +115,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/reports/{report}/resolve', [AdminReportController::class, 'resolve'])->name('reports.resolve');
         Route::delete('/reports/{report}', [AdminReportController::class, 'destroy'])->name('reports.destroy');
 
+        // Contributors Directory Module (Super Admin & Editors)
+        Route::get('/contributors', [AdminContributorController::class, 'index'])->name('contributors.index');
+        Route::get('/contributors/export', [AdminContributorController::class, 'export'])->name('contributors.export');
+
         // Super Admin Only Restricted Operations
         Route::middleware([\App\Http\Middleware\EnsureSuperAdmin::class])->group(function () {
-            // Contributors Directory Module
-            Route::get('/contributors', [AdminContributorController::class, 'index'])->name('contributors.index');
-            Route::get('/contributors/export', [AdminContributorController::class, 'export'])->name('contributors.export');
-
             // Security Audit Logs Module
             Route::get('/security-logs', [AdminSecurityLogController::class, 'index'])->name('security-logs.index');
             Route::post('/security-logs/block-ip', [AdminSecurityLogController::class, 'blockIp'])->name('security-logs.block-ip');
