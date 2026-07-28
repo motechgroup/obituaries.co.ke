@@ -12,6 +12,31 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        .obituary-biography p {
+            margin-bottom: 1.5rem !important;
+            line-height: 1.85 !important;
+        }
+        .obituary-biography p:last-child {
+            margin-bottom: 0 !important;
+        }
+        .obituary-biography h1, .obituary-biography h2, .obituary-biography h3, .obituary-biography h4 {
+            font-family: Georgia, serif;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 1.75rem !important;
+            margin-bottom: 0.75rem !important;
+            line-height: 1.35 !important;
+        }
+        .obituary-biography ul, .obituary-biography ol {
+            margin-top: 1rem !important;
+            margin-bottom: 1.5rem !important;
+            padding-left: 1.75rem !important;
+        }
+        .obituary-biography ul { list-style-type: disc !important; }
+        .obituary-biography ol { list-style-type: decimal !important; }
+        .obituary-biography li { margin-bottom: 0.5rem !important; }
+    </style>
 </head>
 <body class="h-full bg-slate-100 antialiased font-sans text-slate-800" x-data="{ sidebarOpen: false }">
 

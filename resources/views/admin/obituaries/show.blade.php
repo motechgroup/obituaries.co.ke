@@ -126,8 +126,8 @@
                 <!-- Biography text -->
                 <div>
                     <h3 class="font-serif text-lg font-bold text-slate-900 mb-2">Biography & Life Story</h3>
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 text-sm leading-relaxed whitespace-pre-line break-words break-all overflow-hidden">
-                        {{ $obituary->biography }}
+                    <div class="obituary-biography p-5 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 text-sm leading-relaxed font-serif break-words overflow-hidden">
+                        {!! \App\Helpers\StorageHelper::formatBiographyHtml($obituary->biography) !!}
                     </div>
                 </div>
             </div>

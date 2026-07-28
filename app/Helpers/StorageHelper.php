@@ -68,4 +68,46 @@ class StorageHelper
 
         return $cleaned;
     }
+
+    /**
+     * Formats biography HTML ensuring proper paragraph spacing (<p> tags), line breaks, and sanitization.
+     */
+    public static function formatBiographyHtml(?string $biography): string
+    {
+        if (empty($biography)) {
+            return '';
+        }
+
+        $cleaned = self::sanitizeHtml($biography);
+
+        // Check if string contains paragraph or block level HTML tags
+        $hasBlockTags = (bool)preg_match('/<(p|h[1-6]|ul|ol|blockquote|div)\b/i', $cleaned);
+
+        if (!$hasBlockTags) {
+            // Split by single or double newlines and wrap paragraphs in <p> tags
+            $lines = preg_split('/\r\n|\r|\n/', $cleaned);
+            $paragraphs = [];
+            $currentParagraph = [];
+
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if (empty($trimmed)) {
+                    if (!empty($currentParagraph)) {
+                        $paragraphs[] = '<p>' . implode('<br>', $currentParagraph) . '</p>';
+                        $currentParagraph = [];
+                    }
+                } else {
+                    $currentParagraph[] = $trimmed;
+                }
+            }
+
+            if (!empty($currentParagraph)) {
+                $paragraphs[] = '<p>' . implode('<br>', $currentParagraph) . '</p>';
+            }
+
+            return implode("\n", $paragraphs);
+        }
+
+        return $cleaned;
+    }
 }
