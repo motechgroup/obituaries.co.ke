@@ -107,11 +107,11 @@
                             @if($obituary->photo)
                                 <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
                                 
-                                <!-- Glassmorphism Watermark Overlay (Centered) -->
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                    <div class="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-xl flex items-center space-x-1 text-white transform -rotate-12 select-none">
-                                        <span class="font-serif font-bold text-[8px] sm:text-[9px] tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
-                                    </div>
+                                <!-- Glass Embossed Text Watermark (Centered - No Border) -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 select-none">
+                                    <span class="font-serif font-extrabold text-[8px] sm:text-[10px] tracking-[0.2em] uppercase text-white/40 transform -rotate-12 select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.7), -1px -1px 2px rgba(0,0,0,0.7);">
+                                        Obituaries<span class="text-amber-200/50">.co.ke</span>
+                                    </span>
                                 </div>
                             @else
                                 <div class="w-full h-full bg-gradient-to-b from-primary-container to-primary flex flex-col items-center justify-center p-3 text-center text-on-primary">

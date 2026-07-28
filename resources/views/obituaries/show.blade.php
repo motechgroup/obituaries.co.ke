@@ -80,11 +80,11 @@
                 @if($obituary->photo)
                     <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover select-none pointer-events-none">
                     
-                    <!-- Glassmorphism Watermark Overlay (Centered) -->
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                        <div class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-2xl flex items-center space-x-1.5 text-white transform -rotate-12 select-none">
-                            <span class="font-serif font-bold text-[10px] sm:text-xs tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
-                        </div>
+                    <!-- Glass Embossed Text Watermark (Centered - No Border) -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 select-none">
+                        <span class="font-serif font-extrabold text-xs sm:text-sm lg:text-base tracking-[0.25em] uppercase text-white/40 transform -rotate-12 select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.7), -1px -1px 2px rgba(0,0,0,0.7);">
+                            Obituaries<span class="text-amber-200/50">.co.ke</span>
+                        </span>
                     </div>
                 @else
                     <div class="w-full h-full bg-gradient-to-b from-primary to-primary-container flex flex-col items-center justify-center p-4 text-center text-on-primary select-none">
@@ -164,11 +164,11 @@
                         <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container relative select-none">
                             <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none pointer-events-none">
                             
-                            <!-- Glassmorphism Watermark Overlay (Centered) -->
-                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                <div class="px-3 py-1 rounded-full bg-white/25 backdrop-blur-md border border-white/40 shadow-xl flex items-center space-x-1 text-white transform -rotate-12 select-none">
-                                    <span class="font-serif font-bold text-[9px] sm:text-[11px] tracking-wider uppercase drop-shadow-md">Obituaries<span class="text-amber-300">.co.ke</span></span>
-                                </div>
+                            <!-- Glass Embossed Text Watermark (Centered - No Border) -->
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 select-none">
+                                <span class="font-serif font-extrabold text-[10px] sm:text-xs tracking-[0.2em] uppercase text-white/40 transform -rotate-12 select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.7), -1px -1px 2px rgba(0,0,0,0.7);">
+                                    Obituaries<span class="text-amber-200/50">.co.ke</span>
+                                </span>
                             </div>
                         </div>
                     @endforeach
