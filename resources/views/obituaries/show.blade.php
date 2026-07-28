@@ -204,37 +204,39 @@
                         🕯️
                     </div>
                     <div>
-                        <span class="font-serif text-xl font-bold block">{{ $obituary->candles->count() }} {{ Str::plural('Candle', $obituary->candles->count()) }} Lit</span>
-                        <span class="text-xs text-primary-fixed/80">In loving memory and eternal peace</span>
+                        <span class="font-serif text-xl font-bold block">{{ $obituary->total_candles_count }} {{ Str::plural('Candle', $obituary->total_candles_count) }} Lit</span>
+                        <span class="text-xs text-primary-fixed/80">🕯️ {{ $obituary->system_candles_count }} System Tributes (Initial + Daily) &bull; {{ $obituary->visitor_candles_count }} Visitor Candles</span>
                     </div>
                 </div>
             </div>
 
             <!-- Lit Candles Grid / List -->
-            @if($obituary->candles->count() > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    @foreach($obituary->candles as $candle)
-                        <div class="p-4 bg-surface-container-lowest rounded-xl border border-surface-container shadow-xs space-y-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-primary text-xs">🕯️ {{ $candle->name }}</span>
-                                <span class="text-[10px] text-on-surface-variant/60">{{ $candle->created_at->diffForHumans() }}</span>
-                            </div>
-                            @if($candle->message)
-                                <p class="text-xs text-on-surface-variant italic font-serif break-words break-all overflow-hidden">"{{ $candle->message }}"</p>
-                            @endif
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- System Automatic Daily Candle Card -->
+                <div class="p-4 bg-amber-50/80 rounded-xl border border-amber-200/60 shadow-2xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-amber-900 text-xs flex items-center gap-1.5">
+                            <span class="animate-pulse">🕯️</span> System Daily Tribute
+                        </span>
+                        <span class="text-[10px] bg-amber-200/70 text-amber-900 px-2 py-0.5 rounded font-semibold">Automatic {{ $obituary->system_candles_count }} Candles</span>
+                    </div>
+                    <p class="text-xs text-amber-800/90 italic font-serif leading-relaxed">
+                        "5 initial burial candles + 1 candle lit automatically every day in perpetual honor of {{ $firstName }}."
+                    </p>
+                </div>
+
+                @foreach($obituary->candles as $candle)
+                    <div class="p-4 bg-surface-container-lowest rounded-xl border border-surface-container shadow-xs space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-primary text-xs">🕯️ {{ $candle->name }}</span>
+                            <span class="text-[10px] text-on-surface-variant/60">{{ $candle->created_at->diffForHumans() }}</span>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="p-8 text-center bg-surface-container-low rounded-2xl border border-dashed border-outline-variant text-on-surface-variant">
-                    <span class="text-3xl block mb-2">🕯️</span>
-                    <p class="font-serif text-sm font-bold text-primary mb-1">Be the first to light a candle</p>
-                    <p class="text-xs text-on-surface-variant/70 mb-4">Share your love, warmth, and heartfelt tribute for {{ $firstName }}.</p>
-                    <button type="button" @click="candleModal = true" class="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-xs font-semibold">
-                        Light a Candle Now
-                    </button>
-                </div>
-            @endif
+                        @if($candle->message)
+                            <p class="text-xs text-on-surface-variant italic font-serif break-words break-all overflow-hidden">"{{ $candle->message }}"</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
 
             <!-- Light Candle Modal -->
             <div x-show="candleModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" x-transition>

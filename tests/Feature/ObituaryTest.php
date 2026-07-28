@@ -790,4 +790,33 @@ class ObituaryTest extends TestCase
         $obituary->refresh();
         $this->assertTrue(in_array($obituary->status, ['pending_verification', 'published']));
     }
+
+    public function test_system_initial_and_daily_candles_calculation()
+    {
+        $pastBurialDate = now()->subDays(10)->toDateString();
+
+        $obituary = Obituary::create([
+            'slug' => 'candle-calc-test',
+            'full_name' => 'Test Candle Person',
+            'date_of_death' => now()->subDays(15)->toDateString(),
+            'funeral_date' => $pastBurialDate,
+            'county' => 'Nairobi',
+            'town' => 'Westlands',
+            'biography' => 'Test biography text.',
+            'submitter_name' => 'Tester',
+            'submitter_phone' => '0711111111',
+            'relationship' => 'Friend',
+            'status' => 'published',
+        ]);
+
+        // Initial 5 + 10 days elapsed = 15 system candles
+        $this->assertEquals(15, $obituary->system_candles_count);
+
+        // Add 2 visitor lit candles
+        $obituary->candles()->create(['name' => 'Visitor 1', 'message' => 'Rest in peace']);
+        $obituary->candles()->create(['name' => 'Visitor 2', 'message' => 'Condolences']);
+
+        // Total = 15 system + 2 visitor = 17 candles
+        $this->assertEquals(17, $obituary->total_candles_count);
+    }
 }

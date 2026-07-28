@@ -341,7 +341,7 @@
                         <div class="flex items-center justify-between sm:justify-end space-x-4 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/50">
                             <div class="bg-amber-500/10 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center space-x-1.5 shadow-xs">
                                 <span class="animate-pulse text-amber-400 text-sm">🕯️</span>
-                                <span>{{ $obituary->candles_count }} {{ Str::plural('Candle', $obituary->candles_count) }} Lit</span>
+                                <span>{{ $obituary->total_candles_count }} {{ Str::plural('Candle', $obituary->total_candles_count) }} Lit</span>
                             </div>
 
                             <span class="text-xs font-bold text-amber-400 group-hover:text-amber-300 transition-colors flex items-center space-x-1 whitespace-nowrap">

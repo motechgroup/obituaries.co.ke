@@ -236,6 +236,33 @@ class Obituary extends Model
         return "🌹 {$abbreviation} Anniversary";
     }
 
+    public function getSystemCandlesCountAttribute(): int
+    {
+        $startDate = $this->funeral_date ?? $this->date_of_death ?? $this->created_at;
+        if (!$startDate) {
+            return 5;
+        }
+
+        // Days elapsed from burial/reference date to today
+        $daysPassed = max(0, (int) $startDate->diffInDays(now()));
+
+        // Initial candles lit on burial date (5) + 1 candle per day passed since burial
+        return 5 + $daysPassed;
+    }
+
+    public function getVisitorCandlesCountAttribute(): int
+    {
+        if (isset($this->attributes['candles_count'])) {
+            return (int) $this->attributes['candles_count'];
+        }
+        return $this->candles()->count();
+    }
+
+    public function getTotalCandlesCountAttribute(): int
+    {
+        return $this->system_candles_count + $this->visitor_candles_count;
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published');
