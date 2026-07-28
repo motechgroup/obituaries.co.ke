@@ -71,6 +71,9 @@ Route::post('/payment/{obituary}/stkpush', [PaymentController::class, 'initiateS
 Route::get('/payment/{obituary}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
 Route::get('/payment/{obituary}/success', [PaymentController::class, 'success'])->name('payments.success');
 
+// Fallback Login Alias for Laravel Authentication Exception
+Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+
 // Admin Panel Authentication & Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     // Guest Auth Routes

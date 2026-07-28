@@ -77,4 +77,10 @@ class SeoTest extends TestCase
         $articleResponse->assertStatus(200);
         $articleResponse->assertSee('How to Write and Publish an Obituary Notice in Kenya');
     }
+
+    public function test_unauthenticated_request_redirects_to_admin_login()
+    {
+        $response = $this->get('/admin/dashboard');
+        $response->assertRedirect(route('admin.login'));
+    }
 }
