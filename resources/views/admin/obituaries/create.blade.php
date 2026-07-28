@@ -80,7 +80,7 @@
                         <input type="text" name="town" value="{{ old('town') }}" required placeholder="e.g. Ruiru / Westlands" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                     </div>
 
-                    <div class="sm:col-span-2" x-data="biographyEditor(`{!! addslashes(old('biography', '')) !!}`)">
+                    <div class="sm:col-span-2" x-data="biographyEditor({{ json_encode(old('biography', '')) }})">
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-semibold uppercase text-slate-700">Biography & Life Tribute <span class="text-rose-500">*</span></label>
                             <span class="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">⚡ Editor Formatting Toolbar</span>
@@ -102,7 +102,7 @@
 
                         <!-- Editor Textarea -->
                         <div x-show="!previewMode">
-                            <textarea id="admin_biography" name="biography" rows="8" required x-model="content" placeholder="Write the full tribute, life history, and family notices here..." class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-b-xl text-sm leading-relaxed font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                            <textarea id="admin_biography" name="biography" rows="8" required x-model="content" placeholder="Write the full tribute, life history, and family notices here..." class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-b-xl text-sm leading-relaxed font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">{{ old('biography') }}</textarea>
                         </div>
 
                         <!-- Formatted Preview -->
