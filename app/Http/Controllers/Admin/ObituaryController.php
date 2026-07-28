@@ -133,6 +133,7 @@ class ObituaryController extends Controller
         unset($validated['mpesa_transaction_code']);
 
         $obituary = Obituary::create($validated);
+        \App\Services\FraudDetectionService::evaluateSubmission($request, $obituary);
 
         if ($user->isEditor()) {
             $code = $request->input('mpesa_transaction_code');

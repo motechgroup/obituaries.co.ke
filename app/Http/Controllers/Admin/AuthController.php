@@ -32,9 +32,12 @@ class AuthController extends Controller
 
         if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+            \App\Models\SecurityLog::log('admin_login', 'info', null, "Admin user " . Auth::guard('admin')->user()->name . " logged in successfully.");
             return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'Welcome back, Administrator!');
         }
+
+        \App\Models\SecurityLog::log('admin_login_failed', 'warning', null, "Failed login attempt for email: {$credentials['email']}");
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our administrative records.',

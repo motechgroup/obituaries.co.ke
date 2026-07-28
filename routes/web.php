@@ -14,6 +14,9 @@ use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\ContributorController as AdminContributorController;
+use App\Http\Controllers\Admin\SecurityLogController as AdminSecurityLogController;
+use App\Http\Controllers\Admin\FraudController as AdminFraudController;
 use Illuminate\Support\Facades\Route;
 
 // Public Front Routes
@@ -35,8 +38,8 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/search', [PublicObituaryController::class, 'search'])->name('obituaries.search');
 Route::get('/county/{county}', [PublicObituaryController::class, 'countyIndex'])->name('obituaries.county');
 Route::get('/obituary/{slug}', [PublicObituaryController::class, 'show'])->name('obituaries.show');
-Route::post('/obituary/{obituary}/candle', [CandleController::class, 'store'])->name('obituaries.candle');
-Route::post('/obituary/{obituary}/report', [ReportController::class, 'store'])->name('obituaries.report');
+Route::post('/obituary/{obituary}/candle', [CandleController::class, 'store'])->middleware('throttle:15,1')->name('obituaries.candle');
+Route::post('/obituary/{obituary}/report', [ReportController::class, 'store'])->middleware('throttle:5,1')->name('obituaries.report');
 Route::get('/sitemap.xml', [PublicObituaryController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', function () {
     return response(file_get_contents(public_path('robots.txt')), 200, ['Content-Type' => 'text/plain; charset=utf-8']);
@@ -62,13 +65,13 @@ Route::get('/storage/{path}', function ($path) {
     return response()->file($filePath, ['Content-Type' => $mime]);
 })->where('path', '.*')->name('storage.fallback');
 
-// Obituary Submission Workflow
+// Obituary Submission Workflow (Protected with rate limiting: max 5 submissions/min per IP)
 Route::get('/submit', [ObituarySubmissionController::class, 'create'])->name('obituaries.submit');
-Route::post('/submit', [ObituarySubmissionController::class, 'store'])->name('obituaries.store');
+Route::post('/submit', [ObituarySubmissionController::class, 'store'])->middleware('throttle:5,1')->name('obituaries.store');
 
 // Payment Workflow
 Route::get('/payment/{obituary}', [PaymentController::class, 'checkout'])->name('payments.checkout');
-Route::post('/payment/{obituary}/stkpush', [PaymentController::class, 'initiateStkPush'])->name('payments.stkpush');
+Route::post('/payment/{obituary}/stkpush', [PaymentController::class, 'initiateStkPush'])->middleware('throttle:10,1')->name('payments.stkpush');
 Route::get('/payment/{obituary}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
 Route::get('/payment/{obituary}/success', [PaymentController::class, 'success'])->name('payments.success');
 
@@ -77,14 +80,14 @@ Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
 
 // Admin Panel Authentication & Routes
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Guest Auth Routes
+    // Guest Auth Routes (Protected against brute force login: 6 attempts/min)
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1')->name('login.post');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Password Reset Routes
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->middleware('throttle:3,1')->name('password.email');
     Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
@@ -106,6 +109,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/obituaries/{obituary}/verify', [AdminObituaryController::class, 'verify'])->name('obituaries.verify');
         Route::post('/obituaries/{obituary}/unpublish', [AdminObituaryController::class, 'unpublish'])->name('obituaries.unpublish');
         Route::delete('/obituaries/{obituary}', [AdminObituaryController::class, 'destroy'])->name('obituaries.destroy');
+
+        // Contributors Directory Module
+        Route::get('/contributors', [AdminContributorController::class, 'index'])->name('contributors.index');
+        Route::get('/contributors/export', [AdminContributorController::class, 'export'])->name('contributors.export');
+
+        // Security Audit Logs Module
+        Route::get('/security-logs', [AdminSecurityLogController::class, 'index'])->name('security-logs.index');
+        Route::post('/security-logs/block-ip', [AdminSecurityLogController::class, 'blockIp'])->name('security-logs.block-ip');
+
+        // Fraud & Threat Monitoring Module
+        Route::get('/fraud-alerts', [AdminFraudController::class, 'index'])->name('fraud.index');
+        Route::post('/fraud-alerts/{alert}/dismiss', [AdminFraudController::class, 'dismiss'])->name('fraud.dismiss');
+        Route::post('/fraud-alerts/{alert}/block', [AdminFraudController::class, 'blockIpAndUnpublish'])->name('fraud.block');
+        Route::delete('/fraud-alerts/unblock/{ip}', [AdminFraudController::class, 'unblockIp'])->name('fraud.unblock');
 
         // Admin Traffic Analytics & Audience Insights
         Route::get('/analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');

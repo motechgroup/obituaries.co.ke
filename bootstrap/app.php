@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn (Request $request) => route('admin.login'));
         $middleware->web(append: [
+            \App\Http\Middleware\CheckBlockedIp::class,
             \App\Http\Middleware\TrackPageViews::class,
         ]);
         $middleware->validateCsrfTokens(except: [

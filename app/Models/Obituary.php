@@ -38,6 +38,11 @@ class Obituary extends Model
         'meta_description',
         'seo_keywords',
         'canonical_url',
+        'ip_address',
+        'user_agent',
+        'device_type',
+        'is_flagged_fraud',
+        'fraud_reason',
     ];
 
     protected $casts = [

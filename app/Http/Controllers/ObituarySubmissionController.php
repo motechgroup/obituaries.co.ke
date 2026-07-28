@@ -128,6 +128,8 @@ class ObituarySubmissionController extends Controller
             'verification_status' => 'unverified',
         ]);
 
+        \App\Services\FraudDetectionService::evaluateSubmission($request, $obituary);
+
         return redirect()->route('payments.checkout', $obituary->id)
             ->with('success', 'Obituary submitted successfully! Please complete payment to submit for verification.');
     }

@@ -29,13 +29,15 @@ class ReportController extends Controller
 
         $report = ObituaryReport::create([
             'obituary_id' => $obituary->id,
-            'reporter_name' => $validated['reporter_name'],
+            'reporter_name' => strip_tags($validated['reporter_name']),
             'reporter_email' => $validated['reporter_email'],
-            'reporter_phone' => $validated['reporter_phone'],
+            'reporter_phone' => strip_tags($validated['reporter_phone']),
             'reason' => $validated['reason'],
-            'details' => $validated['details'],
+            'details' => strip_tags($validated['details']),
             'status' => 'pending',
         ]);
+
+        \App\Models\SecurityLog::log('report_submitted', 'warning', $obituary->id, "Notice #{$obituary->id} reported by {$report->reporter_name} ({$report->reason})");
 
         // Dispatch Confirmation Email to Reporter
         if (!empty($validated['reporter_email'])) {

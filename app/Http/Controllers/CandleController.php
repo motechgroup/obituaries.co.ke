@@ -16,8 +16,8 @@ class CandleController extends Controller
         ]);
 
         $obituary->candles()->create([
-            'name' => $validated['name'] ?: 'Anonymous',
-            'message' => $validated['message'] ?? null,
+            'name' => strip_tags($validated['name'] ?: 'Anonymous'),
+            'message' => isset($validated['message']) ? strip_tags($validated['message']) : null,
             'ip_address' => $request->ip(),
         ]);
 

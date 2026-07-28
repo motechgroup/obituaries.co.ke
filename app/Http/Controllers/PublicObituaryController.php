@@ -46,15 +46,15 @@ class PublicObituaryController extends Controller
             $query->todayAnniversaries();
         }
 
-        if ($name = $request->input('name')) {
+        if ($name = trim(strip_tags((string)$request->input('name')))) {
             $query->where('full_name', 'like', "%{$name}%");
         }
 
-        if ($county = $request->input('county')) {
+        if ($county = trim(strip_tags((string)$request->input('county')))) {
             $query->where('county', $county);
         }
 
-        if ($year = $request->input('year')) {
+        if ($year = trim(strip_tags((string)$request->input('year')))) {
             $query->whereYear('date_of_death', $year);
         }
 
