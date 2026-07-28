@@ -378,7 +378,7 @@
 </section>
 
 <!-- Submit Obituary Call-To-Action (CTA) Section -->
-<section class="w-full bg-[#0B0E18] text-white py-16 sm:py-20 relative overflow-hidden border-t border-slate-800/80">
+<section class="w-full text-white py-16 sm:py-20 relative overflow-hidden border-t border-slate-800/80" style="background-color: #0b0e18;">
     <div class="absolute inset-0 bg-gradient-to-r from-[#14101b] via-[#0B0E18] to-[#040712] pointer-events-none"></div>
     <div class="max-w-[1000px] mx-auto px-4 sm:px-6 text-center relative z-10">
         <div class="inline-flex items-center space-x-2 px-4 py-1.5 bg-[#1a1510] text-[#FF9800] rounded-full text-xs font-bold uppercase tracking-wider mb-5 border border-[#FF9800]/40 shadow-xs">

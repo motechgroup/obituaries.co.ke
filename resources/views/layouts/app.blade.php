@@ -193,9 +193,8 @@
             </div>
         </div>
 
-        <!-- Mobile Drawer Navigation Overlay (Closed by default, toggled on click) -->
+        <!-- Mobile Drawer Navigation Overlay -->
         <div x-show="mobileMenu" 
-             :class="{ 'hidden': !mobileMenu, 'flex': mobileMenu }"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
@@ -203,8 +202,8 @@
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
              @click.away="mobileMenu = false"
-             class="mobile-drawer-menu hidden md:hidden fixed left-0 right-0 top-[72px] sm:top-[80px] bottom-0 z-[999] w-full text-white overflow-y-auto px-5 py-6 flex-col justify-between shadow-2xl border-t border-slate-800" 
-             style="background-color: #0b0e18; display: none;"
+             class="mobile-drawer-menu md:hidden fixed left-0 right-0 top-[72px] sm:top-[80px] bottom-0 z-[999] w-full text-white overflow-y-auto px-5 py-6 flex flex-col justify-between shadow-2xl border-t border-slate-800" 
+             style="background-color: #0b0e18;"
              x-cloak>
             
             <div class="space-y-6">
