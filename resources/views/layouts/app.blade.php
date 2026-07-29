@@ -184,12 +184,12 @@
             </form>
 
             <!-- Desktop Nav Links -->
-            <nav class="hidden md:flex items-center gap-6" aria-label="Main Navigation">
-                <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Directory</a>
-                <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Counties</a>
-                <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">About</a>
+            <nav class="hidden md:flex items-center gap-2" aria-label="Main Navigation">
+                <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Directory</a>
+                <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Counties</a>
+                <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">About</a>
                 
-                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-container transition-all shadow-sm flex items-center space-x-1.5">
+                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-container transition-all shadow-sm flex items-center space-x-1.5 min-h-[44px]">
                     <span class="material-symbols-outlined text-[16px]">add</span>
                     <span>Submit Obituary</span>
                 </a>
@@ -197,12 +197,12 @@
 
             <!-- Mobile Controls (Submit CTA + Hamburger) -->
             <div class="flex items-center gap-2 md:hidden">
-                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-3.5 py-2 rounded-lg text-xs font-semibold hover:bg-primary-container flex items-center space-x-1">
+                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-3.5 py-2 rounded-lg text-xs font-semibold hover:bg-primary-container flex items-center space-x-1 min-h-[44px]">
                     <span class="material-symbols-outlined text-[14px]">add</span>
                     <span>Submit</span>
                 </a>
 
-                <button type="button" @click="mobileMenu = !mobileMenu" class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high focus:outline-none" aria-label="Toggle Mobile Navigation Menu">
+                <button type="button" @click="mobileMenu = !mobileMenu" class="w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high focus:outline-none" aria-label="Toggle Mobile Navigation Menu">
                     <span class="material-symbols-outlined text-[24px]" x-text="mobileMenu ? 'close' : 'menu'"></span>
                 </button>
             </div>
@@ -227,20 +227,20 @@
                 </div>
             </form>
 
-            <nav class="flex flex-col space-y-3 font-semibold text-sm">
-                <a href="{{ route('home') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
+            <nav class="flex flex-col space-y-2 font-semibold text-sm">
+                <a href="{{ route('home') }}" class="px-3.5 py-3 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2 min-h-[48px]">
                     <span class="material-symbols-outlined text-[18px]">home</span>
                     <span>Home</span>
                 </a>
-                <a href="{{ route('obituaries.search') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
+                <a href="{{ route('obituaries.search') }}" class="px-3.5 py-3 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2 min-h-[48px]">
                     <span class="material-symbols-outlined text-[18px]">menu_book</span>
                     <span>Search Directory</span>
                 </a>
-                <a href="{{ route('pages.about') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
+                <a href="{{ route('pages.about') }}" class="px-3.5 py-3 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2 min-h-[48px]">
                     <span class="material-symbols-outlined text-[18px]">info</span>
                     <span>About Us</span>
                 </a>
-                <a href="{{ route('pages.contact') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
+                <a href="{{ route('pages.contact') }}" class="px-3.5 py-3 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2 min-h-[48px]">
                     <span class="material-symbols-outlined text-[18px]">mail</span>
                     <span>Contact Us</span>
                 </a>
@@ -278,45 +278,45 @@
     <footer class="w-full bg-surface-container-low mt-16 sm:mt-20 border-t border-surface-container-high">
         <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-10 sm:py-12 flex flex-col items-center text-center">
             <!-- Official Site Logo in Footer -->
-            <a href="{{ route('home') }}" class="mb-4 inline-block">
-                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" class="h-10 sm:h-12 w-auto object-contain">
+            <a href="{{ route('home') }}" class="mb-4 inline-block" aria-label="Obituaries.co.ke Logo">
+                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" width="180" height="48" class="h-10 sm:h-12 w-auto object-contain">
             </a>
             <p class="font-serif text-xl sm:text-2xl font-bold text-on-surface mb-2">Remembering Lives. Sharing Memories.</p>
-            <p class="text-xs text-on-surface-variant mb-6 sm:mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
+            <p class="text-xs text-slate-700 font-medium mb-6 sm:mb-8 max-w-md">A dignified sanctuary dedicated to preserving lasting tributes for your loved ones across Kenya.</p>
             
-            <nav class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-6 text-xs font-semibold">
-                <a href="{{ route('home') }}" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
-                <a href="{{ route('obituaries.search') }}" class="text-on-surface-variant hover:text-primary transition-colors">Search Directory</a>
-                <a href="{{ route('pages.about') }}" class="text-on-surface-variant hover:text-primary transition-colors">About</a>
-                <a href="{{ route('pages.contact') }}" class="text-on-surface-variant hover:text-primary transition-colors">Contact</a>
-                <a href="{{ route('pages.privacy') }}" class="text-on-surface-variant hover:text-primary transition-colors">Privacy</a>
-                <a href="{{ route('pages.terms') }}" class="text-on-surface-variant hover:text-primary transition-colors">Terms</a>
-                <a href="{{ route('obituaries.submit') }}" class="text-on-surface-variant hover:text-primary transition-colors">Submit Obituary</a>
+            <nav class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 text-xs font-semibold">
+                <a href="{{ route('home') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Home</a>
+                <a href="{{ route('obituaries.search') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Search Directory</a>
+                <a href="{{ route('pages.about') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">About</a>
+                <a href="{{ route('pages.contact') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Contact</a>
+                <a href="{{ route('pages.privacy') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Privacy</a>
+                <a href="{{ route('pages.terms') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Terms</a>
+                <a href="{{ route('obituaries.submit') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Submit Obituary</a>
             </nav>
 
             <!-- Major County SEO Footer Links -->
             <div class="my-6 w-full bg-[#0B101D] border border-slate-800/80 rounded-2xl p-6 shadow-md text-center">
                 <span class="text-[11px] uppercase font-bold tracking-[0.15em] text-amber-400 block mb-3">Obituaries by County</span>
-                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2.5 text-xs text-slate-300">
-                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Nairobi Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Kisii Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Kisumu Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Mombasa Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Nakuru Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Kiambu Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Eldoret Obituaries</a>
-                    <span class="text-slate-600">&bull;</span>
-                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Machakos Obituaries</a>
+                <div class="flex flex-wrap justify-center gap-x-2 gap-y-2 text-xs text-slate-200">
+                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Nairobi Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Kisii Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Kisumu Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Mombasa Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Nakuru Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Kiambu Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Eldoret Obituaries</a>
+                    <span class="text-slate-400 self-center">&bull;</span>
+                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors py-2 px-2.5 min-h-[44px] inline-flex items-center">Machakos Obituaries</a>
                 </div>
             </div>
             
-            <p class="text-[11px] text-on-tertiary-container">&copy; {{ date('Y') }} Obituaries.co.ke. A dignified space for remembrance.</p>
+            <p class="text-xs text-slate-600 font-medium">&copy; {{ date('Y') }} Obituaries.co.ke. A dignified space for remembrance.</p>
         </div>
     </footer>
 

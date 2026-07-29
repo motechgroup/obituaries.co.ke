@@ -68,10 +68,10 @@
 
         <!-- Quick Filter Pills -->
         <div class="mt-4 flex items-center space-x-2 overflow-x-auto text-xs font-semibold">
-            <a href="{{ route('obituaries.search') }}" class="px-3.5 py-1.5 rounded-full border {{ empty(request('filter')) ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container' }}">
+            <a href="{{ route('obituaries.search') }}" class="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border {{ empty(request('filter')) ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container' }}">
                 All Tributes
             </a>
-            <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="px-3.5 py-1.5 rounded-full border flex items-center space-x-1 {{ request('filter') === 'anniversaries' ? 'bg-amber-800 text-white border-amber-800' : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' }}">
+            <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border space-x-1 {{ request('filter') === 'anniversaries' ? 'bg-amber-800 text-white border-amber-800' : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' }}">
                 <span>🌹 Today's Anniversaries</span>
             </a>
         </div>

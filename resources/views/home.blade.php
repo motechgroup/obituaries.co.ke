@@ -54,7 +54,7 @@
                     <span>OBITUARIES DIRECTORY</span>
                 </span>
             </div>
-            <a href="{{ route('obituaries.search') }}" class="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-amber-400 transition-colors flex items-center space-x-1">
+            <a href="{{ route('obituaries.search') }}" class="text-xs font-bold text-slate-200 hover:text-amber-400 transition-colors flex items-center space-x-1 py-2 px-3 min-h-[44px]">
                 <span>Browse All Archives</span>
                 <span>&rarr;</span>
             </a>
@@ -79,7 +79,7 @@
                         <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight truncate">
                             {{ $obituary->full_name }}
                         </h4>
-                        <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium truncate">
+                        <span class="text-[10px] sm:text-xs text-slate-300 block mt-0.5 font-medium truncate">
                             {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }}
                         </span>
                     </div>
@@ -97,9 +97,9 @@
         <div class="flex flex-row justify-between items-end mb-8 sm:mb-12">
             <div>
                 <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2">Recent Tributes</h2>
-                <p class="text-xs sm:text-sm text-on-surface-variant">Honoring those who recently joined the ancestors.</p>
+                <p class="text-xs sm:text-sm text-slate-700 font-medium">Honoring those who recently joined the ancestors.</p>
             </div>
-            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-1 sm:gap-2 text-xs font-bold text-primary hover:text-secondary transition-colors">
+            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-1 sm:gap-2 text-xs font-bold text-primary hover:text-secondary transition-colors py-2 px-3 min-h-[44px]">
                 <span class="hidden sm:inline">View All Archives</span>
                 <span class="sm:hidden">All</span>
                 <span class="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-1">arrow_forward</span>
@@ -223,8 +223,8 @@
                                 <h3 class="font-bold text-white text-sm sm:text-base group-hover:text-amber-400 transition-colors leading-tight truncate">
                                     {{ $obituary->full_name }}
                                 </h3>
-                                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">
-                                    Passed {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }} &bull; <span class="italic text-slate-300">In Loving Memory</span>
+                                <p class="text-[11px] sm:text-xs text-slate-300 font-medium mt-0.5 truncate">
+                                    Passed {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }} &bull; <span class="italic text-slate-200">In Loving Memory</span>
                                 </p>
                             </div>
                         </div>
@@ -257,9 +257,9 @@
                     <span>🌹 In Loving Remembrance</span>
                 </div>
                 <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1">Today's Anniversaries</h2>
-                <p class="text-xs sm:text-sm text-on-surface-variant">Remembering loved ones whose anniversary of passing falls on today's date.</p>
+                <p class="text-xs sm:text-sm text-slate-700 font-medium">Remembering loved ones whose anniversary of passing falls on today's date.</p>
             </div>
-            <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="text-xs font-bold text-amber-800 hover:text-amber-900 inline-flex items-center space-x-1 whitespace-nowrap">
+            <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="text-xs font-bold text-amber-900 hover:text-amber-950 py-2 px-3 min-h-[44px] inline-flex items-center space-x-1 whitespace-nowrap">
                 <span>View All Anniversaries</span>
                 <span>&rarr;</span>
             </a>
