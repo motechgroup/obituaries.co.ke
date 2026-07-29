@@ -161,7 +161,6 @@
                 <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Directory</a>
                 <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Counties</a>
                 <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">About</a>
-                <a href="{{ route('admin.login') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Admin Portal</a>
                 
                 <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-container transition-all shadow-sm flex items-center space-x-1.5">
                     <span class="material-symbols-outlined text-[16px]">add</span>
@@ -217,10 +216,6 @@
                 <a href="{{ route('pages.contact') }}" class="px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container flex items-center space-x-2">
                     <span class="material-symbols-outlined text-[18px]">mail</span>
                     <span>Contact Us</span>
-                </a>
-                <a href="{{ route('admin.login') }}" class="px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container flex items-center space-x-2 border-t border-outline-variant/30 pt-3">
-                    <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                    <span>Admin Portal</span>
                 </a>
             </nav>
         </div>

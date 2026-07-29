@@ -75,14 +75,17 @@ Route::post('/payment/{obituary}/stkpush', [PaymentController::class, 'initiateS
 Route::get('/payment/{obituary}/status', [PaymentController::class, 'checkStatus'])->name('payments.status');
 Route::get('/payment/{obituary}/success', [PaymentController::class, 'success'])->name('payments.success');
 
-// Fallback Login Alias for Laravel Authentication Exception
+// Custom Secured Login Route (/access)
+Route::get('/access', [AuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/access', [AuthController::class, 'login'])->middleware('throttle:6,1')->name('admin.login.post');
+
+// Fallback Login Aliases for Laravel Authentication Exception & Legacy URLs
 Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+Route::get('/admin/login', fn () => redirect()->route('admin.login'));
 
 // Admin Panel Authentication & Routes
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Guest Auth Routes (Protected against brute force login: 6 attempts/min)
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1')->name('login.post');
+    // Logout Route
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Password Reset Routes

@@ -56,7 +56,7 @@ try {
 
     echo "<div class='btn-group'>
             <a href='/' class='btn btn-primary'>Go to Website &rarr;</a>
-            <a href='/admin/login' class='btn btn-secondary'>Admin Portal &rarr;</a>
+            <a href='/access' class='btn btn-secondary'>Admin Portal &rarr;</a>
             <a href='/setup-db.php' class='btn btn-secondary'>Run Seeders &rarr;</a>
           </div>";
 

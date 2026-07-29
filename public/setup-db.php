@@ -36,7 +36,7 @@ try {
 
     echo "<div style='margin-top: 25px;'>";
     echo "<a href='/' style='display: inline-block; background: #0f172a; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 14px;'>Visit Homepage &rarr;</a> ";
-    echo "<a href='/admin/login' style='display: inline-block; background: #d97706; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-left: 10px;'>Admin Portal &rarr;</a>";
+    echo "<a href='/access' style='display: inline-block; background: #d97706; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-left: 10px;'>Admin Portal &rarr;</a>";
     echo "</div>";
 
 } catch (\Throwable $e) {
