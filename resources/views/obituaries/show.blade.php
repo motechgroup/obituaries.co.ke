@@ -20,7 +20,7 @@
       "@id": "{{ route('obituaries.show', $obituary->slug) }}#person",
       "name": "{{ $obituary->full_name }}",
       "birthDate": "{{ optional($obituary->date_of_birth)->format('Y-m-d') }}",
-      "deathDate": "{{ $obituary->date_of_death->format('Y-m-d') }}",
+      "deathDate": "{{ optional($obituary->date_of_death)->format('Y-m-d') }}",
       "image": "{{ $obituary->photo ? asset('storage/' . $obituary->photo) : asset('images/og-default.jpg') }}",
       "description": "{{ Str::limit(strip_tags($obituary->biography), 200) }}",
       "homeLocation": {

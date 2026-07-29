@@ -87,7 +87,7 @@
 
                         <div>
                             <span class="text-slate-400 font-semibold uppercase block">Date of Death</span>
-                            <span class="font-bold text-slate-900 text-sm">{{ $obituary->date_of_death->format('M d, Y') }}</span>
+                            <span class="font-bold text-slate-900 text-sm">{{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'Not Specified' }}</span>
                         </div>
 
                         <div>

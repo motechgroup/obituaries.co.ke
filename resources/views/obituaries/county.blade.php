@@ -92,7 +92,7 @@
                     </div>
 
                     <div class="px-5 py-3.5 bg-surface-container-low border-t border-outline-variant/10 flex items-center justify-between text-[11px] text-on-surface-variant">
-                        <span>Passed {{ $obituary->date_of_death->format('M d, Y') }}</span>
+                        <span>Passed {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }}</span>
                         <span class="font-bold text-primary group-hover:text-amber-800 transition-colors">&rarr;</span>
                     </div>
                 </a>

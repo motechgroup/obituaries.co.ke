@@ -79,7 +79,7 @@
                             {{ $obituary->full_name }}
                         </h4>
                         <span class="text-[10px] sm:text-xs text-slate-400 block mt-0.5 font-medium truncate">
-                            {{ $obituary->date_of_death->format('M d, Y') }}
+                            {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }}
                         </span>
                     </div>
                 </a>
@@ -152,11 +152,15 @@
                                 <span class="text-[9px] sm:text-[10px] font-semibold text-secondary tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
                                 <h3 class="font-serif text-xs sm:text-base font-bold text-primary mb-0.5 group-hover:text-secondary transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
                                 <p class="text-[10px] text-on-surface-variant/70 italic">
-                                    @if($obituary->date_of_birth)
+                                    @if($obituary->date_of_birth && $obituary->date_of_death)
                                         {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
                                         @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
-                                    @else
+                                    @elseif($obituary->date_of_death)
                                         Passed Away: {{ $obituary->date_of_death->format('M j, Y') }}
+                                    @elseif($obituary->date_of_birth)
+                                        Born: {{ $obituary->date_of_birth->format('Y') }}
+                                    @else
+                                        In Loving Memory
                                     @endif
                                 </p>
                             </div>
@@ -208,7 +212,7 @@
                                         {{ $obituary->full_name }}
                                     </h3>
                                     <p class="text-[11px] sm:text-xs text-on-surface-variant/70 mt-0.5 truncate">
-                                        Passed {{ $obituary->date_of_death->format('M d, Y') }} &bull; <span class="italic text-amber-900/80 font-medium">{{ $obituary->anniversary_badge_text }}</span>
+                                        Passed {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }} &bull; <span class="italic text-amber-900/80 font-medium">{{ $obituary->anniversary_badge_text }}</span>
                                     </p>
                                 </div>
                             </div>
@@ -332,7 +336,7 @@
                                     {{ $obituary->full_name }}
                                 </h3>
                                 <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">
-                                    Passed {{ $obituary->date_of_death->format('M d, Y') }} &bull; <span class="italic text-slate-300">In Loving Memory</span>
+                                    Passed {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }} &bull; <span class="italic text-slate-300">In Loving Memory</span>
                                 </p>
                             </div>
                         </div>
