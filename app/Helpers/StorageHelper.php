@@ -58,9 +58,9 @@ class StorageHelper
 
     /**
      * Resizes and compresses an image file using PHP GD extension.
-     * Max dimension defaults to 800px; quality defaults to 82%.
+     * Max dimension defaults to 600px; quality defaults to 75%.
      */
-    public static function compressAndScaleImage(string $fullPath, int $maxDimension = 800, int $quality = 82): void
+    public static function compressAndScaleImage(string $fullPath, int $maxDimension = 600, int $quality = 75): void
     {
         if (!file_exists($fullPath) || !extension_loaded('gd')) {
             return;
@@ -79,8 +79,8 @@ class StorageHelper
             return;
         }
 
-        // Skip if image is already small enough and smaller than 150KB
-        if ($width <= $maxDimension && $height <= $maxDimension && filesize($fullPath) < 150000) {
+        // Skip if image is already small enough (under 75KB) and within max dimensions
+        if ($width <= $maxDimension && $height <= $maxDimension && filesize($fullPath) < 75000) {
             return;
         }
 

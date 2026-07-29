@@ -146,7 +146,7 @@ try {
                             if ($file->isFile()) {
                                 $ext = strtolower($file->getExtension());
                                 if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
-                                    \App\Helpers\StorageHelper::compressAndScaleImage($file->getRealPath(), 800, 82);
+                                    \App\Helpers\StorageHelper::compressAndScaleImage($file->getRealPath(), 600, 75);
                                 }
                             }
                         }
