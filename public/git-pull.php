@@ -125,10 +125,24 @@ try {
     // Clean up temporary ZIP
     @unlink($tempZipPath);
 
-    // 6. Clear Laravel Cache
+    // 6. Clear Laravel Cache & Purge Stale File Cache
     try {
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+
+        // Delete any leftover file cache items in storage/framework/cache/data
+        $cacheDataDir = storage_path('framework/cache/data');
+        if (file_exists($cacheDataDir)) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($cacheDataDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($files as $fileinfo) {
+                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                @$todo($fileinfo->getRealPath());
+            }
+        }
 
         // Auto-compress existing live storage photos using StorageHelper
         try {
