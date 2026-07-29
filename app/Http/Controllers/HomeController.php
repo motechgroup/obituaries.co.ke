@@ -39,19 +39,11 @@ class HomeController extends Controller
                 ->get();
         }
 
+        // Today's Anniversaries: Strictly notices with date_of_death matching today's month & day, and year < current year
         $todayAnniversaries = Obituary::todayAnniversaries()
             ->latest('date_of_death')
             ->take(6)
             ->get();
-
-        // Fallback: If no obituaries have an anniversary on today's exact date, fetch published notices with date_of_death
-        if ($todayAnniversaries->isEmpty()) {
-            $todayAnniversaries = Obituary::published()
-                ->whereNotNull('date_of_death')
-                ->latest('date_of_death')
-                ->take(6)
-                ->get();
-        }
 
         $todayCandlesObituaries = Obituary::published()
             ->withCount('candles')
