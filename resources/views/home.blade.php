@@ -6,10 +6,11 @@
 
 <!-- Immersive Hero Section from Stitch Design -->
 <section class="relative w-full min-h-[480px] sm:min-h-[580px] lg:h-[650px] flex items-center overflow-hidden py-12 lg:py-0">
-    <!-- Cover Image with Gradient Scrim -->
-    <div class="absolute inset-0 z-0">
-        <div class="w-full h-full bg-cover bg-center animate-ken-burns" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAX9PfmGNd6COO34ia8jh6uRhqSKwIofOR8rZW8cgAnNwMH3tP1UF3CZoFM6J5iZJE5_RiTeLT8EdFGNX5813RF5aH8e_9Qh-j_Aa6PlHJ_CU5GhXpiWL3iIkjCNBE5tS_CAh8IUke7mq1LARZhVFHiHiONDoNvPG6WlbGSaF6F0dUARP99swDYvlmJF_GBO_MKQTXW0S4AD0qBEADEnppuKEEfg4E3WSxqHE-jdby2Xue9MuZu9BC8LimsaHd81IVXuLEaP8y6jFfw')"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/90 to-surface/40 sm:to-transparent"></div>
+    <!-- Ambient Scrim Background (Zero Latency CSS Mesh) -->
+    <div class="absolute inset-0 z-0 overflow-hidden bg-gradient-to-br from-surface via-surface-container-low to-surface-container">
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(#775a19_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none"></div>
     </div>
 
     <div class="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 w-full">

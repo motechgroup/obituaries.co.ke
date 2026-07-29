@@ -66,10 +66,11 @@
 
 <!-- Immersive Hero Section matching Stitch Design & Screenshot -->
 <section class="relative w-full min-h-[380px] sm:min-h-[460px] lg:h-[500px] flex items-center overflow-hidden border-b border-surface-container-high py-10 sm:py-16">
-    <!-- Cover Image with Gradient Scrim -->
-    <div class="absolute inset-0 z-0">
-        <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBMukGU84gf4tb_RHChMQDd_B23JPy5Bu7V7T7TGKz5opRwHBvTpsGdK-UHzBunI2Fpmqfz80T4SmsEkU-ZlmHQMTw32EbDPwfuznH0PjAgOu1GJy548fELHnHza2bIvWbvZVoS--L_nXm_DHosxPzTXn44Zhu6PvDMZz8R5vITf88A6lz0tzxb12ZVmauEXaWiRtxNdpFUcTAR5uAWvPbTkc1GhRXAcfJ54MPWU0bwSPX95qqv_Pj3NI8Jd-wUPoiks-aTR4zOGNk-')"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/90 to-surface/30 sm:to-transparent"></div>
+    <!-- Ambient Scrim Background (Zero Latency CSS Mesh) -->
+    <div class="absolute inset-0 z-0 overflow-hidden bg-gradient-to-br from-surface via-surface-container-low to-surface-container">
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(#775a19_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none"></div>
     </div>
 
     <!-- Profile & Vital Info Card Overlap -->

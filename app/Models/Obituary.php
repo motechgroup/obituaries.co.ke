@@ -74,6 +74,14 @@ class Obituary extends Model
                 $obituary->meta_description = Str::limit("In loving memory of {$cleanName} from {$cleanTown}, {$cleanCounty} Kenya. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.", 480, '');
             }
         });
+
+        static::saved(function (Obituary $obituary) {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
+
+        static::deleted(function (Obituary $obituary) {
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        });
     }
 
     public static function formatAndTruncateSeoKeywords(string $keywordsString): string

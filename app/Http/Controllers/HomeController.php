@@ -4,55 +4,60 @@ namespace App\Http\Controllers;
 
 use App\Models\Obituary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Obituaries Directory (Dark Top Section): Show latest obituaries posted TODAY
-        $todayDirectoryObituaries = Obituary::published()
-            ->where('created_at', '>=', now()->startOfDay())
-            ->latest('id')
-            ->take(8)
-            ->get();
-
-        // Fallback: If no obituaries posted today yet, show latest published obituaries
-        if ($todayDirectoryObituaries->isEmpty()) {
+        $homeData = Cache::remember('homepage_data', 300, function () {
+            // Obituaries Directory (Dark Top Section): Show latest obituaries posted TODAY
             $todayDirectoryObituaries = Obituary::published()
+                ->where('created_at', '>=', now()->startOfDay())
                 ->latest('id')
                 ->take(8)
                 ->get();
-        }
 
-        // Recent Tributes Section: Show obituaries posted on PREVIOUS days (created_at < start of today)
-        $latestObituaries = Obituary::published()
-            ->where('created_at', '<', now()->startOfDay())
-            ->latest('id')
-            ->take(8)
-            ->get();
+            // Fallback: If no obituaries posted today yet, show latest published obituaries
+            if ($todayDirectoryObituaries->isEmpty()) {
+                $todayDirectoryObituaries = Obituary::published()
+                    ->latest('id')
+                    ->take(8)
+                    ->get();
+            }
 
-        // Fallback: If no previous day posts exist, show latest published obituaries
-        if ($latestObituaries->isEmpty()) {
+            // Recent Tributes Section: Show obituaries posted on PREVIOUS days (created_at < start of today)
             $latestObituaries = Obituary::published()
+                ->where('created_at', '<', now()->startOfDay())
                 ->latest('id')
                 ->take(8)
                 ->get();
-        }
 
-        // Today's Anniversaries: Strictly notices with date_of_death matching today's month & day, and year < current year
-        $todayAnniversaries = Obituary::todayAnniversaries()
-            ->latest('date_of_death')
-            ->take(6)
-            ->get();
+            // Fallback: If no previous day posts exist, show latest published obituaries
+            if ($latestObituaries->isEmpty()) {
+                $latestObituaries = Obituary::published()
+                    ->latest('id')
+                    ->take(8)
+                    ->get();
+            }
 
-        $todayCandlesObituaries = Obituary::published()
-            ->withCount('candles')
-            ->orderByDesc('candles_count')
-            ->latest('id')
-            ->take(4)
-            ->get();
+            // Today's Anniversaries: Strictly notices with date_of_death matching today's month & day
+            $todayAnniversaries = Obituary::todayAnniversaries()
+                ->latest('date_of_death')
+                ->take(6)
+                ->get();
 
-        $totalCount = Obituary::published()->count();
+            $todayCandlesObituaries = Obituary::published()
+                ->withCount('candles')
+                ->orderByDesc('candles_count')
+                ->latest('id')
+                ->take(4)
+                ->get();
+
+            $totalCount = Obituary::published()->count();
+
+            return compact('todayDirectoryObituaries', 'latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount');
+        });
 
         $counties = [
             'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
@@ -99,6 +104,6 @@ class HomeController extends Controller
         $dayIndex = (date('z') + date('Y')) % count($quotes);
         $dailyQuote = $quotes[$dayIndex];
 
-        return view('home', compact('todayDirectoryObituaries', 'latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties', 'dailyQuote'));
+        return view('home', array_merge($homeData, compact('counties', 'dailyQuote')));
     }
 }
