@@ -12,8 +12,12 @@ class StorageHelper
     {
         // 1. Save using standard Laravel storage disk
         $path = $file->store($folder, 'public');
+        $sourcePath = storage_path('app/public/' . $path);
 
-        // 2. Immediately mirror to public/storage/ for instant web access
+        // 2. Compress & scale image using PHP GD to save payload size
+        self::compressAndScaleImage($sourcePath, 800, 82);
+
+        // 3. Immediately mirror to public/storage/ for instant web access
         try {
             $destPath = public_path('storage/' . $path);
             $destDir = dirname($destPath);
@@ -22,7 +26,7 @@ class StorageHelper
                 @mkdir($destDir, 0755, true);
             }
 
-            @copy(storage_path('app/public/' . $path), $destPath);
+            @copy($sourcePath, $destPath);
         } catch (\Throwable $e) {
             // Silently handle exceptions
         }
@@ -39,13 +43,113 @@ class StorageHelper
             $source = storage_path('app/public/' . ltrim($relativePath, '/'));
             $destination = public_path('storage/' . ltrim($relativePath, '/'));
 
-            if (file_exists($source) && !file_exists($destination)) {
-                @mkdir(dirname($destination), 0755, true);
-                @copy($source, $destination);
+            if (file_exists($source)) {
+                self::compressAndScaleImage($source, 800, 82);
+
+                if (!file_exists($destination)) {
+                    @mkdir(dirname($destination), 0755, true);
+                    @copy($source, $destination);
+                }
             }
         } catch (\Throwable $e) {
             // Silently handle exceptions
         }
+    }
+
+    /**
+     * Resizes and compresses an image file using PHP GD extension.
+     * Max dimension defaults to 800px; quality defaults to 82%.
+     */
+    public static function compressAndScaleImage(string $fullPath, int $maxDimension = 800, int $quality = 82): void
+    {
+        if (!file_exists($fullPath) || !extension_loaded('gd')) {
+            return;
+        }
+
+        $imageInfo = @getimagesize($fullPath);
+        if (!$imageInfo) {
+            return;
+        }
+
+        $mime = $imageInfo['mime'] ?? '';
+        $width = $imageInfo[0];
+        $height = $imageInfo[1];
+
+        if ($width <= 0 || $height <= 0) {
+            return;
+        }
+
+        // Skip if image is already small enough and smaller than 150KB
+        if ($width <= $maxDimension && $height <= $maxDimension && filesize($fullPath) < 150000) {
+            return;
+        }
+
+        // Calculate target dimensions preserving aspect ratio
+        if ($width > $maxDimension || $height > $maxDimension) {
+            if ($width >= $height) {
+                $newWidth = $maxDimension;
+                $newHeight = (int)round(($height / $width) * $maxDimension);
+            } else {
+                $newHeight = $maxDimension;
+                $newWidth = (int)round(($width / $height) * $maxDimension);
+            }
+        } else {
+            $newWidth = $width;
+            $newHeight = $height;
+        }
+
+        // Create GD resource from original
+        $srcImage = null;
+        switch ($mime) {
+            case 'image/jpeg':
+            case 'image/jpg':
+                $srcImage = @imagecreatefromjpeg($fullPath);
+                break;
+            case 'image/png':
+                $srcImage = @imagecreatefrompng($fullPath);
+                break;
+            case 'image/webp':
+                if (function_exists('imagecreatefromwebp')) {
+                    $srcImage = @imagecreatefromwebp($fullPath);
+                }
+                break;
+        }
+
+        if (!$srcImage) {
+            return;
+        }
+
+        $dstImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        // Preserve alpha transparency for PNG / WebP
+        if ($mime === 'image/png' || $mime === 'image/webp') {
+            imagealphablending($dstImage, false);
+            imagesavealpha($dstImage, true);
+            $transparent = imagecolorallocatealpha($dstImage, 255, 255, 255, 127);
+            imagefilledrectangle($dstImage, 0, 0, $newWidth, $newHeight, $transparent);
+        }
+
+        imagecopyresampled($dstImage, $srcImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+        // Save compressed image back to disk
+        switch ($mime) {
+            case 'image/jpeg':
+            case 'image/jpg':
+                @imagejpeg($dstImage, $fullPath, $quality);
+                break;
+            case 'image/png':
+                $pngQuality = (int)round((100 - $quality) / 10);
+                @imagepng($dstImage, $fullPath, min(9, max(0, $pngQuality)));
+                break;
+            case 'image/webp':
+                if (function_exists('imagewebp')) {
+                    @imagewebp($dstImage, $fullPath, $quality);
+                }
+                break;
+        }
+
+        @imagedestroy($srcImage);
+        @imagedestroy($dstImage);
     }
 
     /**

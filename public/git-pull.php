@@ -129,6 +129,31 @@ try {
     try {
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
+
+        // Auto-compress existing live storage photos using StorageHelper
+        try {
+            if (class_exists('\App\Helpers\StorageHelper')) {
+                $dirs = [
+                    __DIR__ . '/storage/obituaries',
+                    __DIR__ . '/storage/gallery',
+                    dirname(__DIR__) . '/storage/app/public/obituaries',
+                    dirname(__DIR__) . '/storage/app/public/gallery',
+                ];
+                foreach ($dirs as $dir) {
+                    if (file_exists($dir)) {
+                        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS));
+                        foreach ($files as $file) {
+                            if ($file->isFile()) {
+                                $ext = strtolower($file->getExtension());
+                                if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                                    \App\Helpers\StorageHelper::compressAndScaleImage($file->getRealPath(), 800, 82);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
     } catch (\Throwable $e) {}
 
 } catch (\Throwable $e) {
