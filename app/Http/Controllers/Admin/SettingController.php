@@ -227,20 +227,97 @@ class SettingController extends Controller
     public function gitPull(Request $request)
     {
         try {
-            $basePath = base_path();
-            $command = "cd " . escapeshellarg($basePath) . " && git config --global --add safe.directory " . escapeshellarg($basePath) . " 2>&1 && git fetch origin main 2>&1 && git reset --hard origin/main 2>&1";
-            $output = shell_exec($command);
+            $zipUrl = "https://github.com/motechgroup/obituaries.co.ke/archive/refs/heads/main.zip";
+            $tempZipPath = storage_path('app/latest-main.zip');
+            $extractTempPath = storage_path('app/git-extracted');
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $zipUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'ObituariesWebDeployer/1.0');
+            $zipData = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+
+            if ($httpCode !== 200 || empty($zipData)) {
+                throw new \Exception("Failed to download ZIP package from GitHub (HTTP Code: {$httpCode}). " . ($curlError ?: 'Data empty.'));
+            }
+
+            file_put_contents($tempZipPath, $zipData);
+
+            if (!class_exists('ZipArchive')) {
+                throw new \Exception("PHP ZipArchive extension is not enabled on this server.");
+            }
+
+            $zip = new \ZipArchive();
+            if ($zip->open($tempZipPath) !== true) {
+                throw new \Exception("Unable to open downloaded ZIP package.");
+            }
+
+            if (!file_exists($extractTempPath)) {
+                @mkdir($extractTempPath, 0755, true);
+            }
+
+            $zip->extractTo($extractTempPath);
+            $zip->close();
+
+            $extractedDirs = glob($extractTempPath . '/*', GLOB_ONLYDIR);
+            if (empty($extractedDirs)) {
+                throw new \Exception("Extracted ZIP folder structure not found.");
+            }
+            $sourceRoot = $extractedDirs[0];
+
+            $updatedFilesCount = 0;
+            $skipPaths = ['.env', '.git', 'storage/app/public', 'storage/framework/cache', 'storage/framework/views', 'public/storage'];
+
+            $copyRecursive = function ($src, $dst) use (&$copyRecursive, $sourceRoot, &$updatedFilesCount, $skipPaths) {
+                $dir = @opendir($src);
+                if (!$dir) return;
+                @mkdir($dst, 0755, true);
+                while (false !== ($file = readdir($dir))) {
+                    if ($file === '.' || $file === '..') continue;
+                    $srcPath = $src . '/' . $file;
+                    $dstPath = $dst . '/' . $file;
+                    $relative = ltrim(str_replace($sourceRoot, '', $srcPath), '/');
+
+                    $shouldSkip = false;
+                    foreach ($skipPaths as $skip) {
+                        if (str_starts_with($relative, $skip)) {
+                            $shouldSkip = true;
+                            break;
+                        }
+                    }
+                    if ($shouldSkip) continue;
+
+                    if (is_dir($srcPath)) {
+                        $copyRecursive($srcPath, $dstPath);
+                    } else {
+                        @mkdir(dirname($dstPath), 0755, true);
+                        if (@copy($srcPath, $dstPath)) {
+                            $updatedFilesCount++;
+                        }
+                    }
+                }
+                closedir($dir);
+            };
+
+            $copyRecursive($sourceRoot, base_path());
+
+            @unlink($tempZipPath);
 
             \Illuminate\Support\Facades\Artisan::call('view:clear');
             \Illuminate\Support\Facades\Artisan::call('cache:clear');
 
             return back()
                 ->with('active_tab', $request->input('active_tab', 'database'))
-                ->with('success', "🔄 Git Pull Executed Successfully! Output: " . trim($output ?: 'Already up to date.'));
+                ->with('success', "✨ Codebase Updated Successfully! Synchronized {$updatedFilesCount} files directly from GitHub without shell commands.");
         } catch (\Throwable $e) {
             return back()
                 ->with('active_tab', $request->input('active_tab', 'database'))
-                ->with('error', "❌ Git Pull Error: " . $e->getMessage());
+                ->with('error', "❌ Codebase Update Error: " . $e->getMessage());
         }
     }
 

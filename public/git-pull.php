@@ -1,28 +1,151 @@
 <?php
+
 /**
- * Standalone Web Git Pull Helper for Obituaries.co.ke
+ * Pure PHP Web Codebase Deployer for Shared Hosting
+ * Works on Truehost / cPanel shared hosting without shell_exec or terminal access.
  * Access via browser: https://obituaries.co.ke/git-pull.php
  */
 
-use Illuminate\Support\Facades\Artisan;
+define('LARAVEL_START', microtime(true));
 
 $baseDir = dirname(__DIR__);
 
-require_once $baseDir . '/vendor/autoload.php';
-$app = require_once $baseDir . '/bootstrap/app.php';
+// Load Autoloader & Bootstrap Laravel
+$autoloadPath = $baseDir . '/vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    die("Error: Vendor autoloader not found at {$autoloadPath}");
+}
+require_once $autoloadPath;
+
+$appPath = $baseDir . '/bootstrap/app.php';
+if (!file_exists($appPath)) {
+    die("Error: Bootstrap app not found at {$appPath}");
+}
+$app = require_once $appPath;
+
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-echo "<!DOCTYPE html>
-<html lang='en'>
+use Illuminate\Support\Facades\Artisan;
+
+$zipUrl = "https://github.com/motechgroup/obituaries.co.ke/archive/refs/heads/main.zip";
+$tempZipPath = storage_path('app/latest-main.zip');
+$extractTempPath = storage_path('app/git-extracted');
+
+$updatedFilesCount = 0;
+$errorMsg = null;
+
+try {
+    // 1. Download repository ZIP from GitHub using PHP cURL (with follow redirects)
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $zipUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'ObituariesWebDeployer/1.0');
+    $zipData = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    if ($httpCode !== 200 || empty($zipData)) {
+        throw new Exception("Failed to download repository ZIP from GitHub (HTTP Code: {$httpCode}). " . ($curlError ?: 'Data empty.'));
+    }
+
+    // 2. Save ZIP payload to storage
+    file_put_contents($tempZipPath, $zipData);
+
+    // 3. Extract ZIP using PHP ZipArchive
+    if (!class_exists('ZipArchive')) {
+        throw new Exception("PHP ZipArchive extension is not enabled on this server.");
+    }
+
+    $zip = new ZipArchive();
+    if ($zip->open($tempZipPath) !== true) {
+        throw new Exception("Unable to open downloaded ZIP package.");
+    }
+
+    // Ensure extraction folder exists
+    if (!file_exists($extractTempPath)) {
+        @mkdir($extractTempPath, 0755, true);
+    }
+
+    $zip->extractTo($extractTempPath);
+    $zip->close();
+
+    // 4. Locate extracted directory (e.g. obituaries.co.ke-main)
+    $extractedDirs = glob($extractTempPath . '/*', GLOB_ONLYDIR);
+    if (empty($extractedDirs)) {
+        throw new Exception("Extracted ZIP folder structure not found.");
+    }
+    $sourceRoot = $extractedDirs[0];
+
+    // 5. Copy updated files recursively to base_path(), ignoring sensitive files
+    $skipPaths = ['.env', '.git', 'storage/app/public', 'storage/framework/cache', 'storage/framework/views', 'public/storage'];
+
+    $copyRecursive = function ($src, $dst) use (&$copyRecursive, $sourceRoot, &$updatedFilesCount, $skipPaths) {
+        $dir = @opendir($src);
+        if (!$dir) return;
+
+        @mkdir($dst, 0755, true);
+
+        while (false !== ($file = readdir($dir))) {
+            if ($file === '.' || $file === '..') continue;
+
+            $srcPath = $src . '/' . $file;
+            $dstPath = $dst . '/' . $file;
+
+            $relative = ltrim(str_replace($sourceRoot, '', $srcPath), '/');
+
+            // Check if path should be skipped
+            $shouldSkip = false;
+            foreach ($skipPaths as $skip) {
+                if (str_starts_with($relative, $skip)) {
+                    $shouldSkip = true;
+                    break;
+                }
+            }
+
+            if ($shouldSkip) continue;
+
+            if (is_dir($srcPath)) {
+                $copyRecursive($srcPath, $dstPath);
+            } else {
+                @mkdir(dirname($dstPath), 0755, true);
+                if (@copy($srcPath, $dstPath)) {
+                    $updatedFilesCount++;
+                }
+            }
+        }
+        closedir($dir);
+    };
+
+    $copyRecursive($sourceRoot, base_path());
+
+    // Clean up temporary ZIP
+    @unlink($tempZipPath);
+
+    // 6. Clear Laravel Cache
+    try {
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+    } catch (\Throwable $e) {}
+
+} catch (\Throwable $e) {
+    $errorMsg = $e->getMessage();
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Git Pull Codebase | Obituaries.co.ke</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Deploy Codebase | Obituaries.co.ke</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0b101d; color: #e2e8f0; padding: 40px 20px; margin: 0; }
         .container { max-width: 700px; margin: 0 auto; background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 32px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
-        h1 { margin-top: 0; color: #f8fafc; font-size: 24px; font-weight: 800; display: flex; items-center: center; gap: 10px; }
+        h1 { margin-top: 0; color: #f8fafc; font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
         .badge { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 1px; }
         .alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-size: 14px; font-weight: 600; }
         .alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-size: 14px; }
@@ -36,39 +159,30 @@ echo "<!DOCTYPE html>
     </style>
 </head>
 <body>
-<div class='container'>
-    <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;'>
-        <h1>🔄 Git Pull Codebase</h1>
-        <span class='badge'>Obituaries.co.ke</span>
-    </div>";
+<div class="container">
+    <div style="display:flex; justify-namespace:space-between; align-items:center; margin-bottom: 20px;">
+        <h1>✨ Codebase Update (Pure PHP)</h1>
+        <span class="badge">Obituaries.co.ke</span>
+    </div>
 
-try {
-    $basePath = base_path();
-    $command = "cd " . escapeshellarg($basePath) . " && git config --global --add safe.directory " . escapeshellarg($basePath) . " 2>&1 && git fetch origin main 2>&1 && git reset --hard origin/main 2>&1";
-    $output = shell_exec($command);
+    <?php if ($errorMsg): ?>
+        <div class="alert-error">
+            ❌ Deployment Error: <?= htmlspecialchars($errorMsg) ?>
+        </div>
+    <?php else: ?>
+        <div class="alert-success">
+            ✅ Codebase Successfully Synchronized & Cache Cleared!
+        </div>
+        <p style="font-size: 14px; color: #cbd5e1;">
+            Downloaded and updated <strong><?= $updatedFilesCount ?></strong> files directly from GitHub <code>main</code> branch without shell execution requirements.
+        </p>
+    <?php endif; ?>
 
-    Artisan::call('view:clear');
-    Artisan::call('cache:clear');
-
-    echo "<div class='alert-success'>
-            ✅ Git Pull Completed & Cache Cleared!
-          </div>";
-
-    echo "<h3 style='color: #cbd5e1; margin-bottom: 8px;'>Git Command Output:</h3>";
-    echo "<pre>" . htmlspecialchars(trim($output ?: "Already up to date.")) . "</pre>";
-
-    echo "<div class='btn-group'>
-            <a href='/' class='btn btn-primary'>Go to Website &rarr;</a>
-            <a href='/admin/login' class='btn btn-secondary'>Admin Portal &rarr;</a>
-            <a href='/run-migrations.php' class='btn btn-secondary'>Run Migrations &rarr;</a>
-          </div>";
-
-} catch (\Throwable $e) {
-    echo "<div class='alert-error'>
-            ❌ Git Pull Failed! Exception: " . htmlspecialchars($e->getMessage()) . "
-          </div>";
-}
-
-echo "</div>
+    <div class="btn-group">
+        <a href="/" class="btn btn-primary">Go to Website &rarr;</a>
+        <a href="/admin/login" class="btn btn-secondary">Admin Portal &rarr;</a>
+        <a href="/run-migrations.php" class="btn btn-secondary">Run Migrations &rarr;</a>
+    </div>
+</div>
 </body>
-</html>";
+</html>
