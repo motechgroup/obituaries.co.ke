@@ -9,14 +9,14 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Recent Tributes: Only show obituaries posted within the last 24 hours (< 1 day old)
+        // Recent Tributes: Show obituaries posted within the last 48 hours (including 1 day old notices)
         $latestObituaries = Obituary::published()
-            ->where('created_at', '>=', now()->subHours(24))
+            ->where('created_at', '>=', now()->subHours(48))
             ->latest('id')
             ->take(8)
             ->get();
 
-        // Fallback: If no notices were posted in the last 24 hours, show latest published notices
+        // Fallback: If no notices were posted in the last 48 hours, show latest published notices
         if ($latestObituaries->isEmpty()) {
             $latestObituaries = Obituary::published()
                 ->latest('id')
