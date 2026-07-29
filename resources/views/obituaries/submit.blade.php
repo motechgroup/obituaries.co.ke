@@ -23,13 +23,12 @@
          nextStep(next) {
              if (this.step === 1) {
                  const name = document.getElementById('full_name')?.value.trim();
-                 const dod = document.getElementById('date_of_death')?.value.trim();
                  const county = document.getElementById('county')?.value;
                  const town = document.getElementById('town')?.value.trim();
                  const bio = document.getElementById('biography')?.value.trim();
 
-                 if (!name || !dod || !county || !town || !bio) {
-                     alert('Please complete all required fields in Step 1 (Full Name, Date of Death, County, Town, and Biography) before proceeding.');
+                 if (!name || !county || !town || !bio) {
+                     alert('Please complete all required fields in Step 1 (Full Name, County, Town, and Biography) before proceeding.');
                      return;
                  }
              }
@@ -119,10 +118,10 @@
 
                     <div>
                         <label for="date_of_death" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                            Date of Death <span class="text-rose-500">*</span>
+                            Date of Death <span class="text-on-surface-variant/60 font-normal lowercase">(optional)</span>
                         </label>
-                        <input type="text" name="date_of_death" id="date_of_death" value="{{ old('date_of_death') }}" required placeholder="e.g. 2026 or 28/07/2026" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
-                        <span class="text-[10px] text-on-surface-variant/70 mt-1 block">Format: DD/MM/YYYY or 4-digit Year (e.g., <strong>2026</strong>).</span>
+                        <input type="text" name="date_of_death" id="date_of_death" value="{{ old('date_of_death') }}" placeholder="e.g. 2026 or 28/07/2026" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        <span class="text-[10px] text-on-surface-variant/70 mt-1 block">Format: DD/MM/YYYY or 4-digit Year (e.g., <strong>2026</strong>). Leave blank if unknown.</span>
                     </div>
                 </div>
 

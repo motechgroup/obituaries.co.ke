@@ -54,9 +54,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Date of Passing <span class="text-rose-500">*</span></label>
-                        <input type="text" name="date_of_death" value="{{ old('date_of_death', optional($obituary->date_of_death)->format('Y-m-d')) }}" required placeholder="e.g. 2026 or 28/07/2026" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
-                        <span class="text-[10px] text-slate-500 mt-1 block">Type 4-digit Year (e.g., <strong>2026</strong>) OR full date (e.g., <strong>28/07/2026</strong>).</span>
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Date of Passing <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                        <input type="text" name="date_of_death" value="{{ old('date_of_death', optional($obituary->date_of_death)->format('Y-m-d')) }}" placeholder="e.g. 2026 or 28/07/2026" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        <span class="text-[10px] text-slate-500 mt-1 block">Type 4-digit Year (e.g., <strong>2026</strong>) OR full date (e.g., <strong>28/07/2026</strong>). Leave blank if unknown.</span>
                     </div>
 
                     <div>

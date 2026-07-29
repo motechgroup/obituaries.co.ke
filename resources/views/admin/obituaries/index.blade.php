@@ -140,7 +140,11 @@
                                             {{ $ob->full_name }}
                                         </a>
                                         <span class="text-[10px] text-slate-500 block mt-0.5">
-                                            Passed: {{ $ob->date_of_death->format('M d, Y') }}
+                                            @if($ob->date_of_death)
+                                                Passed: {{ $ob->date_of_death->format('M d, Y') }}
+                                            @else
+                                                Date of Passing: Not specified
+                                            @endif
                                             @if($ob->age) &bull; {{ $ob->age }} Yrs @endif
                                         </span>
                                     </div>

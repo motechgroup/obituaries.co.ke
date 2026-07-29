@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('full_name');
             $table->string('photo')->nullable();
-            $table->date('date_of_birth');
-            $table->date('date_of_death');
+            $table->date('date_of_birth')->nullable();
+            $table->date('date_of_death')->nullable();
             $table->string('county');
             $table->string('town');
             $table->text('biography');

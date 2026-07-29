@@ -46,7 +46,7 @@ class ObituarySubmissionController extends Controller
             'full_name' => ['required', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB max
             'date_of_birth' => ['nullable', 'string'],
-            'date_of_death' => ['required', 'string'],
+            'date_of_death' => ['nullable', 'string'],
             'county' => ['required', 'string', 'max:100'],
             'town' => ['required', 'string', 'max:100'],
             'biography' => ['required', 'string', 'min:20'],

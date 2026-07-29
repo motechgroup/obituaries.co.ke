@@ -101,15 +101,17 @@
             <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-primary mb-2 sm:mb-3 leading-tight">{{ $obituary->full_name }}</h1>
             
             <div class="flex items-center gap-3 text-on-surface-variant mb-3 font-semibold text-sm sm:text-base">
-                @if($obituary->date_of_birth)
+                @if($obituary->date_of_birth && $obituary->date_of_death)
                     <span>{{ $obituary->date_of_birth->format('Y') }}</span>
                     <span class="w-6 h-[1px] bg-outline-variant"></span>
                     <span>{{ $obituary->date_of_death->format('Y') }}</span>
                     @if($obituary->age)
                         <span class="text-xs text-on-surface-variant/70 font-normal">({{ $obituary->age }} Years)</span>
                     @endif
-                @else
+                @elseif($obituary->date_of_death)
                     <span>Passed Away: {{ $obituary->date_of_death->format('M j, Y') }}</span>
+                @elseif($obituary->date_of_birth)
+                    <span>Born: {{ $obituary->date_of_birth->format('Y') }}</span>
                 @endif
             </div>
 
