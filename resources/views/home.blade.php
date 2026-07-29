@@ -65,7 +65,7 @@
                     <!-- Thumbnail Avatar -->
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
                         @if($obituary->photo)
-                            <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Obituary Notice" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-amber-400">
                                 <span class="material-symbols-outlined text-[18px] sm:text-[20px]">church</span>
@@ -122,7 +122,7 @@
                             <!-- Compact Square Aspect Image Container -->
                             <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container select-none">
                                 @if($obituary->photo)
-                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Obituary Photo" width="300" height="300" loading="lazy" decoding="async" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
                                     
                                     <!-- Translucent Glass Watermark Overlay (Chest Level) -->
                                     <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
@@ -208,7 +208,7 @@
                             <!-- Thumbnail Avatar -->
                             <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
                                 @if($obituary->photo)
-                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Memorial Photo" width="52" height="52" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-amber-950 to-slate-900 flex items-center justify-center text-amber-300">
                                         <span class="text-lg animate-pulse">🕯️</span>
@@ -279,7 +279,7 @@
                             <!-- Thumbnail Avatar -->
                             <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-surface-container flex-shrink-0 border border-amber-300/50 shadow-xs">
                                 @if($obituary->photo)
-                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Anniversary Photo" width="56" height="56" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-amber-800 to-amber-950 flex items-center justify-center text-amber-100">
                                         <span class="material-symbols-outlined text-[20px] sm:text-[24px]">church</span>

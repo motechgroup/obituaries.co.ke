@@ -110,7 +110,12 @@
         }
     </style>
 
-    <!-- Google Fonts & Material Symbols -->
+    <!-- Preconnect Resource Hints for Fonts & CDNs -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+
+    <!-- Google Fonts & Material Symbols with font-display: swap -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet"/>
 
@@ -166,20 +171,20 @@
     <header class="fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-outline-variant/30">
         <div class="h-20 max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
             <!-- Official Site Logo -->
-            <a href="{{ route('home') }}" class="flex items-center flex-shrink-0 group">
-                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" class="h-10 sm:h-12 w-auto object-contain">
+            <a href="{{ route('home') }}" class="flex items-center flex-shrink-0 group" aria-label="Obituaries.co.ke Homepage">
+                <img src="{{ asset('images/logo.svg') }}" alt="Obituaries.co.ke Logo" width="180" height="48" class="h-10 sm:h-12 w-auto object-contain">
             </a>
 
             <!-- Quick Header Search (Desktop) -->
-            <form action="{{ route('obituaries.search') }}" method="GET" class="hidden md:flex flex-1 max-w-md mx-4">
+            <form action="{{ route('obituaries.search') }}" method="GET" class="hidden md:flex flex-1 max-w-md mx-4" role="search">
                 <div class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-outline-variant focus-within:border-primary w-full transition-all">
                     <span class="material-symbols-outlined text-on-surface-variant mr-2 text-[20px]">search</span>
-                    <input type="text" name="name" placeholder="Search obituary by name..." value="{{ request('name') }}" class="bg-transparent border-none outline-none w-full text-sm text-on-surface placeholder-on-surface-variant/60">
+                    <input type="text" name="name" placeholder="Search obituary by name..." value="{{ request('name') }}" aria-label="Search obituary by name" class="bg-transparent border-none outline-none w-full text-sm text-on-surface placeholder-on-surface-variant/60">
                 </div>
             </form>
 
             <!-- Desktop Nav Links -->
-            <nav class="hidden md:flex items-center gap-6">
+            <nav class="hidden md:flex items-center gap-6" aria-label="Main Navigation">
                 <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Directory</a>
                 <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">Counties</a>
                 <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors">About</a>
@@ -197,7 +202,7 @@
                     <span>Submit</span>
                 </a>
 
-                <button type="button" @click="mobileMenu = !mobileMenu" class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high focus:outline-none" aria-label="Toggle Navigation">
+                <button type="button" @click="mobileMenu = !mobileMenu" class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high focus:outline-none" aria-label="Toggle Mobile Navigation Menu">
                     <span class="material-symbols-outlined text-[24px]" x-text="mobileMenu ? 'close' : 'menu'"></span>
                 </button>
             </div>

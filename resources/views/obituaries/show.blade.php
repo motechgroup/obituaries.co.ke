@@ -78,7 +78,7 @@
         <div class="relative flex-shrink-0">
             <div class="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-surface-container flex items-center justify-center relative group select-none">
                 @if($obituary->photo)
-                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover select-none pointer-events-none">
+                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" width="224" height="224" fetchpriority="high" class="w-full h-full object-cover select-none pointer-events-none">
                     
                     <!-- Translucent Glass Watermark Overlay (Chest Level) -->
                     <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
@@ -166,7 +166,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     @foreach($uploadedGallery as $img)
                         <div class="aspect-square overflow-hidden rounded-xl shadow-xs group bg-surface-container relative select-none">
-                            <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none pointer-events-none">
+                            <img src="{{ asset('storage/' . $img) }}" alt="Moments in Time Photograph" width="300" height="300" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none pointer-events-none">
                             
                             <!-- Translucent Glass Watermark Overlay (Chest Level) -->
                             <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">

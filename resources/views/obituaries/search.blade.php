@@ -105,7 +105,7 @@
                         <!-- Compact Square Aspect Image -->
                         <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container select-none">
                             @if($obituary->photo)
-                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
+                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Obituary Photo" width="300" height="300" loading="lazy" decoding="async" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
                                 
                                 <!-- Translucent Glass Watermark Overlay (Chest Level) -->
                                 <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">

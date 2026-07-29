@@ -60,7 +60,7 @@
                     <div>
                         <div class="relative aspect-4/3 bg-surface-container overflow-hidden select-none">
                             @if($obituary->photo)
-                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} obituary photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none">
+                                <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} obituary photo" width="300" height="225" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none">
                                 
                                 <!-- Translucent Glass Watermark Overlay (Chest Level) -->
                                 <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
