@@ -3,6 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    @php
+        $gaMode = \App\Models\Setting::get('google_analytics_mode', 'auto');
+        $gaMeasurementId = trim(\App\Models\Setting::get('google_analytics_measurement_id', ''));
+        $gaScript = trim(\App\Models\Setting::get('google_analytics_script', ''));
+
+        // Backward compatibility if script was previously pasted into measurement_id field
+        if (empty($gaScript) && (str_contains(strtolower($gaMeasurementId), '<script') || str_contains($gaMeasurementId, '<'))) {
+            $gaScript = $gaMeasurementId;
+            $gaMeasurementId = '';
+        }
+
+        $activeGaType = null;
+        if ($gaMode !== 'disabled') {
+            if ($gaMode === 'script' && !empty($gaScript)) {
+                $activeGaType = 'script';
+            } elseif ($gaMode === 'measurement_id' && !empty($gaMeasurementId)) {
+                $activeGaType = 'measurement_id';
+            } elseif ($gaMode === 'auto') {
+                if (!empty($gaScript)) {
+                    $activeGaType = 'script';
+                } elseif (!empty($gaMeasurementId)) {
+                    $activeGaType = 'measurement_id';
+                }
+            }
+        }
+    @endphp
+
+    @if($activeGaType === 'script')
+        <!-- Google Analytics Custom Script -->
+        {!! $gaScript !!}
+    @elseif($activeGaType === 'measurement_id')
+        <!-- Google tag (gtag.js) GA4 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaMeasurementId }}"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', '{{ $gaMeasurementId }}');
+        </script>
+    @endif
     
     <title>@yield('title', 'Obituaries.co.ke | Kenya Obituaries, Death Notices & Memorials')</title>
     <meta name="description" content="@yield('meta_description', 'Official Kenyan obituary platform. Read recent death notices, life stories, funeral schedules, and light virtual candles for loved ones across Kenya.')">
@@ -67,26 +109,6 @@
             color: #44474e;
         }
     </style>
-
-    @php
-        $gaId = trim(\App\Models\Setting::get('google_analytics_measurement_id', ''));
-    @endphp
-
-    @if(!empty($gaId))
-        @if(str_contains($gaId, '<script'))
-            {!! $gaId !!}
-        @else
-            <!-- Google tag (gtag.js) GA4 -->
-            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
-            <script>
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', '{{ $gaId }}');
-            </script>
-        @endif
-    @endif
 
     <!-- Google Fonts & Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>

@@ -46,8 +46,8 @@ class RecentTributesTest extends TestCase
         $response = $this->get(route('home'));
         $response->assertStatus(200);
 
-        $latestObituaries = $response->viewData('latestObituaries');
-        $this->assertTrue($latestObituaries->contains($recentNotice));
-        $this->assertFalse($latestObituaries->contains($oldNotice));
+        $todayDirectoryObituaries = $response->viewData('todayDirectoryObituaries');
+        $this->assertTrue($todayDirectoryObituaries->contains($recentNotice));
+        $this->assertFalse($todayDirectoryObituaries->contains($oldNotice));
     }
 }

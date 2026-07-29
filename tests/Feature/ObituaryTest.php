@@ -534,12 +534,31 @@ class ObituaryTest extends TestCase
 
         // 3. Configure Google Analytics GA4 Measurement ID in Settings
         \App\Models\Setting::set('google_analytics_measurement_id', 'G-TEST123456');
+        \App\Models\Setting::set('google_analytics_script', '');
+        \App\Models\Setting::set('google_analytics_mode', 'auto');
 
         // 4. Verify public page renders GA4 script tag in head
         $homeResponse = $this->get(route('home'));
         $homeResponse->assertStatus(200);
         $homeResponse->assertSee('https://www.googletagmanager.com/gtag/js?id=G-TEST123456', false);
         $homeResponse->assertSee("gtag('config', 'G-TEST123456');", false);
+
+        // 5. Verify admin can save both Measurement ID and Custom Script Tag via settings form and select preferred mode
+        $fullScriptTag = '<script async src="https://www.googletagmanager.com/gtag/js?id=G-FULLGA999"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-FULLGA999");</script>';
+        $updateResponse = $this->actingAs($admin, 'admin')->post(route('admin.settings.update'), [
+            'google_analytics_measurement_id' => 'G-TEST123456',
+            'google_analytics_script' => $fullScriptTag,
+            'google_analytics_mode' => 'script',
+            'obituary_publishing_cost' => 500,
+        ]);
+        $updateResponse->assertSessionHasNoErrors();
+        $this->assertEquals('G-TEST123456', \App\Models\Setting::get('google_analytics_measurement_id'));
+        $this->assertEquals($fullScriptTag, \App\Models\Setting::get('google_analytics_script'));
+        $this->assertEquals('script', \App\Models\Setting::get('google_analytics_mode'));
+
+        $homeScriptResponse = $this->get(route('home'));
+        $homeScriptResponse->assertStatus(200);
+        $homeScriptResponse->assertSee($fullScriptTag, false);
     }
 
     public function test_admin_can_toggle_public_submissions()

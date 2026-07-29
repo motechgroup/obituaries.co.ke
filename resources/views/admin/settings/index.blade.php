@@ -183,17 +183,115 @@
                 </div>
 
                 <!-- Google Analytics Integration Box -->
-                <div class="sm:col-span-2 p-5 bg-sky-50/80 border border-sky-200 rounded-xl space-y-3">
-                    <div class="flex items-center space-x-2 text-sky-900 font-bold text-sm">
-                        <span class="material-symbols-outlined text-[20px] text-sky-600">analytics</span>
-                        <span>Google Analytics (GA4) Integration</span>
+                <div class="sm:col-span-2 p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-5 shadow-lg">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                        <div class="flex items-center space-x-2.5 text-sky-400 font-bold text-base">
+                            <span class="material-symbols-outlined text-[24px]">analytics</span>
+                            <span>Google Analytics (GA4) Tracking Setup</span>
+                        </div>
+
+                        <!-- Active Status Badge -->
+                        @php
+                            $currentGaMode = old('google_analytics_mode', $settings['google_analytics_mode'] ?? 'auto');
+                            $currentGaId = old('google_analytics_measurement_id', $settings['google_analytics_measurement_id'] ?? '');
+                            $currentGaScript = old('google_analytics_script', $settings['google_analytics_script'] ?? '');
+
+                            // Backward compatibility fallback
+                            if (empty($currentGaScript) && (str_contains(strtolower($currentGaId), '<script') || str_contains($currentGaId, '<'))) {
+                                $currentGaScript = $currentGaId;
+                                $currentGaId = '';
+                            }
+
+                            $activeMethodText = '🔴 Inactive (Not Configured)';
+                            $activeMethodBadgeClass = 'bg-rose-950/80 text-rose-300 border-rose-800';
+
+                            if ($currentGaMode !== 'disabled') {
+                                if ($currentGaMode === 'script' && !empty($currentGaScript)) {
+                                    $activeMethodText = '🟢 Active Method: Custom Script Tag';
+                                    $activeMethodBadgeClass = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
+                                } elseif ($currentGaMode === 'measurement_id' && !empty($currentGaId)) {
+                                    $activeMethodText = '🟢 Active Method: Measurement ID (' . $currentGaId . ')';
+                                    $activeMethodBadgeClass = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
+                                } elseif ($currentGaMode === 'auto') {
+                                    if (!empty($currentGaScript)) {
+                                        $activeMethodText = '🟢 Active Method: Custom Script Tag (Auto-Detected)';
+                                        $activeMethodBadgeClass = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
+                                    } elseif (!empty($currentGaId)) {
+                                        $activeMethodText = '🟢 Active Method: Measurement ID (' . $currentGaId . ')';
+                                        $activeMethodBadgeClass = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
+                                    }
+                                }
+                            }
+                        @endphp
+
+                        <div class="px-3 py-1 rounded-full border text-xs font-bold font-mono tracking-wide flex items-center space-x-1.5 {{ $activeMethodBadgeClass }}">
+                            <span>{{ $activeMethodText }}</span>
+                        </div>
                     </div>
-                    <p class="text-xs text-sky-800 leading-relaxed">
-                        Enter your Google Analytics 4 Measurement ID (e.g. <code class="bg-white px-1.5 py-0.5 rounded border border-sky-200">G-XXXXXXXXXX</code>) or paste the full <code class="bg-white px-1.5 py-0.5 rounded border border-sky-200">&lt;script&gt;</code> tag. It will automatically inject the official Google Tag code into the website.
+
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Configure Google Analytics tracking for Obituaries.co.ke. You can enter both a <strong>GA4 Measurement ID</strong> and a <strong>Custom Script Tag</strong>, then select your preferred mode. The active script is placed immediately at the top of the <code class="bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded">&lt;head&gt;</code> tag for optimal detection by Google Tag Assistant.
                     </p>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Google Analytics Tag / Measurement ID</label>
-                        <input type="text" name="google_analytics_measurement_id" value="{{ old('google_analytics_measurement_id', $settings['google_analytics_measurement_id']) }}" placeholder="e.g. G-ABC123XYZ or <script>...</script>" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-mono">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Preferred Integration Mode -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-1.5">Preferred Tracking Method</label>
+                            <select name="google_analytics_mode" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs font-bold text-white focus:border-amber-400 outline-none">
+                                <option value="auto" {{ $currentGaMode === 'auto' ? 'selected' : '' }}>⚡ Auto-Detect (Use Custom Script if provided, otherwise Measurement ID)</option>
+                                <option value="script" {{ $currentGaMode === 'script' ? 'selected' : '' }}>📜 Use Custom Script Tag (Ignores Measurement ID input)</option>
+                                <option value="measurement_id" {{ $currentGaMode === 'measurement_id' ? 'selected' : '' }}>🏷️ Use GA4 Measurement ID (Ignores Script input)</option>
+                                <option value="disabled" {{ $currentGaMode === 'disabled' ? 'selected' : '' }}>⛔ Disable Google Analytics Tracking</option>
+                            </select>
+                        </div>
+
+                        <!-- Option 1: GA4 Measurement ID -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">GA4 Measurement ID</label>
+                            <input type="text" name="google_analytics_measurement_id" value="{{ $currentGaId }}" placeholder="e.g. G-ABC123XYZ" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono font-bold text-sky-300 placeholder:text-slate-600 focus:border-sky-400 outline-none">
+                            <span class="text-[11px] text-slate-400 block">Example format: <code class="text-sky-300">G-XXXXXXXXXX</code></span>
+                        </div>
+
+                        <!-- Option 2: Custom Script Tag -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">Custom Google Analytics / Tag Manager &lt;script&gt;</label>
+                            <textarea name="google_analytics_script" rows="4" placeholder="Paste your full <script async src='https://www.googletagmanager.com/gtag/js?id=G-...'></script><script>...</script> here" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-emerald-300 placeholder:text-slate-600 focus:border-emerald-400 outline-none leading-relaxed">{{ $currentGaScript }}</textarea>
+                            <span class="text-[11px] text-slate-400 block">Paste full snippet including <code class="text-emerald-300">&lt;script&gt;...&lt;/script&gt;</code> tags</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Saved Script Verification Box -->
+                    <div class="p-4 bg-slate-950/90 rounded-xl border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-300">
+                            <span class="flex items-center space-x-1.5 text-sky-400">
+                                <span class="material-symbols-outlined text-[16px]">verified</span>
+                                <span>Currently Saved Script Preview (In Database)</span>
+                            </span>
+                            @if(!empty($currentGaScript))
+                                <span class="text-[10px] text-emerald-400 font-mono">Script Saved ({{ strlen($currentGaScript) }} chars)</span>
+                            @elseif(!empty($currentGaId))
+                                <span class="text-[10px] text-sky-400 font-mono">ID Saved ({{ strlen($currentGaId) }} chars)</span>
+                            @else
+                                <span class="text-[10px] text-rose-400 font-mono">No Script or ID Saved</span>
+                            @endif
+                        </div>
+
+                        <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg max-h-36 overflow-y-auto">
+                            @if(!empty($currentGaScript))
+                                <pre class="text-[11px] font-mono text-emerald-300 whitespace-pre-wrap break-all leading-relaxed">{{ $currentGaScript }}</pre>
+                            @elseif(!empty($currentGaId))
+                                <pre class="text-[11px] font-mono text-sky-300 whitespace-pre-wrap break-all leading-relaxed">&lt;!-- Google tag (gtag.js) GA4 --&gt;
+&lt;script async src="https://www.googletagmanager.com/gtag/js?id={{ $currentGaId }}"&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ $currentGaId }}');
+&lt;/script&gt;</pre>
+                            @else
+                                <p class="text-xs text-slate-500 italic">No Google Analytics script or measurement ID has been saved yet. Fill in either field above and click "Save All Platform Settings".</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
