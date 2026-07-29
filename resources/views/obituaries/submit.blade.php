@@ -16,11 +16,23 @@
 
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12" 
      x-data="{
-         step: 1,
+         step: {{ $errors->has('submitter_name') || $errors->has('submitter_phone') || $errors->has('relationship') || $errors->has('family_permission_confirmed') ? 3 : ($errors->has('funeral_date') || $errors->has('programme_file') ? 2 : 1) }},
          goToStep(targetStep) {
              this.step = targetStep;
          },
          nextStep(next) {
+             if (this.step === 1) {
+                 const name = document.getElementById('full_name')?.value.trim();
+                 const dod = document.getElementById('date_of_death')?.value.trim();
+                 const county = document.getElementById('county')?.value;
+                 const town = document.getElementById('town')?.value.trim();
+                 const bio = document.getElementById('biography')?.value.trim();
+
+                 if (!name || !dod || !county || !town || !bio) {
+                     alert('Please complete all required fields in Step 1 (Full Name, Date of Death, County, Town, and Biography) before proceeding.');
+                     return;
+                 }
+             }
              this.step = next;
              window.scrollTo({ top: 180, behavior: 'smooth' });
          }
@@ -77,7 +89,7 @@
             </div>
         @endif
 
-        <form action="{{ route('obituaries.store') }}" method="POST" enctype="multipart/form-data" class="p-5 sm:p-10 space-y-6 sm:space-y-8">
+        <form novalidate action="{{ route('obituaries.store') }}" method="POST" enctype="multipart/form-data" class="p-5 sm:p-10 space-y-6 sm:space-y-8">
             @csrf
 
             <!-- STEP 1: DECEASED INFORMATION -->
