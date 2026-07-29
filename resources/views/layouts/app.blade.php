@@ -273,24 +273,24 @@
             </nav>
 
             <!-- Major County SEO Footer Links -->
-            <div class="border-t border-outline-variant/20 pt-6 mb-8 w-full">
-                <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant/70 block mb-3">Obituaries by County</span>
-                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] text-on-surface-variant/80">
-                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-primary font-medium">Nairobi Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-primary font-medium">Kisii Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-primary font-medium">Kisumu Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-primary font-medium">Mombasa Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-primary font-medium">Nakuru Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-primary font-medium">Kiambu Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-primary font-medium">Eldoret Obituaries</a>
-                    <span>&bull;</span>
-                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-primary font-medium">Machakos Obituaries</a>
+            <div class="my-6 w-full bg-[#0B101D] border border-slate-800/80 rounded-2xl p-6 shadow-md text-center">
+                <span class="text-[11px] uppercase font-bold tracking-[0.15em] text-amber-400 block mb-3">Obituaries by County</span>
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2.5 text-xs text-slate-300">
+                    <a href="{{ url('/county/nairobi-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Nairobi Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/kisii-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Kisii Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/kisumu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Kisumu Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/mombasa-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Mombasa Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/nakuru-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Nakuru Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/kiambu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Kiambu Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/uasin-gishu-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Eldoret Obituaries</a>
+                    <span class="text-slate-600">&bull;</span>
+                    <a href="{{ url('/county/machakos-obituaries') }}" class="hover:text-amber-400 font-medium transition-colors">Machakos Obituaries</a>
                 </div>
             </div>
             

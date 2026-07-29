@@ -60,7 +60,7 @@
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 py-1">
-            @forelse($latestObituaries as $obituary)
+            @forelse($todayDirectoryObituaries as $obituary)
                 <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3 sm:space-x-3.5 group transition-opacity hover:opacity-90 min-w-0">
                     <!-- Thumbnail Avatar -->
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
@@ -235,57 +235,7 @@
     </div>
 </section>
 
-<!-- Search & Filter Section matching Stitch Design -->
-<section class="w-full py-14 sm:py-20 bg-primary text-on-primary overflow-hidden relative" id="search-archives">
-    <!-- Background Accents -->
-    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-[100px]"></div>
 
-    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10">
-        <div class="max-w-4xl mx-auto text-center mb-8 sm:mb-12">
-            <h2 class="font-serif text-2xl sm:text-4xl font-bold mb-2 sm:mb-4">Search the Archives</h2>
-            <p class="text-xs sm:text-sm text-primary-fixed/70">Find and honor the legacies of those who have passed across Kenya.</p>
-        </div>
-
-        <div class="bg-surface-container-lowest/10 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-[2rem] shadow-2xl border border-white/10">
-            <form action="{{ route('obituaries.search') }}" method="GET" class="flex flex-col md:flex-row gap-2.5 sm:gap-3">
-                <!-- Name Search -->
-                <div class="flex-1 relative flex items-center px-4 py-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-                    <span class="material-symbols-outlined text-primary-fixed/40 mr-2.5 text-[20px]">search</span>
-                    <input type="text" name="name" value="{{ request('name') }}" placeholder="Search by name..." class="bg-transparent border-none outline-none w-full text-xs sm:text-sm text-on-primary placeholder-primary-fixed/40">
-                </div>
-
-                <!-- County Select -->
-                <div class="flex-1 relative flex items-center px-4 py-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-                    <span class="material-symbols-outlined text-primary-fixed/40 mr-2.5 text-[20px]">location_on</span>
-                    <select name="county" class="bg-transparent border-none outline-none w-full text-xs sm:text-sm text-on-primary appearance-none cursor-pointer">
-                        <option value="" class="bg-slate-900 text-white">All Counties</option>
-                        @foreach($counties as $c)
-                            <option value="{{ $c }}" class="bg-slate-900 text-white" {{ request('county') == $c ? 'selected' : '' }}>{{ $c }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Year Select -->
-                <div class="flex-1 relative flex items-center px-4 py-3 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-                    <span class="material-symbols-outlined text-primary-fixed/40 mr-2.5 text-[20px]">calendar_month</span>
-                    <select name="year" class="bg-transparent border-none outline-none w-full text-xs sm:text-sm text-on-primary appearance-none cursor-pointer">
-                        <option value="" class="bg-slate-900 text-white">All Years</option>
-                        @for($y = date('Y'); $y >= 2000; $y--)
-                            <option value="{{ $y }}" class="bg-slate-900 text-white" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
-                </div>
-
-                <!-- Submit Search -->
-                <button type="submit" class="bg-secondary-fixed text-on-secondary-fixed px-6 sm:px-8 py-3.5 rounded-xl md:rounded-2xl font-bold text-xs hover:bg-secondary hover:text-white transition-all flex items-center justify-center space-x-2 w-full md:w-auto">
-                    <span class="material-symbols-outlined text-[18px]">search</span>
-                    <span>Search Now</span>
-                </button>
-            </form>
-        </div>
-    </div>
-</section>
 
 <!-- Virtual Candles Lit Today Section (Matching User Directive: After Search Section) -->
 <section class="w-full py-12 sm:py-16 bg-slate-950 text-white relative overflow-hidden border-b border-amber-950/40">
