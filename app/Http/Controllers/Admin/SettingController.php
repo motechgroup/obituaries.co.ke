@@ -228,7 +228,7 @@ class SettingController extends Controller
     {
         try {
             $basePath = base_path();
-            $command = "cd " . escapeshellarg($basePath) . " && git config --global --add safe.directory " . escapeshellarg($basePath) . " 2>&1 && git pull origin main 2>&1";
+            $command = "cd " . escapeshellarg($basePath) . " && git config --global --add safe.directory " . escapeshellarg($basePath) . " 2>&1 && git fetch origin main 2>&1 && git reset --hard origin/main 2>&1";
             $output = shell_exec($command);
 
             \Illuminate\Support\Facades\Artisan::call('view:clear');
