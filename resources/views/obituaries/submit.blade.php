@@ -305,15 +305,33 @@
                     </label>
                 </div>
 
-                <!-- Summary Box -->
-                <div class="p-4 bg-primary text-on-primary rounded-xl text-xs flex items-center justify-between">
+                <!-- Summary Box & Promotional Offer Banner -->
+                @php
+                    $pricing = \App\Models\Setting::getPricingDetails();
+                @endphp
+                <div class="p-4 sm:p-5 bg-gradient-to-r from-primary via-slate-900 to-primary text-on-primary rounded-xl text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-amber-500/30">
                     <div>
-                        <span class="font-bold text-secondary-fixed uppercase tracking-wider block mb-0.5">Basic Notice Package</span>
-                        <span class="text-primary-fixed/70">Standard Obituary Notice Publishing</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-amber-300 uppercase tracking-wider block">Standard Notice Package</span>
+                            @if($pricing['has_offer'])
+                                <span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] uppercase tracking-wider">
+                                    🔥 {{ $pricing['discount_percent'] }}% OFF OFFER
+                                </span>
+                            @endif
+                        </div>
+                        <span class="text-primary-fixed/80 text-[11px] mt-0.5 block">Lifetime digital memorial, photo gallery, funeral details, condolences & instant M-Pesa STK push.</span>
                     </div>
-                    <div class="text-right">
-                        <span class="font-serif text-base sm:text-lg font-bold text-white">KES {{ number_format(\App\Models\Setting::get('obituary_publishing_cost', 500)) }}</span>
-                        <span class="text-[10px] text-primary-fixed/60 block">Via M-Pesa STK Push</span>
+                    <div class="sm:text-right flex-shrink-0">
+                        @if($pricing['has_offer'])
+                            <div class="flex items-center space-x-2 sm:justify-end">
+                                <span class="line-through text-slate-400 text-xs font-semibold">KES {{ number_format($pricing['base_price']) }}</span>
+                                <span class="font-serif text-lg sm:text-xl font-bold text-amber-300">KES {{ number_format($pricing['final_price']) }}</span>
+                            </div>
+                            <span class="text-[10px] text-amber-200/90 block mt-0.5 font-medium">Save KES {{ number_format($pricing['savings']) }} (Promotional Discount)</span>
+                        @else
+                            <span class="font-serif text-base sm:text-lg font-bold text-white">KES {{ number_format($pricing['base_price']) }}</span>
+                            <span class="text-[10px] text-primary-fixed/60 block">Via M-Pesa STK Push</span>
+                        @endif
                     </div>
                 </div>
 
@@ -323,7 +341,7 @@
                         Back to Step 2
                     </button>
                     <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-secondary text-on-secondary font-bold rounded-xl text-xs sm:text-sm hover:bg-secondary/90 transition-all shadow-md flex items-center justify-center space-x-2">
-                        <span>Proceed to M-Pesa Payment (KES {{ number_format(\App\Models\Setting::get('obituary_publishing_cost', 500)) }})</span>
+                        <span>Proceed to M-Pesa Payment (KES {{ number_format($pricing['final_price']) }})</span>
                         <span class="material-symbols-outlined text-[18px]">payments</span>
                     </button>
                 </div>

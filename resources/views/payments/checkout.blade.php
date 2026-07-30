@@ -4,7 +4,8 @@
 
 @section('content')
 @php
-    $cost = \App\Models\Setting::get('obituary_publishing_cost', 500);
+    $pricing = \App\Models\Setting::getPricingDetails();
+    $cost = $pricing['final_price'];
 @endphp
 
 <div class="bg-slate-900 text-white py-12">
@@ -52,9 +53,17 @@
                     <span>{{ $obituary->town }}, {{ $obituary->county }}</span>
                 </div>
             </div>
-            <div class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm text-right">
-                <span class="text-xs text-slate-500 block uppercase font-medium">Total Fee</span>
-                <span class="font-serif text-2xl font-bold text-slate-900">KES {{ number_format($cost, 2) }}</span>
+            <div class="bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm text-right min-w-[180px]">
+                @if($pricing['has_offer'])
+                    <span class="text-[10px] text-slate-400 block line-through font-medium">Original KES {{ number_format($pricing['base_price']) }}</span>
+                    <div class="flex items-center space-x-1.5 justify-end">
+                        <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 text-[10px] font-bold uppercase">{{ $pricing['discount_percent'] }}% OFF</span>
+                        <span class="font-serif text-2xl font-extrabold text-amber-600">KES {{ number_format($cost) }}</span>
+                    </div>
+                @else
+                    <span class="text-xs text-slate-500 block uppercase font-medium">Total Fee</span>
+                    <span class="font-serif text-2xl font-bold text-slate-900">KES {{ number_format($cost) }}</span>
+                @endif
             </div>
         </div>
 

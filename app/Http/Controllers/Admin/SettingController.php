@@ -29,7 +29,9 @@ class SettingController extends Controller
 
             // Publishing & M-Pesa
             'enable_public_submissions' => Setting::get('enable_public_submissions', '1'),
-            'obituary_publishing_cost' => Setting::get('obituary_publishing_cost', '500'),
+            'obituary_publishing_cost' => Setting::get('obituary_publishing_cost', '2000'),
+            'obituary_discount_percentage' => Setting::get('obituary_discount_percentage', '20'),
+            'obituary_offer_enabled' => Setting::get('obituary_offer_enabled', '1'),
             'auto_publish_obituaries' => Setting::get('auto_publish_obituaries', '0'),
             'show_poster_details' => Setting::get('show_poster_details', '0'),
             'mpesa_env' => Setting::get('mpesa_env', 'sandbox'),
@@ -88,7 +90,9 @@ class SettingController extends Controller
             'copyright_text' => ['nullable', 'string', 'max:255'],
 
             'enable_public_submissions' => ['nullable', 'string', 'in:0,1'],
-            'obituary_publishing_cost' => ['required', 'numeric', 'min:0'],
+            'obituary_publishing_cost' => ['nullable', 'numeric', 'min:0'],
+            'obituary_discount_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'obituary_offer_enabled' => ['nullable', 'string', 'in:0,1'],
             'auto_publish_obituaries' => ['nullable', 'string', 'in:0,1'],
             'show_poster_details' => ['nullable', 'string', 'in:0,1'],
             'mpesa_env' => ['nullable', 'string', 'in:sandbox,live'],

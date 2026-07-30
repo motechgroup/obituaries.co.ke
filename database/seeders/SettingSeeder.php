@@ -17,6 +17,8 @@ class SettingSeeder extends Seeder
             'footer_email' => 'support@obituaries.co.ke',
             'copyright_text' => '© ' . date('Y') . ' Obituaries.co.ke. All rights reserved.',
             'obituary_publishing_cost' => '2000',
+            'obituary_discount_percentage' => '20',
+            'obituary_offer_enabled' => '1',
 
             // SMTP Mail Credentials for obituaries.co.ke
             'mail_host' => 'mail.obituaries.co.ke',

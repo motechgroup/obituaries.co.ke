@@ -352,26 +352,55 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Publishing Fee (KES)</label>
-                        <input type="number" step="0.01" min="0" name="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $settings['obituary_publishing_cost']) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Base Publishing Fee (KES)</label>
+                        <input type="number" step="0.01" min="0" name="obituary_publishing_cost" value="{{ old('obituary_publishing_cost', $settings['obituary_publishing_cost']) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-base font-bold text-slate-900">
+                        <p class="text-[11px] text-slate-500 mt-1">Standard full publishing price before any promotional offer.</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Post Approval Mode</label>
-                        <select name="auto_publish_obituaries" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
-                            <option value="0" {{ (string)$settings['auto_publish_obituaries'] === '0' ? 'selected' : '' }}>🔒 Require Admin Approval (Default)</option>
-                            <option value="1" {{ (string)$settings['auto_publish_obituaries'] === '1' ? 'selected' : '' }}>⚡ Auto-Publish Immediately Upon Payment</option>
-                        </select>
-                        <p class="text-[11px] text-slate-500 mt-1">When set to require approval, obituaries stay pending until verified by admin.</p>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Promotional Offer Discount (%)</label>
+                        <div class="relative">
+                            <input type="number" step="1" min="0" max="100" name="obituary_discount_percentage" value="{{ old('obituary_discount_percentage', $settings['obituary_discount_percentage'] ?? 20) }}" required class="w-full px-4 py-2.5 bg-amber-50/80 border border-amber-300 rounded-xl text-base font-bold text-amber-900 pr-10">
+                            <span class="absolute right-4 top-2.5 text-amber-700 font-bold">% OFF</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Percentage discount applied to standard publishing price.</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Public Poster Details</label>
-                        <select name="show_poster_details" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
-                            <option value="0" {{ (string)$settings['show_poster_details'] === '0' ? 'selected' : '' }}>🙈 Hide Poster/Submitter Details (Default)</option>
-                            <option value="1" {{ (string)$settings['show_poster_details'] === '1' ? 'selected' : '' }}>👁️ Show Poster/Submitter Details Publicly</option>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">Offer Status Toggle</label>
+                        <select name="obituary_offer_enabled" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
+                            <option value="1" {{ (string)($settings['obituary_offer_enabled'] ?? '1') === '1' ? 'selected' : '' }}>🔥 Enable Promotional Offer (Active)</option>
+                            <option value="0" {{ (string)($settings['obituary_offer_enabled'] ?? '1') === '0' ? 'selected' : '' }}>❌ Disable Offer (Charge Full Base Price)</option>
                         </select>
-                        <p class="text-[11px] text-slate-500 mt-1">Controls whether "Submitted by {Name}" appears on public obituary pages.</p>
+                        <p class="text-[11px] text-slate-500 mt-1">When active, visitors see strikethrough original price & discount badge.</p>
+                    </div>
+                </div>
+
+                <!-- Live Pricing & Offer Summary Preview -->
+                @php
+                    $pricing = \App\Models\Setting::getPricingDetails();
+                @endphp
+                <div class="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 rounded-2xl text-white flex flex-col sm:flex-row items-center justify-between gap-4 border border-amber-500/30 shadow-md">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xl flex-shrink-0">
+                            🔥
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-amber-400 block">Live Visitor Pricing Preview</span>
+                            <div class="flex items-center space-x-2.5 mt-0.5">
+                                @if($pricing['has_offer'])
+                                    <span class="text-sm line-through text-slate-400 font-medium">KES {{ number_format($pricing['base_price']) }}</span>
+                                    <span class="text-xl font-extrabold text-amber-400">KES {{ number_format($pricing['final_price']) }}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider">Save {{ $pricing['discount_percent'] }}%</span>
+                                @else
+                                    <span class="text-xl font-extrabold text-white">KES {{ number_format($pricing['base_price']) }}</span>
+                                    <span class="text-xs text-slate-400 font-medium">(Standard Rate / No Active Offer)</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-300 sm:text-right font-medium">
+                        Net Payable via M-Pesa STK Push: <span class="font-bold text-amber-300">KES {{ number_format($pricing['final_price']) }}</span>
                     </div>
                 </div>
 
