@@ -1,13 +1,50 @@
+@php
+    $ogPhotoUrl = null;
+    $ogWidth = 1200;
+    $ogHeight = 630;
+    $ogType = 'image/jpeg';
+
+    if ($obituary->photo) {
+        $photoRelPath = 'storage/' . $obituary->photo;
+        $photoFullPath = public_path($photoRelPath);
+        $ogPhotoUrl = asset($photoRelPath);
+        
+        if (file_exists($photoFullPath) && $imgInfo = @getimagesize($photoFullPath)) {
+            $ogWidth = $imgInfo[0] ?? 800;
+            $ogHeight = $imgInfo[1] ?? 800;
+            $ogType = $imgInfo['mime'] ?? 'image/jpeg';
+        } else {
+            $ogWidth = 800;
+            $ogHeight = 800;
+            $ogType = 'image/jpeg';
+        }
+    } else {
+        $ogPhotoUrl = asset('images/og-default.jpg');
+        $ogWidth = 1200;
+        $ogHeight = 630;
+        $ogType = 'image/jpeg';
+    }
+
+    // Force HTTPS scheme on URLs for Facebook Open Graph scraper
+    $ogPhotoUrl = preg_replace('/^http:/i', 'https:', $ogPhotoUrl);
+    $canonicalUrl = preg_replace('/^http:/i', 'https:', $obituary->canonical_url ?: route('obituaries.show', $obituary->slug));
+@endphp
+
 @extends('layouts.app')
 
 @section('title', $obituary->meta_title ?: $obituary->full_name . ' Obituary | Death Notice & Funeral Details | Obituaries.co.ke')
 @section('meta_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . ' from ' . $obituary->town . ', ' . $obituary->county . ' County. Share condolences.')
 @section('seo_keywords', $obituary->seo_keywords ?: $obituary->full_name . ' obituary, ' . $obituary->county . ' obituaries, ' . $obituary->full_name . ' funeral details, death notice Kenya')
-@section('canonical_url', $obituary->canonical_url ?: route('obituaries.show', $obituary->slug))
+@section('canonical_url', $canonicalUrl)
 
 @section('og_title', $obituary->meta_title ?: $obituary->full_name . ' Obituary | Obituaries.co.ke')
 @section('og_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . '.')
-@section('og_image', $obituary->photo ? asset('storage/' . $obituary->photo) : asset('images/og-default.jpg'))
+@section('og_image', $ogPhotoUrl)
+@section('og_image_secure', $ogPhotoUrl)
+@section('og_image_width', $ogWidth)
+@section('og_image_height', $ogHeight)
+@section('og_image_type', $ogType)
+@section('og_image_alt', 'Photo of ' . $obituary->full_name)
 @section('og_type', 'article')
 
 @section('structured_data')
@@ -418,8 +455,10 @@
                 <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-4 text-center">Share This Memorial</p>
                 
                 @php
-                    $shareUrl = urlencode(url()->current());
-                    $shareText = urlencode("In loving memory of {$obituary->full_name}. Read full obituary and funeral details here: " . url()->current());
+                    $rawCurrentUrl = url()->current();
+                    $secureCurrentUrl = preg_replace('/^http:/i', 'https:', $rawCurrentUrl);
+                    $shareUrl = urlencode($secureCurrentUrl);
+                    $shareText = urlencode("In loving memory of {$obituary->full_name}. Read full obituary and funeral details here: " . $secureCurrentUrl);
                 @endphp
 
                 <div class="flex justify-center gap-4">

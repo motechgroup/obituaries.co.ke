@@ -60,19 +60,38 @@
         <meta name="robots" content="noindex, nofollow">
     @endif
 
+    @php
+        $rawOgImage = trim($__env->yieldContent('og_image', asset('images/og-default.jpg')));
+        // Force HTTPS protocol for Open Graph crawlers (Facebook, WhatsApp, Twitter)
+        $ogImageUrl = preg_replace('/^http:/i', 'https:', $rawOgImage);
+
+        $rawOgUrl = trim($__env->yieldContent('canonical_url', url()->current()));
+        $ogUrl = preg_replace('/^http:/i', 'https:', $rawOgUrl);
+
+        $ogImageWidth = trim($__env->yieldContent('og_image_width', '1200'));
+        $ogImageHeight = trim($__env->yieldContent('og_image_height', '630'));
+        $ogImageType = trim($__env->yieldContent('og_image_type', 'image/jpeg'));
+        $ogImageAlt = trim($__env->yieldContent('og_image_alt', 'Obituaries.co.ke | Kenya Obituaries & Death Notices'));
+    @endphp
+
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:site_name" content="Obituaries.co.ke">
     <meta property="og:type" content="@yield('og_type', 'website')">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="{{ $ogUrl }}">
     <meta property="og:title" content="@yield('og_title', 'Obituaries.co.ke | Kenya Obituaries & Death Notices')">
     <meta property="og:description" content="@yield('og_description', 'Official Kenyan obituary publishing and memorial platform.')">
-    <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta property="og:image" content="{{ $ogImageUrl }}">
+    <meta property="og:image:secure_url" content="{{ $ogImageUrl }}">
+    <meta property="og:image:width" content="{{ $ogImageWidth }}">
+    <meta property="og:image:height" content="{{ $ogImageHeight }}">
+    <meta property="og:image:type" content="{{ $ogImageType }}">
+    <meta property="og:image:alt" content="{{ $ogImageAlt }}">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('og_title', 'Obituaries.co.ke | Kenya Obituaries & Death Notices')">
     <meta name="twitter:description" content="@yield('og_description', 'Official Kenyan obituary publishing and memorial platform.')">
-    <meta name="twitter:image" content="@yield('og_image', asset('images/og-default.jpg'))">
+    <meta name="twitter:image" content="{{ $ogImageUrl }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
