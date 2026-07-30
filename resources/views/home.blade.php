@@ -62,28 +62,36 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 py-1">
             @forelse($todayDirectoryObituaries as $obituary)
-                <a href="{{ route('obituaries.show', $obituary->slug) }}" class="flex items-center space-x-3 sm:space-x-3.5 group transition-opacity hover:opacity-90 min-w-0">
-                    <!-- Thumbnail Avatar -->
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
-                        @if($obituary->photo)
-                            <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Obituary Notice" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        @else
-                            <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-amber-400">
-                                <span class="material-symbols-outlined text-[18px] sm:text-[20px]">church</span>
-                            </div>
-                        @endif
-                    </div>
-                    
-                    <!-- Deceased Name & Date of Death -->
-                    <div class="text-left min-w-0 flex-1">
-                        <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight truncate">
-                            {{ $obituary->full_name }}
-                        </h4>
-                        <span class="text-[10px] sm:text-xs text-slate-300 block mt-0.5 font-medium truncate">
-                            {{ $obituary->date_of_death ? $obituary->date_of_death->format('M d, Y') : 'N/A' }}
-                        </span>
-                    </div>
-                </a>
+                @php
+                    $obSlug = is_object($obituary) ? ($obituary->slug ?? '') : (is_array($obituary) ? ($obituary['slug'] ?? '') : '');
+                    $obName = is_object($obituary) ? ($obituary->full_name ?? '') : (is_array($obituary) ? ($obituary['full_name'] ?? '') : '');
+                    $obPhoto = is_object($obituary) ? ($obituary->photo ?? null) : (is_array($obituary) ? ($obituary['photo'] ?? null) : null);
+                    $obDate = (is_object($obituary) && !empty($obituary->date_of_death)) ? $obituary->date_of_death->format('M d, Y') : (is_array($obituary) && !empty($obituary['date_of_death']) ? $obituary['date_of_death'] : 'N/A');
+                @endphp
+                @if(!empty($obSlug) || !empty($obName))
+                    <a href="{{ route('obituaries.show', $obSlug ?: 'memorial') }}" class="flex items-center space-x-3 sm:space-x-3.5 group transition-opacity hover:opacity-90 min-w-0">
+                        <!-- Thumbnail Avatar -->
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700/60 shadow-xs">
+                            @if($obPhoto)
+                                <img src="{{ asset('storage/' . $obPhoto) }}" alt="{{ $obName }} Obituary Notice" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-amber-400">
+                                    <span class="material-symbols-outlined text-[18px] sm:text-[20px]">church</span>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Deceased Name & Date of Death -->
+                        <div class="text-left min-w-0 flex-1">
+                            <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-amber-400 transition-colors leading-tight truncate">
+                                {{ $obName }}
+                            </h4>
+                            <span class="text-[10px] sm:text-xs text-slate-300 block mt-0.5 font-medium truncate">
+                                {{ $obDate }}
+                            </span>
+                        </div>
+                    </a>
+                @endif
             @empty
                 <div class="text-slate-400 text-xs py-2 italic">No published notices available in directory.</div>
             @endforelse

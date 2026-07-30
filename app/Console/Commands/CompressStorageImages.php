@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\StorageHelper;
+use App\Services\ImageOptimizerEngine;
 use Illuminate\Console\Command;
 
 class CompressStorageImages extends Command
@@ -12,14 +12,14 @@ class CompressStorageImages extends Command
      *
      * @var string
      */
-    protected $signature = 'obituaries:compress-images {--max=800} {--quality=82}';
+    protected $signature = 'images:optimize {--max=800} {--quality=80}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Batch compress and resize all existing uploaded obituary photos in storage';
+    protected $description = 'Batch compress and optimize all existing storage photos using ImageOptimizerEngine';
 
     /**
      * Execute the console command.
@@ -29,42 +29,30 @@ class CompressStorageImages extends Command
         $max = (int) $this->option('max');
         $quality = (int) $this->option('quality');
 
+        $this->info("Initializing Image Compression Engine (Max Dimension: {$max}px, Quality: {$quality}%)...");
+
+        $optimizer = new ImageOptimizerEngine($max, $quality);
+
         $directories = [
-            storage_path('app/public/obituaries'),
-            storage_path('app/public/gallery'),
-            public_path('storage/obituaries'),
-            public_path('storage/gallery'),
+            storage_path('app/public'),
+            public_path('storage'),
         ];
 
-        $totalCompressed = 0;
+        $totalProcessed = 0;
+        $totalSaved = 0;
 
         foreach ($directories as $dir) {
             if (!file_exists($dir)) {
                 continue;
             }
 
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS)
-            );
-
-            foreach ($files as $file) {
-                if ($file->isFile()) {
-                    $ext = strtolower($file->getExtension());
-                    if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
-                        $beforeSize = $file->getSize();
-                        StorageHelper::compressAndScaleImage($file->getRealPath(), $max, $quality);
-                        clearstatcache(true, $file->getRealPath());
-                        $afterSize = filesize($file->getRealPath());
-
-                        if ($afterSize < $beforeSize) {
-                            $totalCompressed++;
-                        }
-                    }
-                }
-            }
+            $stats = $optimizer->optimizeDirectory($dir);
+            $totalProcessed += $stats['files_processed'];
+            $totalSaved += $stats['total_bytes_saved'];
         }
 
-        $this->info("Successfully processed and optimized {$totalCompressed} images.");
+        $mbSaved = round($totalSaved / (1024 * 1024), 2);
+        $this->info("✅ Successfully processed {$totalProcessed} images. Total storage saved: {$mbSaved} MB.");
         return Command::SUCCESS;
     }
 }
