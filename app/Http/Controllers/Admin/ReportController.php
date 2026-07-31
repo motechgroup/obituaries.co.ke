@@ -7,6 +7,8 @@ use App\Models\ObituaryReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 use App\Models\BlockedIp;
 use App\Models\SecurityLog;
 
@@ -14,13 +16,30 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        // Auto-heal missing columns on live server if migration hasn't been manually executed yet
+        if (Schema::hasTable('obituary_reports') && !Schema::hasColumn('obituary_reports', 'is_system_flagged')) {
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+            } catch (\Throwable $e) {}
+        }
+
+        $hasFlagColumn = Schema::hasTable('obituary_reports') && Schema::hasColumn('obituary_reports', 'is_system_flagged');
+
         $status = $request->input('status');
         $query = ObituaryReport::with(['obituary', 'resolver']);
 
         if ($status === 'system_flagged') {
-            $query->where('is_system_flagged', true);
+            if ($hasFlagColumn) {
+                $query->where('is_system_flagged', true);
+            } else {
+                $query->where('status', 'flagged_spam');
+            }
         } elseif ($status === 'pending') {
-            $query->where('status', 'pending')->where('is_system_flagged', false);
+            if ($hasFlagColumn) {
+                $query->where('status', 'pending')->where('is_system_flagged', false);
+            } else {
+                $query->where('status', 'pending');
+            }
         } elseif ($status === 'spam') {
             $query->whereIn('status', ['spam', 'flagged_spam']);
         } elseif ($status) {
@@ -28,7 +47,9 @@ class ReportController extends Controller
         }
 
         $reports = $query->latest()->paginate(15)->withQueryString();
-        $systemFlaggedCount = ObituaryReport::where('is_system_flagged', true)->where('status', 'flagged_spam')->count();
+        $systemFlaggedCount = $hasFlagColumn 
+            ? ObituaryReport::where('is_system_flagged', true)->where('status', 'flagged_spam')->count() 
+            : 0;
 
         return view('admin.reports.index', compact('reports', 'status', 'systemFlaggedCount'));
     }
