@@ -18,6 +18,11 @@ class ObituaryReport extends Model
         'resolution_notes',
         'ip_address',
         'user_agent',
+        'is_system_flagged',
+    ];
+
+    protected $casts = [
+        'is_system_flagged' => 'boolean',
     ];
 
     public function obituary()

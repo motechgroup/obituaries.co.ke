@@ -21,24 +21,6 @@ class ReportController extends Controller
             return back()->withErrors(['security' => 'Please review your submission details and try again.'])->withInput();
         }
 
-        // 2. Honeypot Check (Must be empty)
-        if (!SpamProtectionService::checkHoneypot($request->input('website_hp'))) {
-            SecurityLog::log('report_honeypot_triggered', 'warning', $obituary->id, "Honeypot filled by IP {$request->ip()}");
-            return back()->with('success', '🚩 Your report has been submitted to our moderation team. We will review it promptly.');
-        }
-
-        // 3. Time-lock Submission Check (Minimum 3 Seconds)
-        if (!SpamProtectionService::verifyTimeLock($request->input('_form_time'), 3)) {
-            SecurityLog::log('report_fast_submit', 'warning', $obituary->id, "Fast form submission (<3s) from IP {$request->ip()}");
-            return back()->withErrors(['details' => 'Please review your submission details and try again.'])->withInput();
-        }
-
-        // 4. Cloudflare Turnstile Verification
-        if (!SpamProtectionService::verifyTurnstile($request->input('cf-turnstile-response'), $request->ip())) {
-            SecurityLog::log('report_turnstile_failed', 'warning', $obituary->id, "Turnstile verification failed for IP {$request->ip()}");
-            return back()->withErrors(['security' => 'Security verification check failed. Please try again.'])->withInput();
-        }
-
         $validated = $request->validate([
             'reporter_name' => ['required', 'string', 'max:255'],
             'reporter_email' => ['required', 'email', 'max:255'],
@@ -47,22 +29,36 @@ class ReportController extends Controller
             'details' => ['required', 'string', 'min:3', 'max:2000'],
         ]);
 
+        $flagReasons = [];
+
+        // 2. Honeypot Check (Must be empty)
+        if (!SpamProtectionService::checkHoneypot($request->input('website_hp'))) {
+            $flagReasons[] = "Honeypot field filled by bot";
+        }
+
+        // 3. Time-lock Submission Check (Minimum 3 Seconds)
+        if (!SpamProtectionService::verifyTimeLock($request->input('_form_time'), 3)) {
+            $flagReasons[] = "Fast form submission (<3 seconds)";
+        }
+
+        // 4. Cloudflare Turnstile Verification
+        if (!SpamProtectionService::verifyTurnstile($request->input('cf-turnstile-response'), $request->ip())) {
+            $flagReasons[] = "Cloudflare Turnstile verification check failed";
+        }
+
         // 5. Disposable Email Provider Check
         if (SpamProtectionService::isDisposableEmail($validated['reporter_email'])) {
-            SecurityLog::log('report_disposable_email', 'warning', $obituary->id, "Disposable email blocked: {$validated['reporter_email']} from IP {$request->ip()}");
-            return back()->withErrors(['reporter_email' => 'Please provide a valid personal or business email address.'])->withInput();
+            $flagReasons[] = "Disposable email provider domain ({$validated['reporter_email']})";
         }
 
         // 6. Kenyan Phone Number Check
         if (!SpamProtectionService::isKenyanPhone($validated['reporter_phone'])) {
-            SecurityLog::log('report_invalid_phone', 'warning', $obituary->id, "Non-Kenyan phone blocked: {$validated['reporter_phone']} from IP {$request->ip()}");
-            return back()->withErrors(['reporter_phone' => 'Please enter a valid Kenyan phone number (e.g. 0712345678 or +254712345678).'])->withInput();
+            $flagReasons[] = "Non-Kenyan phone number format ({$validated['reporter_phone']})";
         }
 
         // 7. Gibberish & Random-Character Content Detection
         if (SpamProtectionService::isGibberish($validated['reporter_name']) || SpamProtectionService::isGibberish($validated['details'])) {
-            SecurityLog::log('report_gibberish_detected', 'warning', $obituary->id, "Gibberish spam content blocked from IP {$request->ip()}");
-            return back()->withErrors(['details' => 'Please provide clear and readable details for your report.'])->withInput();
+            $flagReasons[] = "Gibberish or random-character content pattern detected";
         }
 
         // Auto-heal: Ensure obituary_reports table exists in database
@@ -72,7 +68,11 @@ class ReportController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        // 8. Log IP Address, User Agent, and Submission Timestamp
+        $isSystemFlagged = !empty($flagReasons);
+        $status = $isSystemFlagged ? 'flagged_spam' : 'pending';
+        $resolutionNotes = $isSystemFlagged ? "[System Flagged] Triggered anti-spam rules: " . implode('; ', $flagReasons) : null;
+
+        // 8. Log IP Address, User Agent, Timestamp, and System Flag Status
         $report = ObituaryReport::create([
             'obituary_id' => $obituary->id,
             'reporter_name' => strip_tags($validated['reporter_name']),
@@ -80,10 +80,17 @@ class ReportController extends Controller
             'reporter_phone' => strip_tags($validated['reporter_phone']),
             'reason' => $validated['reason'],
             'details' => strip_tags($validated['details']),
-            'status' => 'pending',
+            'status' => $status,
             'ip_address' => $request->ip(),
             'user_agent' => substr((string)$request->userAgent(), 0, 500),
+            'is_system_flagged' => $isSystemFlagged,
+            'resolution_notes' => $resolutionNotes,
         ]);
+
+        if ($isSystemFlagged) {
+            SecurityLog::log('report_system_flagged_spam', 'warning', $obituary->id, "Report #{$report->id} system flagged as spam: " . implode('; ', $flagReasons));
+            return back()->with('success', '🚩 Your report has been submitted to our moderation team. We will review it promptly.');
+        }
 
         \App\Models\SecurityLog::log('report_submitted', 'warning', $obituary->id, "Notice #{$obituary->id} reported by {$report->reporter_name} ({$report->reason})");
 

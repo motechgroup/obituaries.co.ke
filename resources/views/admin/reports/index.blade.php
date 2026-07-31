@@ -26,6 +26,12 @@
         <a href="{{ route('admin.reports.index', ['status' => 'pending']) }}" class="px-3.5 py-2 rounded-lg {{ $status === 'pending' ? 'bg-slate-900 text-amber-400' : 'text-slate-600 hover:bg-slate-100' }}">
             Pending
         </a>
+        <a href="{{ route('admin.reports.index', ['status' => 'system_flagged']) }}" class="px-3.5 py-2 rounded-lg flex items-center space-x-1.5 {{ $status === 'system_flagged' ? 'bg-amber-900 text-amber-300 font-bold' : 'text-amber-700 hover:bg-amber-50' }}">
+            <span>🤖 System Flagged</span>
+            @if(!empty($systemFlaggedCount) && $systemFlaggedCount > 0)
+                <span class="px-2 py-0.5 bg-rose-600 text-white rounded-full text-[10px] font-bold">{{ $systemFlaggedCount }}</span>
+            @endif
+        </a>
         <a href="{{ route('admin.reports.index', ['status' => 'resolved']) }}" class="px-3.5 py-2 rounded-lg {{ $status === 'resolved' ? 'bg-slate-900 text-amber-400' : 'text-slate-600 hover:bg-slate-100' }}">
             Resolved
         </a>
@@ -75,6 +81,11 @@
                                 {{ str_replace('_', ' ', $r->reason) }}
                             </span>
                             <p class="text-slate-600 line-clamp-2 max-w-sm font-sans">{{ $r->details }}</p>
+                            @if($r->is_system_flagged && $r->resolution_notes)
+                                <div class="mt-1.5 text-[11px] font-semibold text-rose-800 bg-rose-50 border border-rose-200 p-1.5 rounded-lg leading-snug">
+                                    🤖 {{ $r->resolution_notes }}
+                                </div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-xs">
                             <div class="font-semibold text-slate-900">{{ $r->reporter_name }}</div>
@@ -89,7 +100,11 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            @if($r->status === 'pending')
+                            @if($r->is_system_flagged || $r->status === 'flagged_spam')
+                                <span class="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-xs font-bold uppercase flex items-center space-x-1 w-max">
+                                    <span>🤖 System Flagged</span>
+                                </span>
+                            @elseif($r->status === 'pending')
                                 <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold uppercase">Pending</span>
                             @elseif($r->status === 'resolved')
                                 <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase">Resolved</span>

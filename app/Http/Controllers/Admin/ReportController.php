@@ -17,13 +17,20 @@ class ReportController extends Controller
         $status = $request->input('status');
         $query = ObituaryReport::with(['obituary', 'resolver']);
 
-        if ($status) {
+        if ($status === 'system_flagged') {
+            $query->where('is_system_flagged', true);
+        } elseif ($status === 'pending') {
+            $query->where('status', 'pending')->where('is_system_flagged', false);
+        } elseif ($status === 'spam') {
+            $query->whereIn('status', ['spam', 'flagged_spam']);
+        } elseif ($status) {
             $query->where('status', $status);
         }
 
         $reports = $query->latest()->paginate(15)->withQueryString();
+        $systemFlaggedCount = ObituaryReport::where('is_system_flagged', true)->where('status', 'flagged_spam')->count();
 
-        return view('admin.reports.index', compact('reports', 'status'));
+        return view('admin.reports.index', compact('reports', 'status', 'systemFlaggedCount'));
     }
 
     public function resolve(Request $request, ObituaryReport $report)

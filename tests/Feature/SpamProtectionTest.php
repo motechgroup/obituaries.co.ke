@@ -61,99 +61,64 @@ class SpamProtectionTest extends TestCase
             'reporter_email' => 'david@gmail.com',
             'reporter_phone' => '0712345678',
             'reason' => 'inaccurate_info',
+            'is_system_flagged' => false,
             'user_agent' => 'Mozilla/5.0 TestBrowser',
         ]);
     }
 
-    public function test_honeypot_field_filled_silently_ignores_submission()
+    public function test_spam_trigger_creates_system_flagged_report()
     {
         $obituary = $this->createObituary();
 
         $response = $this->post(route('obituaries.report', $obituary->id), [
-            'reporter_name' => 'Spam Bot',
-            'reporter_email' => 'spambot@example.com',
+            'reporter_name' => 'Spam Bot User',
+            'reporter_email' => 'spammer@mailinator.com',
             'reporter_phone' => '0712345678',
             'reason' => 'inaccurate_info',
-            'details' => 'Buy cheap products now',
-            'website_hp' => 'http://spam-link.com',
+            'details' => 'Disposabe email domain spam test',
+            'website_hp' => '',
             '_form_time' => (string)(time() - 10),
         ]);
 
         $response->assertSessionHas('success');
-        $this->assertDatabaseMissing('obituary_reports', [
-            'reporter_name' => 'Spam Bot',
+        $this->assertDatabaseHas('obituary_reports', [
+            'reporter_name' => 'Spam Bot User',
+            'status' => 'flagged_spam',
+            'is_system_flagged' => true,
         ]);
     }
 
-    public function test_submission_under_three_seconds_is_rejected()
+    public function test_admin_can_view_system_flagged_reports()
     {
+        $admin = Admin::create([
+            'name' => 'Admin Flag Viewer',
+            'email' => 'admin_flag@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
         $obituary = $this->createObituary();
 
-        $response = $this->post(route('obituaries.report', $obituary->id), [
-            'reporter_name' => 'Fast Bot',
-            'reporter_email' => 'fast@gmail.com',
+        $report = ObituaryReport::create([
+            'obituary_id' => $obituary->id,
+            'reporter_name' => 'Automated Bot',
+            'reporter_email' => 'bot@disposable.com',
             'reporter_phone' => '0712345678',
-            'reason' => 'inaccurate_info',
-            'details' => 'Fast speed submission',
-            'website_hp' => '',
-            '_form_time' => (string)time(), // 0 seconds elapsed
+            'reason' => 'other',
+            'details' => 'Automated spam submission details',
+            'status' => 'flagged_spam',
+            'is_system_flagged' => true,
+            'resolution_notes' => '[System Flagged] Triggered anti-spam rules: Disposable email provider domain',
+            'ip_address' => '197.232.100.100',
         ]);
 
-        $response->assertSessionHasErrors(['details']);
-        $this->assertDatabaseMissing('obituary_reports', [
-            'reporter_name' => 'Fast Bot',
-        ]);
-    }
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.reports.index', ['status' => 'system_flagged']));
 
-    public function test_disposable_email_is_rejected()
-    {
-        $obituary = $this->createObituary();
-
-        $response = $this->post(route('obituaries.report', $obituary->id), [
-            'reporter_name' => 'Jane Wanjiku',
-            'reporter_email' => 'spammer@mailinator.com',
-            'reporter_phone' => '0712345678',
-            'reason' => 'inaccurate_info',
-            'details' => 'Legitimate message text here',
-            'website_hp' => '',
-            '_form_time' => (string)(time() - 5),
-        ]);
-
-        $response->assertSessionHasErrors(['reporter_email']);
-    }
-
-    public function test_non_kenyan_phone_is_rejected()
-    {
-        $obituary = $this->createObituary();
-
-        $response = $this->post(route('obituaries.report', $obituary->id), [
-            'reporter_name' => 'John Smith',
-            'reporter_email' => 'john@gmail.com',
-            'reporter_phone' => '+15551234567', // US phone
-            'reason' => 'inaccurate_info',
-            'details' => 'Test details description',
-            'website_hp' => '',
-            '_form_time' => (string)(time() - 5),
-        ]);
-
-        $response->assertSessionHasErrors(['reporter_phone']);
-    }
-
-    public function test_gibberish_random_character_details_are_rejected()
-    {
-        $obituary = $this->createObituary();
-
-        $response = $this->post(route('obituaries.report', $obituary->id), [
-            'reporter_name' => 'Test User',
-            'reporter_email' => 'test@gmail.com',
-            'reporter_phone' => '0712345678',
-            'reason' => 'inaccurate_info',
-            'details' => 'asdfghjklqwertyuiopzxcvbnmkkkkkkk',
-            'website_hp' => '',
-            '_form_time' => (string)(time() - 5),
-        ]);
-
-        $response->assertSessionHasErrors(['details']);
+        $response->assertStatus(200);
+        $response->assertSee('System Flagged');
+        $response->assertSee('Automated Bot');
+        $response->assertSee('Disposable email provider domain');
     }
 
     public function test_admin_marking_report_as_spam_automatically_blocks_ip()
@@ -172,7 +137,8 @@ class SpamProtectionTest extends TestCase
             'reporter_phone' => '0712345678',
             'reason' => 'other',
             'details' => 'Spam content',
-            'status' => 'pending',
+            'status' => 'flagged_spam',
+            'is_system_flagged' => true,
             'ip_address' => '197.232.40.50',
         ]);
 
