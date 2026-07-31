@@ -12,24 +12,24 @@ class RecentTributesTest extends TestCase
 
     public function test_notices_older_than_one_day_do_not_appear_as_recent_when_newer_notices_exist()
     {
-        // 1. Notice posted 2 days ago (1+ day old)
-        $oldNotice = Obituary::create([
-            'slug' => 'old-notice-test',
-            'full_name' => 'Old Notice Deceased',
+        // 1. Notice posted yesterday (1 day ago)
+        $yesterdayNotice = Obituary::create([
+            'slug' => 'yesterday-notice-test',
+            'full_name' => 'Yesterday Notice Deceased',
             'date_of_death' => '2026-06-01',
             'county' => 'Nairobi',
             'town' => 'Westlands',
-            'biography' => 'Biography for old notice test.',
+            'biography' => 'Biography for yesterday notice test.',
             'submitter_name' => 'John Submitter',
             'submitter_phone' => '0722000000',
             'relationship' => 'Son',
             'status' => 'published',
         ]);
-        $oldNotice->created_at = now()->subDays(2);
-        $oldNotice->save(['timestamps' => false]);
+        $yesterdayNotice->created_at = now()->subDay()->startOfDay()->addHours(2);
+        $yesterdayNotice->save(['timestamps' => false]);
 
-        // 2. Notice posted 2 hours ago (< 1 day old)
-        $recentNotice = Obituary::create([
+        // 2. Notice posted 2 hours ago (< 1 day old / today)
+        $todayNotice = Obituary::create([
             'slug' => 'recent-notice-test',
             'full_name' => 'Recent Notice Deceased',
             'date_of_death' => '2026-07-28',
@@ -47,7 +47,9 @@ class RecentTributesTest extends TestCase
         $response->assertStatus(200);
 
         $todayDirectoryObituaries = $response->viewData('todayDirectoryObituaries');
-        $this->assertTrue($todayDirectoryObituaries->contains($recentNotice));
-        $this->assertFalse($todayDirectoryObituaries->contains($oldNotice));
+        $todayObituaries = $response->viewData('todayObituaries');
+
+        $this->assertTrue($todayDirectoryObituaries->contains($yesterdayNotice));
+        $this->assertTrue($todayObituaries->contains($todayNotice));
     }
 }

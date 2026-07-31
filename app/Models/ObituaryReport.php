@@ -16,6 +16,8 @@ class ObituaryReport extends Model
         'status',
         'resolved_by',
         'resolution_notes',
+        'ip_address',
+        'user_agent',
     ];
 
     public function obituary()

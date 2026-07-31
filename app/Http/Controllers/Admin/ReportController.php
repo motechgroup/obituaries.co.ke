@@ -7,6 +7,9 @@ use App\Models\ObituaryReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\BlockedIp;
+use App\Models\SecurityLog;
+
 class ReportController extends Controller
 {
     public function index(Request $request)
@@ -26,15 +29,33 @@ class ReportController extends Controller
     public function resolve(Request $request, ObituaryReport $report)
     {
         $validated = $request->validate([
-            'status' => ['required', 'string', 'in:reviewed,resolved,dismissed'],
+            'status' => ['required', 'string', 'in:reviewed,resolved,dismissed,spam'],
             'resolution_notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        $status = $validated['status'];
+
         $report->update([
-            'status' => $validated['status'],
+            'status' => $status,
             'resolution_notes' => $validated['resolution_notes'] ?? null,
             'resolved_by' => Auth::guard('admin')->id(),
         ]);
+
+        // If marked as spam, automatically block the offender's IP address
+        if ($status === 'spam') {
+            if (!empty($report->ip_address)) {
+                BlockedIp::firstOrCreate(
+                    ['ip_address' => $report->ip_address],
+                    [
+                        'reason' => "Automated block: Marked as spam offender on Report #{$report->id}",
+                        'blocked_by' => Auth::guard('admin')->id(),
+                    ]
+                );
+            }
+            SecurityLog::log('report_marked_spam', 'warning', $report->obituary_id, "Report #{$report->id} marked as spam by Admin. IP {$report->ip_address} blocked.");
+
+            return back()->with('success', "Report #{$report->id} marked as SPAM. IP address {$report->ip_address} has been automatically blocked.");
+        }
 
         $report->load('obituary');
 

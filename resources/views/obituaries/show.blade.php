@@ -348,19 +348,33 @@
                     <form action="{{ route('obituaries.report', $obituary->id) }}" method="POST" class="space-y-4 text-xs">
                         @csrf
 
+                        <!-- Honeypot Hidden Field (Bot Trap) -->
+                        <input type="text" name="website_hp" value="" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+
+                        <!-- Encrypted Form Time-Lock Token (Min 3 Seconds Speed Check) -->
+                        <input type="hidden" name="_form_time" value="{{ encrypt(time()) }}">
+
+                        @if($errors->any())
+                            <div class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium">
+                                @foreach($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                            </div>
+                        @endif
+
                         <div>
                             <label class="block font-semibold uppercase text-on-surface-variant mb-1">Your Full Name <span class="text-rose-500">*</span></label>
-                            <input type="text" name="reporter_name" required placeholder="e.g. David Ochieng" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
+                            <input type="text" name="reporter_name" required value="{{ old('reporter_name') }}" placeholder="e.g. David Ochieng" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
                         </div>
 
                         <div>
                             <label class="block font-semibold uppercase text-on-surface-variant mb-1">Your Email Address <span class="text-rose-500">*</span></label>
-                            <input type="email" name="reporter_email" required placeholder="e.g. david@example.com" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
+                            <input type="email" name="reporter_email" required value="{{ old('reporter_email') }}" placeholder="e.g. david@example.com" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
                         </div>
 
                         <div>
                             <label class="block font-semibold uppercase text-on-surface-variant mb-1">Your Phone Number <span class="text-rose-500">*</span></label>
-                            <input type="tel" name="reporter_phone" required placeholder="e.g. 0712345678" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
+                            <input type="tel" name="reporter_phone" required value="{{ old('reporter_phone') }}" placeholder="e.g. 0712345678" class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface">
                         </div>
 
                         <div>
@@ -377,8 +391,16 @@
 
                         <div>
                             <label class="block font-semibold uppercase text-on-surface-variant mb-1">Description / Details <span class="text-rose-500">*</span></label>
-                            <textarea name="details" rows="3" required placeholder="Please describe the issue in detail so our editorial team can investigate." class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface leading-relaxed"></textarea>
+                            <textarea name="details" rows="3" required placeholder="Please describe the issue in detail so our editorial team can investigate." class="w-full px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface leading-relaxed">{{ old('details') }}</textarea>
                         </div>
+
+                        <!-- Cloudflare Turnstile Widget -->
+                        @if(config('services.turnstile.site_key'))
+                            <div class="pt-1 flex justify-center">
+                                <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
+                                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                            </div>
+                        @endif
 
                         <div class="pt-2 flex justify-end space-x-3">
                             <button type="button" @click="reportModal = false" class="px-4 py-2 bg-surface-container text-on-surface rounded-xl font-semibold">Cancel</button>

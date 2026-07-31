@@ -39,7 +39,7 @@ Route::get('/search', [PublicObituaryController::class, 'search'])->name('obitua
 Route::get('/county/{county}', [PublicObituaryController::class, 'countyIndex'])->name('obituaries.county');
 Route::get('/obituary/{slug}', [PublicObituaryController::class, 'show'])->name('obituaries.show');
 Route::post('/obituary/{obituary}/candle', [CandleController::class, 'store'])->middleware('throttle:15,1')->name('obituaries.candle');
-Route::post('/obituary/{obituary}/report', [ReportController::class, 'store'])->middleware('throttle:5,1')->name('obituaries.report');
+Route::post('/obituary/{obituary}/report', [ReportController::class, 'store'])->middleware('throttle:3,30')->name('obituaries.report');
 Route::get('/sitemap.xml', [PublicObituaryController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', function () {
     return response(file_get_contents(public_path('robots.txt')), 200, ['Content-Type' => 'text/plain; charset=utf-8']);

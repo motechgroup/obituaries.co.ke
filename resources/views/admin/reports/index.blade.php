@@ -32,6 +32,9 @@
         <a href="{{ route('admin.reports.index', ['status' => 'dismissed']) }}" class="px-3.5 py-2 rounded-lg {{ $status === 'dismissed' ? 'bg-slate-900 text-amber-400' : 'text-slate-600 hover:bg-slate-100' }}">
             Dismissed
         </a>
+        <a href="{{ route('admin.reports.index', ['status' => 'spam']) }}" class="px-3.5 py-2 rounded-lg {{ $status === 'spam' ? 'bg-rose-900 text-rose-300 font-bold' : 'text-rose-700 hover:bg-rose-50' }}">
+            Spam & Blocked
+        </a>
     </div>
 
     <!-- Reports Table -->
@@ -41,7 +44,7 @@
                 <tr>
                     <th class="px-6 py-3.5">Obituary Notice</th>
                     <th class="px-6 py-3.5">Reason & Details</th>
-                    <th class="px-6 py-3.5">Reporter Contact</th>
+                    <th class="px-6 py-3.5">Reporter & IP</th>
                     <th class="px-6 py-3.5">Status</th>
                     <th class="px-6 py-3.5 text-right">Actions</th>
                 </tr>
@@ -79,12 +82,22 @@
                             @if($r->reporter_phone)
                                 <div class="text-slate-500">{{ $r->reporter_phone }}</div>
                             @endif
+                            @if($r->ip_address)
+                                <div class="inline-block mt-1 font-mono text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">
+                                    IP: {{ $r->ip_address }}
+                                </div>
+                            @endif
                         </td>
                         <td class="px-6 py-4">
                             @if($r->status === 'pending')
                                 <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold uppercase">Pending</span>
                             @elseif($r->status === 'resolved')
                                 <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase">Resolved</span>
+                            @elseif($r->status === 'spam')
+                                <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-bold uppercase flex items-center space-x-1 w-max">
+                                    <span class="material-symbols-outlined text-[14px]">block</span>
+                                    <span>Spam</span>
+                                </span>
                             @else
                                 <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold uppercase">{{ ucfirst($r->status) }}</span>
                             @endif
@@ -138,6 +151,9 @@
                 <div><strong class="text-slate-700">Reason:</strong> <span class="uppercase font-bold text-rose-700" x-text="activeReport.reason"></span></div>
                 <div><strong class="text-slate-700">Report Details:</strong> <p class="mt-1 text-slate-800 whitespace-pre-line font-sans" x-text="activeReport.details"></p></div>
                 <div><strong class="text-slate-700">Reporter:</strong> <span x-text="activeReport.reporter_name + ' (' + activeReport.reporter_email + ')'"></span></div>
+                <template x-if="activeReport.ip_address">
+                    <div><strong class="text-slate-700">IP Address:</strong> <span class="font-mono bg-slate-200 px-1.5 py-0.5 rounded text-[11px]" x-text="activeReport.ip_address"></span></div>
+                </template>
             </div>
 
             <!-- Quick Unpublish Notice Button -->
@@ -152,6 +168,17 @@
                 </form>
             </template>
 
+            <!-- Quick Mark as Spam & Block IP Button -->
+            <form :action="'/admin/reports/' + activeReport.id + '/resolve'" method="POST" onsubmit="return confirm('Mark this report as SPAM and automatically block IP address?')">
+                @csrf
+                <input type="hidden" name="status" value="spam">
+                <input type="hidden" name="resolution_notes" value="Flagged as spam submission. IP automatically blocked.">
+                <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-black text-rose-400 hover:text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center space-x-2 shadow-sm transition-all border border-rose-900/60">
+                    <span class="material-symbols-outlined text-[16px]">block</span>
+                    <span>Mark as Spam & Block Offender IP</span>
+                </button>
+            </form>
+
             <form :action="'/admin/reports/' + activeReport.id + '/resolve'" method="POST" class="space-y-4">
                 @csrf
 
@@ -161,6 +188,7 @@
                         <option value="resolved">Mark as Resolved</option>
                         <option value="reviewed">Mark as Reviewed</option>
                         <option value="dismissed">Dismiss Report</option>
+                        <option value="spam">🚫 Mark as Spam & Block IP</option>
                     </select>
                 </div>
 
