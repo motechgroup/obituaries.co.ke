@@ -25,14 +25,23 @@ class HomeController extends Controller
                 ->get();
         }
 
-        // Obituaries Directory (Dark Top Section): Show latest obituaries posted TODAY
+        // Obituaries Directory (Dark Section): Show obituaries posted YESTERDAY
         $todayDirectoryObituaries = Obituary::published()
-            ->where('created_at', '>=', now()->startOfDay())
+            ->whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])
             ->latest('id')
             ->take(8)
             ->get();
 
-        // Fallback: If no obituaries posted today yet, show latest published obituaries
+        // Fallback: If no obituaries posted yesterday, show latest published obituaries prior to today
+        if ($todayDirectoryObituaries->isEmpty()) {
+            $todayDirectoryObituaries = Obituary::published()
+                ->where('created_at', '<', now()->startOfDay())
+                ->latest('id')
+                ->take(8)
+                ->get();
+        }
+
+        // Second fallback: If still empty, get any latest published obituaries
         if ($todayDirectoryObituaries->isEmpty()) {
             $todayDirectoryObituaries = Obituary::published()
                 ->latest('id')
@@ -40,17 +49,17 @@ class HomeController extends Controller
                 ->get();
         }
 
-        // Recent Tributes Section: Show obituaries posted on PREVIOUS days (created_at < start of today)
+        // Recent Tributes Section: Show random notices from the same week (past 7 days)
         $latestObituaries = Obituary::published()
-            ->where('created_at', '<', now()->startOfDay())
-            ->latest('id')
+            ->where('created_at', '>=', now()->subDays(7)->startOfDay())
+            ->inRandomOrder()
             ->take(8)
             ->get();
 
-        // Fallback: If no previous day posts exist, show latest published obituaries
-        if ($latestObituaries->isEmpty()) {
+        // Fallback: If fewer than 8 notices from the week exist, show random published obituaries overall
+        if ($latestObituaries->count() < 8) {
             $latestObituaries = Obituary::published()
-                ->latest('id')
+                ->inRandomOrder()
                 ->take(8)
                 ->get();
         }
