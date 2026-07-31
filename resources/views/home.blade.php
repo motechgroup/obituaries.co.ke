@@ -4,8 +4,8 @@
 
 @section('content')
 
-<!-- Immersive Hero Section from Stitch Design -->
-<section class="relative w-full min-h-[480px] sm:min-h-[580px] lg:h-[650px] flex items-center overflow-hidden py-12 lg:py-0">
+<!-- Hero Section (Compact Height, Clean Typography) -->
+<section class="relative w-full py-8 sm:py-12 lg:py-14 flex items-center overflow-hidden">
     <!-- Ambient Scrim Background (Zero Latency CSS Mesh) -->
     <div class="absolute inset-0 z-0 overflow-hidden bg-gradient-to-br from-surface via-surface-container-low to-surface-container">
         <div class="absolute -top-32 -right-32 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -15,31 +15,105 @@
 
     <div class="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 w-full">
         <div class="max-w-2xl">
-            <div class="flex items-center gap-3 mb-4 sm:mb-6">
+            <div class="flex items-center gap-3 mb-3 sm:mb-4">
                 <div class="h-[1px] w-8 sm:w-12 bg-secondary"></div>
                 <span class="text-[10px] sm:text-xs font-semibold text-secondary tracking-widest uppercase">Honoring Every Journey</span>
             </div>
             
-            <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-primary mb-4 sm:mb-6 leading-tight">
+            <h1 class="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-primary mb-3 sm:mb-4 leading-tight">
                 Remembering Lives.<br/>
                 <span class="italic font-normal">Sharing Memories.</span>
             </h1>
 
-            <p class="text-sm sm:text-lg text-on-surface-variant mb-8 sm:mb-10 max-w-lg leading-relaxed">
+            <p class="text-xs sm:text-base text-on-surface-variant max-w-lg leading-relaxed">
                 A dignified space to create and preserve a lasting digital sanctuary for your loved ones. We help you tell their story with the grace it deserves.
             </p>
+        </div>
+    </div>
+</section>
 
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
-                <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-xs sm:text-sm font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 w-full sm:w-auto">
-                    <span class="material-symbols-outlined text-[18px]">add</span>
-                    <span>Submit Obituary</span>
-                </a>
-                <a href="#search-archives" class="border border-outline text-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-xs sm:text-sm font-semibold hover:bg-surface-container transition-all duration-300 flex items-center justify-center space-x-2 w-full sm:w-auto">
-                    <span class="material-symbols-outlined text-[18px]">search</span>
-                    <span>Search Archives</span>
+<!-- Latest Obituaries (Today's Notices - Editorial Grid matching Stitch Design) -->
+<section class="w-full py-10 sm:py-16 bg-surface-container-lowest border-b border-outline-variant/20">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+        <div class="flex flex-row justify-between items-end mb-6 sm:mb-10">
+            <div>
+                <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-500/10 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border border-amber-300/30">
+                    <span>✨ Today's Notices</span>
+                </div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1">Latest Obituaries</h2>
+                <p class="text-xs sm:text-sm text-slate-700 font-medium">Honoring those whose memorial notices were published today.</p>
+            </div>
+            <a href="{{ route('obituaries.search') }}" class="group flex items-center gap-1 sm:gap-2 text-xs font-bold text-primary hover:text-secondary transition-colors py-2 px-3 min-h-[44px]">
+                <span class="hidden sm:inline">View All Archives</span>
+                <span class="sm:hidden">All</span>
+                <span class="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+            </a>
+        </div>
+
+        @if($todayObituaries->isEmpty())
+            <div class="bg-surface-container-lowest rounded-2xl p-8 sm:p-12 text-center border border-outline-variant/30 max-w-xl mx-auto">
+                <span class="material-symbols-outlined text-[40px] sm:text-[48px] text-on-surface-variant/40 mb-3">auto_stories</span>
+                <h3 class="font-serif text-lg sm:text-xl font-bold text-primary mb-2">No Published Obituaries Today</h3>
+                <p class="text-xs text-on-surface-variant mb-6">Be the first to publish a verified tribute for your loved one today.</p>
+                <a href="{{ route('obituaries.submit') }}" class="inline-flex items-center px-6 py-3 bg-primary text-on-primary rounded-xl text-xs font-semibold">
+                    Submit an Obituary
                 </a>
             </div>
-        </div>
+        @else
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                @foreach($todayObituaries as $obituary)
+                    <a href="{{ route('obituaries.show', $obituary->slug) }}" class="group relative bg-surface-container-lowest p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border border-outline-variant/20 block cursor-pointer">
+                        <div>
+                            <!-- Compact Square Aspect Image Container -->
+                            <div class="relative aspect-square mb-3 overflow-hidden rounded-lg sm:rounded-xl bg-surface-container select-none">
+                                @if($obituary->photo)
+                                    <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }} Obituary Photo" width="300" height="300" loading="lazy" decoding="async" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100 select-none pointer-events-none">
+                                    
+                                    <!-- Translucent Glass Watermark Overlay (Chest Level) -->
+                                    <div class="absolute inset-x-0 text-center pointer-events-none z-10 select-none" style="bottom: 14%;">
+                                        <span class="font-serif font-black text-[8px] sm:text-[10px] tracking-[0.14em] select-none pointer-events-none" style="color: rgba(255, 255, 255, 0.65); -webkit-text-fill-color: rgba(255, 255, 255, 0.65); text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 -1px 2px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 255, 255, 0.8); filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)); transform: rotate(-5deg); display: inline-block;">Obituaries.co.ke</span>
+                                    </div>
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-b from-primary-container to-primary flex flex-col items-center justify-center p-3 text-center text-on-primary">
+                                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex items-center justify-center text-secondary-fixed mb-1">
+                                            <span class="material-symbols-outlined text-[18px] sm:text-[22px]">church</span>
+                                        </div>
+                                        <span class="font-serif text-[9px] sm:text-[10px] italic">In Loving Memory</span>
+                                    </div>
+                                @endif
+
+                                @if($obituary->is_anniversary_today)
+                                    <div class="absolute top-2 left-2 bg-amber-700/90 backdrop-blur-md text-amber-100 text-[8px] sm:text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-amber-300/30 shadow-xs z-10">
+                                        <span>{{ $obituary->anniversary_badge_text }}</span>
+                                    </div>
+                                @endif
+
+                                <div class="absolute top-2 right-2 z-10 select-none pointer-events-none" title="Verified Notice">
+                                    <span class="material-symbols-outlined text-amber-400 text-[18px] sm:text-[20px] drop-shadow-md leading-none">verified</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <span class="text-[9px] sm:text-[10px] font-semibold text-secondary tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                                <h3 class="font-serif text-xs sm:text-base font-bold text-primary mb-0.5 group-hover:text-secondary transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
+                                <p class="text-[10px] text-on-surface-variant/70 italic">
+                                    @if($obituary->date_of_birth && $obituary->date_of_death)
+                                        {{ $obituary->date_of_birth->format('Y') }} &mdash; {{ $obituary->date_of_death->format('Y') }}
+                                        @if($obituary->age) ({{ $obituary->age }} Yrs) @endif
+                                    @elseif($obituary->date_of_death)
+                                        Passed Away: {{ $obituary->date_of_death->format('M j, Y') }}
+                                    @elseif($obituary->date_of_birth)
+                                        Born: {{ $obituary->date_of_birth->format('Y') }}
+                                    @else
+                                        In Loving Memory
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @endif
     </div>
 </section>
 

@@ -10,6 +10,21 @@ class HomeController extends Controller
 {
     public function index()
     {
+        // Today's Obituaries (Latest Obituaries section directly under Hero): Show obituaries posted TODAY
+        $todayObituaries = Obituary::published()
+            ->where('created_at', '>=', now()->startOfDay())
+            ->latest('id')
+            ->take(8)
+            ->get();
+
+        // Fallback: If no obituaries posted today yet, show latest published obituaries
+        if ($todayObituaries->isEmpty()) {
+            $todayObituaries = Obituary::published()
+                ->latest('id')
+                ->take(8)
+                ->get();
+        }
+
         // Obituaries Directory (Dark Top Section): Show latest obituaries posted TODAY
         $todayDirectoryObituaries = Obituary::published()
             ->where('created_at', '>=', now()->startOfDay())
@@ -100,6 +115,6 @@ class HomeController extends Controller
         $dayIndex = (date('z') + date('Y')) % count($quotes);
         $dailyQuote = $quotes[$dayIndex];
 
-        return view('home', compact('todayDirectoryObituaries', 'latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties', 'dailyQuote'));
+        return view('home', compact('todayObituaries', 'todayDirectoryObituaries', 'latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties', 'dailyQuote'));
     }
 }
