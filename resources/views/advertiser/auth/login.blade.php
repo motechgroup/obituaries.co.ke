@@ -4,17 +4,17 @@
 
 @section('content')
 <div class="max-w-md mx-auto py-8 sm:py-16">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
         <div class="text-center space-y-2">
-            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center font-bold">
-                <span class="material-symbols-outlined text-[28px]">lock</span>
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-900 mx-auto flex items-center justify-center font-bold">
+                <span class="material-symbols-outlined text-[32px]">campaign</span>
             </div>
-            <h1 class="font-serif text-2xl font-bold text-white">Advertiser Login</h1>
-            <p class="text-xs text-slate-400">Access your advertising dashboard, campaigns, and M-Pesa statements.</p>
+            <h1 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Advertiser Login</h1>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">Access your advertising dashboard, campaigns, and M-Pesa statements.</p>
         </div>
 
         @if ($errors->any())
-            <div class="p-4 bg-rose-950/60 border border-rose-800 rounded-2xl text-xs text-rose-300 space-y-1">
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 space-y-1 font-medium">
                 @foreach ($errors->all() as $error)
                     <p>• {{ $error }}</p>
                 @endforeach
@@ -25,29 +25,29 @@
             @csrf
 
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Email Address</label>
-                <input type="email" name="email" value="{{ old('email') }}" required placeholder="advertiser@domain.co.ke" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-amber-500 outline-none">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Email Address</label>
+                <input type="email" name="email" value="{{ old('email') }}" required placeholder="advertiser@domain.co.ke" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 font-medium focus:bg-white focus:border-amber-500 outline-none transition-all">
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Password</label>
-                <input type="password" name="password" required placeholder="Password" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-amber-500 outline-none">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Password</label>
+                <input type="password" name="password" required placeholder="Enter password" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 font-medium focus:bg-white focus:border-amber-500 outline-none transition-all">
             </div>
 
-            <div class="flex items-center justify-between text-xs">
-                <label class="flex items-center space-x-2 text-slate-400 cursor-pointer">
-                    <input type="checkbox" name="remember" class="rounded bg-slate-950 border-slate-800 text-amber-500 focus:ring-amber-500">
+            <div class="flex items-center justify-between text-xs pt-1">
+                <label class="flex items-center space-x-2 text-slate-700 font-medium cursor-pointer">
+                    <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500">
                     <span>Remember Me</span>
                 </label>
             </div>
 
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg">
-                Log In to Portal &rarr;
+            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                <span>Log In to Advertiser Portal &rarr;</span>
             </button>
         </form>
 
-        <div class="pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
-            Don't have an advertiser account? <a href="{{ route('advertiser.register') }}" class="text-amber-400 font-bold hover:underline">Register your business</a>
+        <div class="pt-4 border-t border-slate-100 text-center text-xs text-slate-600 font-medium">
+            Don't have an advertiser account? <a href="{{ route('advertiser.register') }}" class="text-amber-900 font-bold hover:underline">Register your business</a>
         </div>
     </div>
 </div>
