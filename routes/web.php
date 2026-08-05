@@ -176,6 +176,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Admin Advertising System Management
         Route::prefix('advertising')->name('advertising.')->group(function () {
             Route::get('/campaigns', [AdminCampaignController::class, 'index'])->name('campaigns.index');
+            Route::get('/campaigns/create', [AdminCampaignController::class, 'create'])->name('campaigns.create');
+            Route::post('/campaigns', [AdminCampaignController::class, 'store'])->name('campaigns.store');
             Route::get('/campaigns/{campaign}', [AdminCampaignController::class, 'show'])->name('campaigns.show');
             Route::post('/campaigns/{campaign}/approve', [AdminCampaignController::class, 'approve'])->name('campaigns.approve');
             Route::post('/campaigns/{campaign}/reject', [AdminCampaignController::class, 'reject'])->name('campaigns.reject');

@@ -43,6 +43,11 @@ class Advertiser extends Authenticatable
         return $this->hasOne(BusinessProfile::class)->oldestOfMany();
     }
 
+    public function businessProfile()
+    {
+        return $this->hasOne(BusinessProfile::class);
+    }
+
     public function campaigns()
     {
         return $this->hasMany(AdCampaign::class);

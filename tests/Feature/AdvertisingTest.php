@@ -107,4 +107,18 @@ class AdvertisingTest extends TestCase
             'ad_campaign_id' => $campaign->id,
         ]);
     }
+
+    public function test_admin_can_access_campaign_creation_page()
+    {
+        $admin = \App\Models\Admin::create([
+            'name' => 'Admin User',
+            'email' => 'admin_test@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.advertising.campaigns.create'));
+        $response->assertStatus(200);
+        $response->assertSee('Create & Place Ad Campaign');
+    }
 }
