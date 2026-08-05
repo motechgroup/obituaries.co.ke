@@ -12,6 +12,12 @@ class AdminPricingController extends Controller
 {
     public function index()
     {
+        if (\App\Models\AdPricing::count() === 0) {
+            try {
+                (new \Database\Seeders\AdvertisingSeeder())->run();
+            } catch (\Throwable $e) {}
+        }
+
         $pricings = AdPricing::with(['placement', 'bannerSize'])->latest()->paginate(20);
         $placements = AdPlacement::with('bannerSizes')->where('status', true)->get();
         $bannerSizes = BannerSize::where('status', true)->get();

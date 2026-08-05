@@ -11,6 +11,12 @@ class AdminCategoryController extends Controller
 {
     public function index()
     {
+        if (BusinessCategory::count() === 0) {
+            try {
+                (new \Database\Seeders\AdvertisingSeeder())->run();
+            } catch (\Throwable $e) {}
+        }
+
         $categories = BusinessCategory::withCount(['profiles', 'campaigns'])->orderBy('sort_order')->get();
         return view('admin.advertising.categories.index', compact('categories'));
     }
