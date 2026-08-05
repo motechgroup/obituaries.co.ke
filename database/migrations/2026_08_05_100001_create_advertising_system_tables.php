@@ -108,7 +108,7 @@ return new class extends Migration
             $table->string('banner_path');
             $table->string('banner_webp_path')->nullable();
             $table->string('thumbnail_path')->nullable();
-            $table->text('landing_url');
+            $table->text('landing_url')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('total_days')->default(1);

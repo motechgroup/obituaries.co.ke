@@ -152,4 +152,29 @@ class AdvertisingTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Ad Analytics & Performance Reports');
     }
+
+    public function test_campaign_can_be_created_without_landing_url()
+    {
+        $advertiser = Advertiser::first();
+        $placement = AdPlacement::first();
+        $size = BannerSize::first();
+
+        $campaign = AdCampaign::create([
+            'advertiser_id' => $advertiser->id,
+            'ad_placement_id' => $placement->id,
+            'banner_size_id' => $size->id,
+            'name' => 'No Landing URL Campaign',
+            'banner_path' => 'advertising/banners/test.png',
+            'landing_url' => null,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->addDays(10)->format('Y-m-d'),
+            'total_days' => 10,
+            'status' => 'running',
+        ]);
+
+        $this->assertDatabaseHas('ad_campaigns', [
+            'id' => $campaign->id,
+            'landing_url' => null,
+        ]);
+    }
 }

@@ -147,7 +147,7 @@ class CampaignController extends Controller
             'banner_path' => $processedImages['banner_path'],
             'banner_webp_path' => $processedImages['banner_webp_path'],
             'thumbnail_path' => $processedImages['thumbnail_path'],
-            'landing_url' => $validated['landing_url'],
+            'landing_url' => $validated['landing_url'] ?? null,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'total_days' => $pricingResult['total_days'],
