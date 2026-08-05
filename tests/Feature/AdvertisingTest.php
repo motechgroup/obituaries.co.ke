@@ -138,4 +138,18 @@ class AdvertisingTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Edit Campaign');
     }
+
+    public function test_admin_can_view_ad_analytics_page()
+    {
+        $admin = \App\Models\Admin::create([
+            'name' => 'Analytics Admin',
+            'email' => 'admin_analytics@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.advertising.analytics.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Ad Analytics & Performance Reports');
+    }
 }

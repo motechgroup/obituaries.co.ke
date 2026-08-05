@@ -32,4 +32,14 @@ class AdPlacement extends Model
     {
         return $this->hasMany(AdCampaign::class);
     }
+
+    public function impressions()
+    {
+        return $this->hasMany(AdImpression::class);
+    }
+
+    public function clicks()
+    {
+        return $this->hasMany(AdClick::class);
+    }
 }
