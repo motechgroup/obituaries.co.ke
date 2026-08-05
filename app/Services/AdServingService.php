@@ -16,6 +16,14 @@ class AdServingService
         ?string $targetCounty = null,
         array $excludeCampaignIds = []
     ): ?AdCampaign {
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('ad_placements') || !\Illuminate\Support\Facades\Schema::hasTable('ad_campaigns')) {
+                return null;
+            }
+        } catch (\Throwable $e) {
+            return null;
+        }
+
         $placement = AdPlacement::where('slug', $placementSlug)
             ->where('status', true)
             ->first();

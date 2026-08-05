@@ -21,38 +21,46 @@ class AdTrackingService
         $request = $request ?? request();
         $ip = $request->ip();
 
-        // 1. Impression Deduplication Window Check (5 mins)
-        $recentImpressionExists = AdImpression::where('ad_campaign_id', $campaign->id)
-            ->where('ip_address', $ip)
-            ->where('created_at', '>=', now()->subMinutes(5))
-            ->exists();
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('ad_impressions')) {
+                return false;
+            }
 
-        if ($recentImpressionExists) {
+            // 1. Impression Deduplication Window Check (5 mins)
+            $recentImpressionExists = AdImpression::where('ad_campaign_id', $campaign->id)
+                ->where('ip_address', $ip)
+                ->where('created_at', '>=', now()->subMinutes(5))
+                ->exists();
+
+            if ($recentImpressionExists) {
+                return false;
+            }
+
+            // Detect user agent & device info
+            $agent = $request->userAgent() ?? '';
+            $deviceType = static::detectDeviceType($agent);
+            $browser = static::detectBrowser($agent);
+            $os = static::detectOs($agent);
+            $county = $request->get('county') ?? $campaign->counties->first()?->county ?? 'Nairobi';
+
+            AdImpression::create([
+                'ad_campaign_id' => $campaign->id,
+                'ad_placement_id' => $placement?->id ?? $campaign->ad_placement_id,
+                'ip_address' => $ip,
+                'county' => $county,
+                'country' => 'Kenya',
+                'browser' => $browser,
+                'os' => $os,
+                'device_type' => $deviceType,
+                'referer' => substr($request->header('referer', ''), 0, 500),
+                'page_url' => substr($request->fullUrl(), 0, 500),
+                'created_at' => now(),
+            ]);
+
+            return true;
+        } catch (\Throwable $e) {
             return false;
         }
-
-        // Detect user agent & device info
-        $agent = $request->userAgent() ?? '';
-        $deviceType = static::detectDeviceType($agent);
-        $browser = static::detectBrowser($agent);
-        $os = static::detectOs($agent);
-        $county = $request->get('county') ?? $campaign->counties->first()?->county ?? 'Nairobi';
-
-        AdImpression::create([
-            'ad_campaign_id' => $campaign->id,
-            'ad_placement_id' => $placement?->id ?? $campaign->ad_placement_id,
-            'ip_address' => $ip,
-            'county' => $county,
-            'country' => 'Kenya',
-            'browser' => $browser,
-            'os' => $os,
-            'device_type' => $deviceType,
-            'referer' => substr($request->header('referer', ''), 0, 500),
-            'page_url' => substr($request->fullUrl(), 0, 500),
-            'created_at' => now(),
-        ]);
-
-        return true;
     }
 
     /**
@@ -66,37 +74,45 @@ class AdTrackingService
         $request = $request ?? request();
         $ip = $request->ip();
 
-        // 1. Rate-limiting anti-spam check (10 seconds window)
-        $recentClickExists = AdClick::where('ad_campaign_id', $campaign->id)
-            ->where('ip_address', $ip)
-            ->where('created_at', '>=', now()->subSeconds(10))
-            ->exists();
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('ad_clicks')) {
+                return false;
+            }
 
-        if ($recentClickExists) {
+            // 1. Rate-limiting anti-spam check (10 seconds window)
+            $recentClickExists = AdClick::where('ad_campaign_id', $campaign->id)
+                ->where('ip_address', $ip)
+                ->where('created_at', '>=', now()->subSeconds(10))
+                ->exists();
+
+            if ($recentClickExists) {
+                return false;
+            }
+
+            $agent = $request->userAgent() ?? '';
+            $deviceType = static::detectDeviceType($agent);
+            $browser = static::detectBrowser($agent);
+            $os = static::detectOs($agent);
+            $county = $request->get('county') ?? $campaign->counties->first()?->county ?? 'Nairobi';
+
+            AdClick::create([
+                'ad_campaign_id' => $campaign->id,
+                'ad_placement_id' => $placement?->id ?? $campaign->ad_placement_id,
+                'ip_address' => $ip,
+                'county' => $county,
+                'country' => 'Kenya',
+                'browser' => $browser,
+                'os' => $os,
+                'device_type' => $deviceType,
+                'referer' => substr($request->header('referer', ''), 0, 500),
+                'page_url' => substr($request->fullUrl(), 0, 500),
+                'created_at' => now(),
+            ]);
+
+            return true;
+        } catch (\Throwable $e) {
             return false;
         }
-
-        $agent = $request->userAgent() ?? '';
-        $deviceType = static::detectDeviceType($agent);
-        $browser = static::detectBrowser($agent);
-        $os = static::detectOs($agent);
-        $county = $request->get('county') ?? $campaign->counties->first()?->county ?? 'Nairobi';
-
-        AdClick::create([
-            'ad_campaign_id' => $campaign->id,
-            'ad_placement_id' => $placement?->id ?? $campaign->ad_placement_id,
-            'ip_address' => $ip,
-            'county' => $county,
-            'country' => 'Kenya',
-            'browser' => $browser,
-            'os' => $os,
-            'device_type' => $deviceType,
-            'referer' => substr($request->header('referer', ''), 0, 500),
-            'page_url' => substr($request->fullUrl(), 0, 500),
-            'created_at' => now(),
-        ]);
-
-        return true;
     }
 
     protected static function detectDeviceType(string $agent): string

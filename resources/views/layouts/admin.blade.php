@@ -194,7 +194,15 @@
                             </a>
                             <div class="flex items-center space-x-2">
                                 @php
-                                    $pendingAdCount = \App\Models\AdCampaign::where('status', 'pending_approval')->count();
+                                    $pendingAdCount = 0;
+                                    try {
+                                        if (!\Illuminate\Support\Facades\Schema::hasTable('ad_campaigns')) {
+                                            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                                        }
+                                        if (\Illuminate\Support\Facades\Schema::hasTable('ad_campaigns')) {
+                                            $pendingAdCount = \App\Models\AdCampaign::where('status', 'pending_approval')->count();
+                                        }
+                                    } catch (\Throwable $e) {}
                                 @endphp
                                 @if($pendingAdCount > 0)
                                     <span class="text-xs bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
