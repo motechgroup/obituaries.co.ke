@@ -174,6 +174,8 @@
 <script>
 function adminCampaignWizard() {
     const placements = @json($placements);
+    const fallbackSizes = @json($bannerSizes);
+    const allCounties = @json($counties);
 
     return {
         placementId: '',
@@ -196,19 +198,35 @@ function adminCampaignWizard() {
             if (placements.length > 0) {
                 this.placementId = placements[0].id;
                 this.updateSizes();
+            } else if (fallbackSizes.length > 0) {
+                this.availableSizes = fallbackSizes;
+                this.sizeId = fallbackSizes[0].id;
             }
         },
 
         updateSizes() {
             const p = placements.find(x => x.id == this.placementId);
-            if (p && p.banner_sizes) {
-                this.availableSizes = p.banner_sizes;
-                if (this.availableSizes.length > 0) {
-                    this.sizeId = this.availableSizes[0].id;
-                }
+            let sizes = [];
+            if (p) {
+                sizes = p.banner_sizes || p.bannerSizes || [];
+            }
+            if (!sizes || sizes.length === 0) {
+                sizes = fallbackSizes;
+            }
+            this.availableSizes = sizes;
+            if (this.availableSizes.length > 0) {
+                this.sizeId = this.availableSizes[0].id;
             } else {
-                this.availableSizes = [];
                 this.sizeId = '';
+            }
+            this.calculatePrice();
+        },
+
+        toggleNational() {
+            if (this.isNational) {
+                this.selectedCounties = [...allCounties];
+            } else {
+                this.selectedCounties = ['Nairobi'];
             }
             this.calculatePrice();
         },

@@ -16,8 +16,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans h-full bg-slate-50 text-slate-900 antialiased flex flex-col min-h-screen selection:bg-amber-500 selection:text-slate-950">
 
@@ -59,7 +58,7 @@
 
                     <!-- User Dropdown -->
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="flex items-center space-x-2 text-xs font-bold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300">
+                        <button type="button" @click="open = !open" class="flex items-center space-x-2 text-xs font-bold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 focus:outline-none">
                             <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-[11px]">
                                 {{ strtoupper(substr(Auth::guard('advertiser')->user()->business_name, 0, 1)) }}
                             </span>
@@ -67,7 +66,17 @@
                             <span class="material-symbols-outlined text-[16px]">expand_more</span>
                         </button>
 
-                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-52 bg-white border border-slate-200 rounded-xl shadow-lg py-2 z-50 text-xs">
+                        <div x-show="open" 
+                             @click.away="open = false" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             style="display: none;" 
+                             x-cloak 
+                             class="absolute right-0 mt-2 w-52 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 text-xs">
                             <div class="px-4 py-2 border-b border-slate-100">
                                 <p class="font-bold text-slate-900 truncate">{{ Auth::guard('advertiser')->user()->business_name }}</p>
                                 <p class="text-[10px] text-slate-500 truncate">{{ Auth::guard('advertiser')->user()->email }}</p>

@@ -78,10 +78,15 @@
             <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 border-b border-slate-800 pb-2">3. Geographic County Targeting</h3>
 
             <div class="flex items-center space-x-3 p-4 bg-slate-950 rounded-xl border border-slate-800">
-                <input type="checkbox" name="is_national" id="is_national" value="1" x-model="isNational" @change="calculatePrice()" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
+                <input type="checkbox" name="is_national" id="is_national" value="1" x-model="isNational" @change="toggleNational()" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
                 <label for="is_national" class="text-xs font-bold text-white cursor-pointer">
                     Target Entire Kenya (National Coverage Across All 47 Counties)
                 </label>
+            </div>
+
+            <div x-show="isNational" class="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs font-bold text-amber-400 flex items-center space-x-2" x-cloak>
+                <span class="material-symbols-outlined text-[20px]">public</span>
+                <span>National Coverage Active: Your advertisement will be broadcast across all 47 counties in Kenya.</span>
             </div>
 
             <div x-show="!isNational" class="space-y-2">
@@ -148,6 +153,8 @@
 <script>
 function campaignWizard() {
     const placements = @json($placements);
+    const fallbackSizes = @json($bannerSizes);
+    const allCounties = @json($counties);
 
     return {
         placementId: '',
@@ -170,19 +177,35 @@ function campaignWizard() {
             if (placements.length > 0) {
                 this.placementId = placements[0].id;
                 this.updateSizes();
+            } else if (fallbackSizes.length > 0) {
+                this.availableSizes = fallbackSizes;
+                this.sizeId = fallbackSizes[0].id;
             }
         },
 
         updateSizes() {
             const p = placements.find(x => x.id == this.placementId);
-            if (p && p.banner_sizes) {
-                this.availableSizes = p.banner_sizes;
-                if (this.availableSizes.length > 0) {
-                    this.sizeId = this.availableSizes[0].id;
-                }
+            let sizes = [];
+            if (p) {
+                sizes = p.banner_sizes || p.bannerSizes || [];
+            }
+            if (!sizes || sizes.length === 0) {
+                sizes = fallbackSizes;
+            }
+            this.availableSizes = sizes;
+            if (this.availableSizes.length > 0) {
+                this.sizeId = this.availableSizes[0].id;
             } else {
-                this.availableSizes = [];
                 this.sizeId = '';
+            }
+            this.calculatePrice();
+        },
+
+        toggleNational() {
+            if (this.isNational) {
+                this.selectedCounties = [...allCounties];
+            } else {
+                this.selectedCounties = ['Nairobi'];
             }
             this.calculatePrice();
         },
