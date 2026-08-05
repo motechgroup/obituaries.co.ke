@@ -95,10 +95,9 @@ class AdCampaign extends Model
 
     public function scopeRunning($query)
     {
-        $today = now()->format('Y-m-d');
         return $query->where('status', 'running')
-            ->where('start_date', '<=', $today)
-            ->where('end_date', '>=', $today);
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now());
     }
 
     public function scopePendingApproval($query)

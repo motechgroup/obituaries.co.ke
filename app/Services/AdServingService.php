@@ -32,14 +32,12 @@ class AdServingService
             return null;
         }
 
-        $today = now()->format('Y-m-d');
-
         // Query active running campaigns for this placement
-        $baseQuery = AdCampaign::with(['businessProfile', 'bannerSize', 'placement'])
+        $baseQuery = AdCampaign::with(['businessProfile', 'bannerSize', 'placement', 'counties'])
             ->where('ad_placement_id', $placement->id)
             ->where('status', 'running')
-            ->where('start_date', '<=', $today)
-            ->where('end_date', '>=', $today);
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now());
 
         if (!empty($excludeCampaignIds)) {
             $baseQuery->whereNotIn('id', $excludeCampaignIds);

@@ -4,6 +4,11 @@
 
 @section('content')
 
+<!-- Homepage Header Ad Banner Slot -->
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 pt-4">
+    <x-ad-banner placement="homepage_header" />
+</div>
+
 <!-- Hero Section (Compact Height, Clean Typography) -->
 <section class="relative w-full py-8 sm:py-12 lg:py-14 flex items-center overflow-hidden">
     <!-- Ambient Scrim Background (Zero Latency CSS Mesh) -->

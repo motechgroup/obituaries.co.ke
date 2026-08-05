@@ -164,6 +164,11 @@
     </div>
 </section>
 
+<!-- Obituary Top Ad Banner -->
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 mt-6">
+    <x-ad-banner placement="obituary_top" :county="$obituary->county" />
+</div>
+
 <!-- Content Grid with Copy Protection -->
 <div id="obituary-content" class="max-w-[1200px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 mt-12 sm:mt-16 pb-16 select-none" style="-webkit-user-select: none; user-select: none;">
     
@@ -427,6 +432,9 @@
     <!-- Right Column: Service Details Card & Share Widgets (4 cols) -->
     <div class="lg:col-span-4 space-y-6 sm:space-y-8" x-data="{ copied: false }">
         
+        <!-- Desktop Sidebar Ad Banner Slot -->
+        <x-ad-banner placement="desktop_sidebar" :county="$obituary->county" />
+
         <!-- Funeral Service Info Card matching Screenshot -->
         <div class="bg-surface-container-lowest rounded-2xl shadow-md p-6 sm:p-8 border border-surface-container space-y-6">
             <h3 class="font-serif text-xl font-bold text-primary border-b border-surface-container pb-4">Service Details</h3>
