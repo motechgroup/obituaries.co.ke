@@ -30,6 +30,7 @@ use App\Http\Controllers\Advertiser\AnalyticsController as AdvertiserAnalyticsCo
 use App\Http\Controllers\Admin\Advertising\AdminCampaignController;
 use App\Http\Controllers\Admin\Advertising\AdminFinanceController;
 use App\Http\Controllers\Admin\Advertising\AdminAdvertiserController;
+use App\Http\Controllers\Admin\Advertising\AdminAnalyticsController;
 use App\Http\Controllers\Admin\Advertising\AdminPricingController;
 use App\Http\Controllers\Admin\Advertising\AdminPlacementController;
 use App\Http\Controllers\Admin\Advertising\AdminCategoryController;
@@ -187,6 +188,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
             Route::get('/finance/export', [AdminFinanceController::class, 'exportCsv'])->name('finance.export');
+
+            Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
+            Route::get('/analytics/export', [AdminAnalyticsController::class, 'exportCsv'])->name('analytics.export');
 
             Route::get('/advertisers', [AdminAdvertiserController::class, 'index'])->name('advertisers.index');
             Route::get('/advertisers/{advertiser}', [AdminAdvertiserController::class, 'show'])->name('advertisers.show');

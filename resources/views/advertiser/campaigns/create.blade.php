@@ -32,8 +32,9 @@
                     <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Funeral Service Promo Q3" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-amber-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Landing URL / Website Link <span class="text-amber-400">*</span></label>
-                    <input type="url" name="landing_url" value="{{ old('landing_url', $profile->website ?: 'https://') }}" required placeholder="https://yourbusiness.co.ke" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-amber-500 outline-none">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Landing URL / Website Link <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                    <input type="url" name="landing_url" value="{{ old('landing_url') }}" placeholder="https://yourbusiness.co.ke (Optional)" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-amber-500 outline-none">
+                    <span class="text-[10px] text-slate-400 mt-1 block">Leave blank for a display-only branding banner without website redirection.</span>
                 </div>
             </div>
         </div>

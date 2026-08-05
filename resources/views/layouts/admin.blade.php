@@ -225,6 +225,9 @@
                             <a href="{{ route('admin.advertising.finance.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.finance.*') ? 'text-emerald-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
                                 <span>&bull; Financial Revenue</span>
                             </a>
+                            <a href="{{ route('admin.advertising.analytics.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.analytics.*') ? 'text-amber-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Ad Analytics & Reports</span>
+                            </a>
                             <a href="{{ route('admin.advertising.advertisers.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.advertisers.*') ? 'text-sky-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
                                 <span>&bull; Advertisers Directory</span>
                             </a>

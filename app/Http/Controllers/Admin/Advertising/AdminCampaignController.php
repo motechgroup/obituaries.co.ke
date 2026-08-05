@@ -95,7 +95,7 @@ class AdminCampaignController extends Controller
             'ad_placement_id' => ['required', 'exists:ad_placements,id'],
             'banner_size_id' => ['required', 'exists:banner_sizes,id'],
             'business_category_id' => ['nullable', 'exists:business_categories,id'],
-            'landing_url' => ['required', 'url', 'max:1000'],
+            'landing_url' => ['nullable', 'url', 'max:1000'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'is_national' => ['nullable', 'boolean'],

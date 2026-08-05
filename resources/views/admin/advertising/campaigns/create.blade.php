@@ -57,8 +57,9 @@
                     <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Lee Funeral Home Premier Care Ad" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:border-amber-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Landing URL / Website Link <span class="text-rose-500">*</span></label>
-                    <input type="url" name="landing_url" value="{{ old('landing_url', 'https://') }}" required placeholder="https://example.co.ke" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:border-amber-500 outline-none">
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Landing URL / Website Link <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                    <input type="url" name="landing_url" value="{{ old('landing_url') }}" placeholder="https://example.co.ke (Optional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:border-amber-500 outline-none">
+                    <span class="text-[10px] text-slate-500 mt-1 block">Leave blank for a display-only branding banner without website redirection.</span>
                 </div>
             </div>
         </div>
