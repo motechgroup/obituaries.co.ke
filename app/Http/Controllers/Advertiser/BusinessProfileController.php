@@ -49,7 +49,7 @@ class BusinessProfileController extends Controller
             'county' => ['required', 'string'],
             'address' => ['nullable', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
         ]);
 
         if ($request->hasFile('logo')) {

@@ -66,8 +66,8 @@
             <div class="pt-2">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Upload Banner Image File <span class="text-amber-400">*</span></label>
                 <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <input type="file" name="banner_image" accept="image/jpeg,image/png,image/jpg,image/webp" required class="text-xs text-slate-300">
-                    <p class="text-[11px] text-slate-400">Max Size: <strong class="text-amber-400">2MB</strong>. Valid formats: JPG, PNG, WebP.</p>
+                    <input type="file" name="banner_image" accept="image/jpeg,image/png,image/jpg" required class="text-xs text-slate-300">
+                    <p class="text-[11px] text-slate-400">Max Size: <strong class="text-amber-400">5MB</strong>. Valid formats: <strong class="text-slate-200">PNG, JPEG, JPG only</strong>.</p>
                 </div>
             </div>
         </div>

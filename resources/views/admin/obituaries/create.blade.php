@@ -212,8 +212,8 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Main Obituary Photo (JPEG, PNG, WEBP)</label>
-                        <input type="file" name="photo" accept="image/*" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Main Obituary Photo (JPEG, JPG, PNG only - Max 5MB)</label>
+                        <input type="file" name="photo" accept="image/jpeg,image/png,image/jpg" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                         <p class="text-[11px] text-slate-500 mt-1">Primary portrait picture displayed on home and public memorial page.</p>
                     </div>
 
@@ -224,8 +224,8 @@
                     </div>
 
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Moments in Time Photo Gallery (Up to 8 Images)</label>
-                        <input type="file" name="gallery_images[]" multiple accept="image/*" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Moments in Time Photo Gallery (Up to 8 Images - JPEG/PNG only, Max 5MB each)</label>
+                        <input type="file" name="gallery_images[]" multiple accept="image/jpeg,image/png,image/jpg" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                         <p class="text-[11px] text-slate-500 mt-1">Select multiple family photographs for the memorial gallery.</p>
                     </div>
                 </div>

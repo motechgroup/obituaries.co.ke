@@ -44,7 +44,7 @@ class ObituarySubmissionController extends Controller
             // Step 1: Deceased Info
             'full_name' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', Rule::in(Obituary::CATEGORIES)],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB max
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:5120'], // 5MB max (PNG & JPEG/JPG only)
             'date_of_birth' => ['nullable', 'string'],
             'date_of_death' => ['nullable', 'string'],
             'county' => ['nullable', 'string', 'max:100'],
@@ -66,7 +66,7 @@ class ObituarySubmissionController extends Controller
 
             // Gallery Images (Moments in Time)
             'gallery_images' => ['nullable', 'array', 'max:8'],
-            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5120'],
         ], [
             'family_permission_confirmed.accepted' => 'You must confirm that you have permission from the family to submit this obituary.',
         ]);

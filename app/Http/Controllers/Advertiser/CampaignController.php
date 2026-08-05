@@ -107,7 +107,7 @@ class CampaignController extends Controller
             'is_featured' => ['nullable', 'boolean'],
             'counties' => ['nullable', 'array'],
             'counties.*' => ['string'],
-            'banner_image' => ['required', 'file', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'banner_image' => ['required', 'file', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
         ]);
 
         $bannerSize = BannerSize::findOrFail($validated['banner_size_id']);

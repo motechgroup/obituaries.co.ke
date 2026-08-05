@@ -127,8 +127,8 @@
                                 <img src="{{ asset('storage/' . $obituary->photo) }}" alt="{{ $obituary->full_name }}" class="w-14 h-14 object-cover rounded-lg flex-shrink-0 border border-slate-300">
                             @endif
                             <div class="flex-grow">
-                                <input type="file" name="photo" accept="image/jpeg,image/png,image/jpg,image/webp" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
-                                <span class="text-[10px] text-slate-400 block mt-1">Leave empty to keep existing photo.</span>
+                                <input type="file" name="photo" accept="image/jpeg,image/png,image/jpg" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
+                                <span class="text-[10px] text-slate-400 block mt-1">JPEG or PNG only (Max 5MB). Leave empty to keep existing photo.</span>
                             </div>
                         </div>
                     </div>
@@ -145,8 +145,8 @@
                                     @endforeach
                                 </div>
                             @endif
-                            <input type="file" name="gallery_images[]" multiple accept="image/jpeg,image/png,image/jpg,image/webp" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
-                            <span class="text-[10px] text-slate-400 block">Select multiple image files to add to the gallery.</span>
+                            <input type="file" name="gallery_images[]" multiple accept="image/jpeg,image/png,image/jpg" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800">
+                            <span class="text-[10px] text-slate-400 block">Select multiple image files to add to the gallery (JPEG or PNG only, Max 5MB each).</span>
                         </div>
                     </div>
 

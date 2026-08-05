@@ -16,23 +16,25 @@ class AdImageService
     {
         $errors = [];
 
-        // 1. Max size 2MB (2048 KB)
-        $fileSizeKb = round($file->getSize() / 1024);
-        if ($fileSizeKb > $targetSize->max_size_kb) {
-            $errors[] = "File size exceeds the maximum limit of " . ($targetSize->max_size_kb / 1024) . "MB (Uploaded: {$fileSizeKb} KB).";
+        // 1. Validate MIME type (PNG and JPEG/JPG only)
+        $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];
+        $imageInfo = @getimagesize($file->getRealPath());
+        if (!$imageInfo || !in_array(strtolower($imageInfo['mime'] ?? ''), $allowedMimes, true)) {
+            $errors[] = "Only PNG and JPEG/JPG image formats are allowed.";
+            return ['valid' => false, 'errors' => $errors];
         }
 
-        // 2. Validate image dimensions using getimagesize()
-        $imageInfo = @getimagesize($file->getRealPath());
-        if (!$imageInfo) {
-            $errors[] = "Uploaded file is not a valid image.";
-            return ['valid' => false, 'errors' => $errors];
+        // 2. Max size 5MB (5120 KB)
+        $maxKb = 5120;
+        $fileSizeKb = round($file->getSize() / 1024);
+        if ($fileSizeKb > $maxKb) {
+            $errors[] = "File size exceeds the maximum limit of 5MB (Uploaded: " . round($fileSizeKb / 1024, 2) . "MB).";
         }
 
         $width = $imageInfo[0];
         $height = $imageInfo[1];
 
-        // Allow 5% tolerance for aspect ratio matching if necessary, but enforce strict dimension bounds
+        // Enforce dimension bounds
         $targetW = $targetSize->width;
         $targetH = $targetSize->height;
 
