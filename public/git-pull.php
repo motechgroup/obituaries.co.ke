@@ -125,9 +125,10 @@ try {
     // Clean up temporary ZIP
     @unlink($tempZipPath);
 
-    // 6. Clear Laravel Cache, Purge Stale File Cache & Run Database Migrations
+    // 6. Clear Laravel Cache, Purge Stale File Cache, Run Database Migrations & Seed Advertising Tables
     try {
         Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('db:seed', ['--class' => 'AdvertisingSeeder', '--force' => true]);
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
         Artisan::call('config:clear');

@@ -203,8 +203,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/analytics/export', [AdminAnalyticsController::class, 'exportCsv'])->name('analytics.export');
 
             Route::get('/advertisers', [AdminAdvertiserController::class, 'index'])->name('advertisers.index');
+            Route::get('/advertisers/create', [AdminAdvertiserController::class, 'create'])->name('advertisers.create');
+            Route::post('/advertisers', [AdminAdvertiserController::class, 'store'])->name('advertisers.store');
             Route::get('/advertisers/{advertiser}', [AdminAdvertiserController::class, 'show'])->name('advertisers.show');
+            Route::get('/advertisers/{advertiser}/edit', [AdminAdvertiserController::class, 'edit'])->name('advertisers.edit');
+            Route::put('/advertisers/{advertiser}', [AdminAdvertiserController::class, 'update'])->name('advertisers.update');
             Route::post('/advertisers/{advertiser}/toggle-status', [AdminAdvertiserController::class, 'toggleStatus'])->name('advertisers.toggle-status');
+            Route::delete('/advertisers/{advertiser}', [AdminAdvertiserController::class, 'destroy'])->name('advertisers.destroy');
 
             Route::get('/pricing', [AdminPricingController::class, 'index'])->name('pricing.index');
             Route::post('/pricing', [AdminPricingController::class, 'store'])->name('pricing.store');

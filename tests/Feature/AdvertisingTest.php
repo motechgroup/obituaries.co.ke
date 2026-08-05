@@ -193,4 +193,47 @@ class AdvertisingTest extends TestCase
         $response = $this->actingAs($advertiser, 'advertiser')->get(route('advertise'));
         $response->assertRedirect(route('advertiser.dashboard'));
     }
+
+    public function test_admin_can_create_edit_and_manage_advertiser_account()
+    {
+        $admin = \App\Models\User::create([
+            'name' => 'Admin User',
+            'email' => 'admin_adv_mgr@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.advertising.advertisers.store'), [
+            'business_name' => 'Montezuma Monalisa Funeral Home',
+            'contact_person' => 'John Montezuma',
+            'phone_number' => '0711223344',
+            'email' => 'info@montezuma.co.ke',
+            'password' => 'password123',
+            'status' => 'active',
+        ]);
+
+        $response->assertRedirect(route('admin.advertising.advertisers.index'));
+        $this->assertDatabaseHas('advertisers', [
+            'email' => 'info@montezuma.co.ke',
+            'business_name' => 'Montezuma Monalisa Funeral Home',
+        ]);
+
+        $adv = Advertiser::where('email', 'info@montezuma.co.ke')->first();
+
+        // Admin updates advertiser
+        $updateResp = $this->actingAs($admin, 'admin')->put(route('admin.advertising.advertisers.update', $adv->id), [
+            'business_name' => 'Montezuma Funeral Services',
+            'contact_person' => 'John Montezuma',
+            'phone_number' => '0711223344',
+            'email' => 'info@montezuma.co.ke',
+            'status' => 'suspended',
+        ]);
+
+        $updateResp->assertRedirect(route('admin.advertising.advertisers.index'));
+        $this->assertDatabaseHas('advertisers', [
+            'id' => $adv->id,
+            'business_name' => 'Montezuma Funeral Services',
+            'status' => 'suspended',
+        ]);
+    }
 }

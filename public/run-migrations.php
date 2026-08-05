@@ -43,8 +43,9 @@ echo "<!DOCTYPE html>
     </div>";
 
 try {
-    // Run migrations with force flag
+    // Run migrations with force flag & seed advertising tables
     Artisan::call('migrate', ['--force' => true]);
+    Artisan::call('db:seed', ['--class' => 'AdvertisingSeeder', '--force' => true]);
     $migrateOutput = Artisan::output();
 
     echo "<div class='alert-success'>
