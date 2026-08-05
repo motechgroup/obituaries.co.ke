@@ -46,22 +46,32 @@ class AdminCampaignController extends Controller
 
     public function create()
     {
-        $advertisers = Advertiser::with('businessProfile')->orderBy('business_name')->get();
-        if ($advertisers->isEmpty()) {
-            $adminAdvertiser = Advertiser::create([
-                'business_name' => 'Obituaries.co.ke Admin Sales',
+        $systemAdvertiser = Advertiser::firstOrCreate(
+            ['email' => 'admin@obituaries.co.ke'],
+            [
+                'business_name' => 'System (Obituaries.co.ke Admin Direct Ads)',
                 'contact_person' => 'System Administrator',
                 'phone_number' => '0700000000',
-                'email' => 'admin@obituaries.co.ke',
                 'password' => bcrypt('password123'),
-            ]);
-            $adminAdvertiser->businessProfile()->create([
-                'business_name' => 'Obituaries.co.ke Admin Sales',
+                'status' => 'active',
+            ]
+        );
+
+        $systemAdvertiser->businessProfile()->firstOrCreate(
+            ['advertiser_id' => $systemAdvertiser->id],
+            [
+                'business_name' => 'System (Obituaries.co.ke Admin Direct Ads)',
                 'phone' => '0700000000',
                 'email' => 'admin@obituaries.co.ke',
-            ]);
-            $advertisers = collect([$adminAdvertiser]);
-        }
+            ]
+        );
+
+        $otherAdvertisers = Advertiser::with('businessProfile')
+            ->where('id', '!=', $systemAdvertiser->id)
+            ->orderBy('business_name')
+            ->get();
+
+        $advertisers = collect([$systemAdvertiser])->concat($otherAdvertisers);
 
         $placements = AdPlacement::with('bannerSizes')->where('status', true)->get();
         $bannerSizes = BannerSize::where('status', true)->get();

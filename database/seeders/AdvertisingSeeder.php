@@ -140,7 +140,29 @@ class AdvertisingSeeder extends Seeder
             }
         }
 
-        // 5. Demo Advertiser & Business Profile
+        // 5. System Admin Advertiser & Demo Advertiser Accounts
+        $systemAdvertiser = Advertiser::firstOrCreate(
+            ['email' => 'admin@obituaries.co.ke'],
+            [
+                'business_name' => 'System (Obituaries.co.ke Admin Direct Ads)',
+                'contact_person' => 'System Administrator',
+                'phone_number' => '0700000000',
+                'password' => bcrypt('password123'),
+                'email_verified_at' => now(),
+                'status' => 'active',
+            ]
+        );
+
+        BusinessProfile::firstOrCreate(
+            ['advertiser_id' => $systemAdvertiser->id],
+            [
+                'business_name' => 'System (Obituaries.co.ke Admin Direct Ads)',
+                'phone' => '0700000000',
+                'email' => 'admin@obituaries.co.ke',
+                'status' => 'active',
+            ]
+        );
+
         $advertiser = Advertiser::firstOrCreate(
             ['email' => 'advertiser@obituaries.co.ke'],
             [

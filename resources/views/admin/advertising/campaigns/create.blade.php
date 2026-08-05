@@ -31,9 +31,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">Select Advertiser Account <span class="text-rose-500">*</span></label>
-                    <select name="advertiser_id" required class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 font-medium focus:bg-white focus:border-amber-500 outline-none">
+                    <select name="advertiser_id" required class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 font-bold focus:bg-white focus:border-amber-500 outline-none">
                         @foreach($advertisers as $adv)
-                            <option value="{{ $adv->id }}">{{ $adv->business_name }} ({{ $adv->contact_person }} • {{ $adv->phone_number }})</option>
+                            <option value="{{ $adv->id }}" {{ $loop->first ? 'selected' : '' }}>
+                                {{ str_contains(strtolower($adv->business_name), 'system') ? '⚙️ System Account: ' : '🏢 ' }}{{ $adv->business_name }} ({{ $adv->contact_person }} • {{ $adv->phone_number }})
+                            </option>
                         @endforeach
                     </select>
                 </div>
