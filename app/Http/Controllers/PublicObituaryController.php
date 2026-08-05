@@ -46,6 +46,10 @@ class PublicObituaryController extends Controller
             $query->todayAnniversaries();
         }
 
+        if ($category = trim(strip_tags((string)$request->input('category')))) {
+            $query->where('category', $category);
+        }
+
         if ($name = trim(strip_tags((string)$request->input('name')))) {
             $query->where('full_name', 'like', "%{$name}%");
         }
@@ -60,8 +64,9 @@ class PublicObituaryController extends Controller
 
         $obituaries = $query->latest('date_of_death')->paginate(12)->withQueryString();
         $counties = static::getCountiesList();
+        $categories = Obituary::CATEGORIES;
 
-        return view('obituaries.search', compact('obituaries', 'counties'));
+        return view('obituaries.search', compact('obituaries', 'counties', 'categories'));
     }
 
     public function countyIndex($countySlug)

@@ -19,11 +19,25 @@
     <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl border border-outline-variant/30 shadow-md">
         <form action="{{ route('obituaries.search') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4 items-end">
             <!-- Name Input -->
-            <div class="sm:col-span-5">
+            <div class="sm:col-span-4">
                 <label for="name" class="block text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 sm:mb-2">Deceased Name</label>
                 <div class="relative flex items-center bg-surface-container-low rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 border border-outline-variant focus-within:border-primary">
                     <span class="material-symbols-outlined text-on-surface-variant mr-2 text-[18px] sm:text-[20px]">search</span>
                     <input type="text" name="name" id="name" value="{{ request('name') }}" placeholder="Search by name..." class="bg-transparent border-none outline-none w-full text-xs text-on-surface">
+                </div>
+            </div>
+
+            <!-- Category Select -->
+            <div class="sm:col-span-3">
+                <label for="category" class="block text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 sm:mb-2">Category</label>
+                <div class="relative flex items-center bg-surface-container-low rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 border border-outline-variant">
+                    <span class="material-symbols-outlined text-on-surface-variant mr-2 text-[18px] sm:text-[20px]">category</span>
+                    <select name="category" id="category" class="bg-transparent border-none outline-none w-full text-xs text-on-surface appearance-none cursor-pointer">
+                        <option value="">All Categories</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
@@ -56,11 +70,11 @@
             </div>
 
             <!-- Buttons -->
-            <div class="sm:col-span-2 flex gap-2 pt-1 sm:pt-0">
-                <button type="submit" class="w-full py-2.5 sm:py-3 bg-primary text-on-primary font-bold rounded-xl text-xs hover:bg-primary-container transition-colors">
+            <div class="sm:col-span-12 flex justify-end gap-2 pt-1">
+                <button type="submit" class="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-xl text-xs hover:bg-primary-container transition-colors">
                     Filter
                 </button>
-                <a href="{{ route('obituaries.search') }}" class="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold rounded-xl text-xs transition-colors flex items-center justify-center">
+                <a href="{{ route('obituaries.search') }}" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold rounded-xl text-xs transition-colors flex items-center justify-center">
                     Reset
                 </a>
             </div>
@@ -68,9 +82,14 @@
 
         <!-- Quick Filter Pills -->
         <div class="mt-4 flex items-center space-x-2 overflow-x-auto text-xs font-semibold">
-            <a href="{{ route('obituaries.search') }}" class="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border {{ empty(request('filter')) ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container' }}">
+            <a href="{{ route('obituaries.search') }}" class="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border {{ empty(request('filter')) && empty(request('category')) ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container' }}">
                 All Tributes
             </a>
+            @foreach($categories as $cat)
+                <a href="{{ route('obituaries.search', ['category' => $cat]) }}" class="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border space-x-1 {{ request('category') === $cat ? 'bg-amber-800 text-white border-amber-800 font-bold' : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' }}">
+                    <span>{{ $cat }}</span>
+                </a>
+            @endforeach
             <a href="{{ route('obituaries.search', ['filter' => 'anniversaries']) }}" class="px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border space-x-1 {{ request('filter') === 'anniversaries' ? 'bg-amber-800 text-white border-amber-800' : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' }}">
                 <span>🌹 Today's Anniversaries</span>
             </a>
@@ -132,7 +151,7 @@
                         </div>
 
                         <div class="text-center">
-                            <span class="text-[9px] sm:text-[10px] font-semibold text-secondary tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->town }}, {{ $obituary->county }}</span>
+                            <span class="text-[9px] sm:text-[10px] font-semibold text-secondary tracking-widest uppercase mb-0.5 block truncate">{{ $obituary->location }}</span>
                             <h3 class="font-serif text-xs sm:text-base font-bold text-primary mb-0.5 group-hover:text-secondary transition-colors line-clamp-2 leading-snug">{{ $obituary->full_name }}</h3>
                             <p class="text-[10px] text-on-surface-variant/70 italic">
                                 @if($obituary->date_of_birth && $obituary->date_of_death)

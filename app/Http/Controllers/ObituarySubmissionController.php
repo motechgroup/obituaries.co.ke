@@ -24,11 +24,10 @@ class ObituarySubmissionController extends Controller
             'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
         ];
 
-        $relationships = [
-            'Child', 'Spouse', 'Parent', 'Relative', 'Friend', 'Organization'
-        ];
+        $relationships = ['Child', 'Spouse', 'Parent', 'Relative', 'Friend', 'Organization'];
+        $categories = Obituary::CATEGORIES;
 
-        return view('obituaries.submit', compact('counties', 'relationships'));
+        return view('obituaries.submit', compact('counties', 'relationships', 'categories'));
     }
 
     public function store(Request $request)
@@ -44,11 +43,12 @@ class ObituarySubmissionController extends Controller
         $validated = $request->validate([
             // Step 1: Deceased Info
             'full_name' => ['required', 'string', 'max:255'],
+            'category' => ['nullable', 'string', Rule::in(Obituary::CATEGORIES)],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB max
             'date_of_birth' => ['nullable', 'string'],
             'date_of_death' => ['nullable', 'string'],
-            'county' => ['required', 'string', 'max:100'],
-            'town' => ['required', 'string', 'max:100'],
+            'county' => ['nullable', 'string', 'max:100'],
+            'town' => ['nullable', 'string', 'max:100'],
             'biography' => ['required', 'string', 'min:20'],
 
             // Step 2: Funeral Info
@@ -109,13 +109,14 @@ class ObituarySubmissionController extends Controller
         // Create Pending Obituary Record
         $obituary = Obituary::create([
             'slug' => $slug,
+            'category' => $validated['category'] ?? 'Death Announcement',
             'full_name' => $validated['full_name'],
             'photo' => $photoPath,
             'gallery_images' => $galleryPaths,
             'date_of_birth' => $dobParsed,
             'date_of_death' => $dodParsed,
-            'county' => $validated['county'],
-            'town' => $validated['town'],
+            'county' => $validated['county'] ?? null,
+            'town' => $validated['town'] ?? null,
             'biography' => strip_tags($validated['biography']),
             'funeral_date' => $validated['funeral_date'] ?? null,
             'burial_location' => $validated['burial_location'] ?? null,

@@ -79,6 +79,43 @@ class HomeController extends Controller
 
         $totalCount = Obituary::published()->count();
 
+        $noticeCategories = [
+            'Death Announcement' => [
+                'title' => 'Death Announcements',
+                'subtitle' => 'Official death announcements and passing notices across Kenya.',
+                'icon' => 'campaign',
+            ],
+            'Anniversary' => [
+                'title' => 'Anniversaries & Remembrances',
+                'subtitle' => 'Honoring loved ones whose anniversaries of passing are remembered.',
+                'icon' => 'event_repeat',
+            ],
+            'Memorial' => [
+                'title' => 'Memorial Tributes',
+                'subtitle' => 'Preserving everlasting memories and tributes for departed loved ones.',
+                'icon' => 'auto_stories',
+            ],
+            'Life Celebration' => [
+                'title' => 'Life Celebrations',
+                'subtitle' => 'Celebrating rich lives, joyful memories, and timeless legacies.',
+                'icon' => 'celebration',
+            ],
+        ];
+
+        $categoryObituaries = [];
+        foreach (array_keys($noticeCategories) as $catKey) {
+            $categoryObituaries[$catKey] = Obituary::published()
+                ->where(function($q) use ($catKey) {
+                    $q->where('category', $catKey);
+                    if ($catKey === 'Death Announcement') {
+                        $q->orWhereNull('category');
+                    }
+                })
+                ->latest('id')
+                ->take(4)
+                ->get();
+        }
+
         $counties = [
             'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
             'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
@@ -124,6 +161,17 @@ class HomeController extends Controller
         $dayIndex = (date('z') + date('Y')) % count($quotes);
         $dailyQuote = $quotes[$dayIndex];
 
-        return view('home', compact('todayObituaries', 'todayDirectoryObituaries', 'latestObituaries', 'todayAnniversaries', 'todayCandlesObituaries', 'totalCount', 'counties', 'dailyQuote'));
+        return view('home', compact(
+            'todayObituaries',
+            'todayDirectoryObituaries',
+            'latestObituaries',
+            'todayAnniversaries',
+            'todayCandlesObituaries',
+            'noticeCategories',
+            'categoryObituaries',
+            'totalCount',
+            'counties',
+            'dailyQuote'
+        ));
     }
 }

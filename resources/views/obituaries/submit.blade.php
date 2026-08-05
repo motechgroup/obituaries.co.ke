@@ -23,12 +23,10 @@
          nextStep(next) {
              if (this.step === 1) {
                  const name = document.getElementById('full_name')?.value.trim();
-                 const county = document.getElementById('county')?.value;
-                 const town = document.getElementById('town')?.value.trim();
                  const bio = document.getElementById('biography')?.value.trim();
 
-                 if (!name || !county || !town || !bio) {
-                     alert('Please complete all required fields in Step 1 (Full Name, County, Town, and Biography) before proceeding.');
+                 if (!name || !bio) {
+                     alert('Please complete all required fields in Step 1 (Full Name and Biography) before proceeding.');
                      return;
                  }
              }
@@ -106,6 +104,18 @@
                     <input type="text" name="full_name" id="full_name" value="{{ old('full_name') }}" required placeholder="e.g. Mzee John Kamau Njoroge" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
                 </div>
 
+                <!-- Category Selection -->
+                <div>
+                    <label for="category" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
+                        Notice Category
+                    </label>
+                    <select name="category" id="category" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat }}" {{ old('category', 'Death Announcement') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <!-- Dates Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
@@ -129,10 +139,10 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                         <label for="county" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                            County <span class="text-rose-500">*</span>
+                            County <span class="text-on-surface-variant/60 font-normal lowercase">(optional)</span>
                         </label>
-                        <select name="county" id="county" required class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
-                            <option value="">Select County</option>
+                        <select name="county" id="county" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                            <option value="">Select County (Optional)</option>
                             @foreach($counties as $c)
                                 <option value="{{ $c }}" {{ old('county') == $c ? 'selected' : '' }}>{{ $c }}</option>
                             @endforeach
@@ -141,9 +151,9 @@
 
                     <div>
                         <label for="town" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                            Town / Sub-County <span class="text-rose-500">*</span>
+                            Town / Sub-County <span class="text-on-surface-variant/60 font-normal lowercase">(optional)</span>
                         </label>
-                        <input type="text" name="town" id="town" value="{{ old('town') }}" required placeholder="e.g. Westlands, Nakuru Town, Eldoret" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
+                        <input type="text" name="town" id="town" value="{{ old('town') }}" placeholder="e.g. Westlands, Nakuru Town, Eldoret" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface text-sm focus:outline-none focus:border-primary">
                     </div>
                 </div>
 

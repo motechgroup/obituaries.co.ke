@@ -80,7 +80,7 @@
 
                         <div class="p-5">
                             <span class="text-[10px] font-bold tracking-widest text-amber-800 uppercase block mb-1">
-                                {{ $obituary->town }}, {{ $obituary->county }}
+                                {{ $obituary->location }}
                             </span>
                             <h2 class="font-serif text-lg font-bold text-primary group-hover:text-amber-800 transition-colors leading-tight mb-2 line-clamp-2">
                                 {{ $obituary->full_name }}

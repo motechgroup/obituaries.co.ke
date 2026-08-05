@@ -81,6 +81,16 @@
                     <!-- Meta details grid -->
                     <div class="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
+                            <span class="text-slate-400 font-semibold uppercase block">Category</span>
+                            <span class="font-bold text-amber-900 text-sm bg-amber-100 px-2 py-0.5 rounded border border-amber-200 inline-block mt-0.5">{{ $obituary->category ?? 'Death Announcement' }}</span>
+                        </div>
+
+                        <div>
+                            <span class="text-slate-400 font-semibold uppercase block">Location</span>
+                            <span class="font-bold text-slate-900 text-sm">{{ $obituary->location }}</span>
+                        </div>
+
+                        <div>
                             <span class="text-slate-400 font-semibold uppercase block">Date of Birth</span>
                             <span class="font-bold text-slate-900 text-sm">{{ $obituary->date_of_birth ? $obituary->date_of_birth->format('M d, Y') : 'Not Specified' }}</span>
                         </div>
@@ -96,11 +106,6 @@
                         </div>
 
                         <div>
-                            <span class="text-slate-400 font-semibold uppercase block">County & Town</span>
-                            <span class="font-bold text-slate-900 text-sm">{{ $obituary->town }}, {{ $obituary->county }}</span>
-                        </div>
-
-                        <div>
                             <span class="text-slate-400 font-semibold uppercase block">Funeral Date</span>
                             <span class="font-bold text-slate-900 text-sm">{{ $obituary->funeral_date ? $obituary->funeral_date->format('M d, Y') : 'Not specified' }}</span>
                         </div>
@@ -110,7 +115,7 @@
                             <span class="font-bold text-slate-900 text-sm">{{ $obituary->church_service_location ?? 'Not specified' }}</span>
                         </div>
 
-                        <div class="sm:col-span-2">
+                        <div>
                             <span class="text-slate-400 font-semibold uppercase block">Burial Location</span>
                             <span class="font-bold text-slate-900 text-sm">{{ $obituary->burial_location ?? 'Not specified' }}</span>
                         </div>
@@ -158,6 +163,12 @@
                         <span class="text-slate-500">Verification Status:</span>
                         <span class="font-bold capitalize text-slate-900">{{ $obituary->verification_status }}</span>
                     </div>
+                    @if($obituary->published_at)
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Scheduled/Published:</span>
+                            <span class="font-bold text-purple-700 font-mono">{{ $obituary->published_at->format('M d, Y g:i A') }}</span>
+                        </div>
+                    @endif
                     @if($obituary->verified_at)
                         <div class="flex justify-between">
                             <span class="text-slate-500">Verified By:</span>
@@ -165,7 +176,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Verified Date:</span>
-                            <span class="text-slate-800">{{ $obituary->verified_at->format('M d, Y H:i') }}</span>
+                            <span class="text-slate-800">{{ $obituary->verified_at->format('M d, Y g:i A') }}</span>
                         </div>
                     @endif
                 </div>
@@ -185,6 +196,35 @@
                     @endif
 
                     <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                            Scheduled Publish Date & Time <span class="text-amber-800 font-bold">(12-Hour AM/PM System)</span>
+                        </label>
+                        <div class="space-y-2">
+                            <input type="date" name="published_date" id="published_date" value="{{ old('published_date', $obituary->published_at ? $obituary->published_at->format('Y-m-d') : '') }}" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900">
+                            <div class="grid grid-cols-2 gap-2">
+                                <select name="published_time" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
+                                    <option value="">Time (12-Hr)...</option>
+                                    @for($h = 1; $h <= 12; $h++)
+                                        @foreach(['00', '15', '30', '45'] as $m)
+                                            @php
+                                                $val = sprintf('%02d:%s', $h, $m);
+                                                $currTime = $obituary->published_at ? sprintf('%02d:%s', (int)$obituary->published_at->format('g'), $obituary->published_at->format('i')) : '';
+                                            @endphp
+                                            <option value="{{ $val }}" {{ old('published_time', $currTime) === $val ? 'selected' : '' }}>{{ sprintf('%02d:%s', $h, $m) }}</option>
+                                        @endforeach
+                                    @endfor
+                                </select>
+                                <select name="published_period" class="w-full px-2 py-1.5 bg-amber-100 border border-amber-300 rounded-xl text-xs font-extrabold text-amber-950">
+                                    @php $currPeriod = $obituary->published_at ? $obituary->published_at->format('A') : 'AM'; @endphp
+                                    <option value="AM" {{ old('published_period', $currPeriod) === 'AM' ? 'selected' : '' }}>AM</option>
+                                    <option value="PM" {{ old('published_period', $currPeriod) === 'PM' ? 'selected' : '' }}>PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-slate-500 mt-1 block">Specify 12-hour time and AM/PM to avoid scheduling confusion.</span>
+                    </div>
+
+                    <div>
                         <label for="verification_notes" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
                             Internal Verification Notes
                         </label>
@@ -196,7 +236,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            <span>Approve & Publish Notice</span>
+                            <span>Approve & Publish / Schedule Notice</span>
                         </button>
 
                         <button type="submit" name="action" value="reject" onclick="return confirm('Are you sure you want to reject this obituary submission?')" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-colors border border-rose-200 flex items-center justify-center space-x-2">

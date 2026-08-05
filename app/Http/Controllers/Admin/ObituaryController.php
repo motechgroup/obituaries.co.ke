@@ -7,18 +7,24 @@ use App\Models\Obituary;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ObituaryController extends Controller
 {
     public function index(Request $request)
     {
         $status = $request->input('status');
+        $category = $request->input('category');
         $search = $request->input('search');
 
         $query = Obituary::query();
 
         if ($status) {
             $query->where('status', $status);
+        }
+
+        if ($category) {
+            $query->where('category', $category);
         }
 
         if ($search) {
@@ -30,8 +36,9 @@ class ObituaryController extends Controller
         }
 
         $obituaries = $query->latest('id')->paginate(15)->withQueryString();
+        $categories = Obituary::CATEGORIES;
 
-        return view('admin.obituaries.index', compact('obituaries', 'status', 'search'));
+        return view('admin.obituaries.index', compact('obituaries', 'status', 'category', 'search', 'categories'));
     }
 
     public function create()
@@ -44,18 +51,21 @@ class ObituaryController extends Controller
             'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
             'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
         ];
+        $categories = Obituary::CATEGORIES;
 
-        return view('admin.obituaries.create', compact('counties'));
+        return view('admin.obituaries.create', compact('counties', 'categories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
+            'category' => ['nullable', 'string', Rule::in(Obituary::CATEGORIES)],
             'date_of_birth' => ['nullable', 'string'],
             'date_of_death' => ['nullable', 'string'],
-            'county' => ['required', 'string'],
-            'town' => ['required', 'string'],
+            'published_at' => ['nullable', 'date'],
+            'county' => ['nullable', 'string'],
+            'town' => ['nullable', 'string'],
             'biography' => ['required', 'string'],
             'funeral_date' => ['nullable', 'date'],
             'burial_location' => ['nullable', 'string', 'max:255'],
@@ -64,7 +74,7 @@ class ObituaryController extends Controller
             'submitter_phone' => ['required', 'string', 'max:255'],
             'submitter_email' => ['nullable', 'email', 'max:255'],
             'relationship' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'string', 'in:published,draft,pending_verification'],
+            'status' => ['required', 'string', 'in:published,scheduled,draft,pending_verification'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'programme_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'gallery_images' => ['nullable', 'array', 'max:8'],
@@ -75,8 +85,15 @@ class ObituaryController extends Controller
             'mpesa_transaction_code' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $validated['category'] = $validated['category'] ?? 'Death Announcement';
         $validated['date_of_birth'] = $this->parseFlexibleDate($validated['date_of_birth'] ?? null);
         $validated['date_of_death'] = $this->parseFlexibleDate($validated['date_of_death'] ?? null);
+        $validated['published_at'] = $this->parseScheduledPublishAt($request);
+
+        // Check if publication is scheduled for future
+        if (!empty($validated['published_at']) && $validated['published_at']->isFuture()) {
+            $validated['status'] = 'scheduled';
+        }
 
         // Auto generate unique slug
         $baseSlug = \Illuminate\Support\Str::slug($validated['full_name']);
@@ -121,7 +138,7 @@ class ObituaryController extends Controller
         }
 
         // Admin submissions auto-verify
-        $validated['verification_status'] = ($validated['status'] === 'published') ? 'verified' : 'pending';
+        $validated['verification_status'] = in_array($validated['status'], ['published', 'scheduled']) ? 'verified' : 'pending';
         $validated['verified_by'] = $user->id;
         $validated['verified_at'] = now();
 
@@ -138,8 +155,12 @@ class ObituaryController extends Controller
             }
         }
 
+        $successMsg = ($obituary->status === 'scheduled') 
+            ? "Obituary notice for '{$obituary->full_name}' created and scheduled for " . $obituary->published_at->format('M j, Y H:i') . " successfully!"
+            : "Obituary notice for '{$obituary->full_name}' created and published successfully!";
+
         return redirect()->route('admin.obituaries.show', $obituary->id)
-            ->with('success', "Obituary notice for '{$obituary->full_name}' created and published successfully!");
+            ->with('success', $successMsg);
     }
 
     public function show(Obituary $obituary)
@@ -158,15 +179,17 @@ class ObituaryController extends Controller
             'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
             'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
         ];
+        $categories = Obituary::CATEGORIES;
 
         $statuses = [
             'published' => 'Published',
+            'scheduled' => 'Scheduled',
             'pending_verification' => 'Pending Verification',
             'rejected' => 'Rejected',
             'pending_payment' => 'Pending Payment'
         ];
 
-        return view('admin.obituaries.edit', compact('obituary', 'counties', 'statuses'));
+        return view('admin.obituaries.edit', compact('obituary', 'counties', 'categories', 'statuses'));
     }
 
     public function update(Request $request, Obituary $obituary)
@@ -180,10 +203,12 @@ class ObituaryController extends Controller
 
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
+            'category' => ['nullable', 'string', Rule::in(Obituary::CATEGORIES)],
             'date_of_birth' => ['nullable', 'string'],
             'date_of_death' => ['nullable', 'string'],
-            'county' => ['required', 'string'],
-            'town' => ['required', 'string'],
+            'published_at' => ['nullable', 'date'],
+            'county' => ['nullable', 'string'],
+            'town' => ['nullable', 'string'],
             'biography' => ['required', 'string'],
             'funeral_date' => ['nullable', 'date'],
             'burial_location' => ['nullable', 'string'],
@@ -192,7 +217,7 @@ class ObituaryController extends Controller
             'submitter_phone' => ['required', 'string'],
             'submitter_email' => ['nullable', 'email'],
             'relationship' => ['required', 'string'],
-            'status' => ['required', 'string', 'in:published,pending_verification,rejected,pending_payment'],
+            'status' => ['required', 'string', 'in:published,scheduled,pending_verification,rejected,pending_payment'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'programme_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'gallery_images' => ['nullable', 'array', 'max:8'],
@@ -206,6 +231,11 @@ class ObituaryController extends Controller
 
         $validated['date_of_birth'] = $this->parseFlexibleDate($validated['date_of_birth'] ?? null);
         $validated['date_of_death'] = $this->parseFlexibleDate($validated['date_of_death'] ?? null);
+        $validated['published_at'] = $this->parseScheduledPublishAt($request);
+
+        if (!empty($validated['published_at']) && $validated['published_at']->isFuture()) {
+            $validated['status'] = 'scheduled';
+        }
 
         if ($request->hasFile('photo')) {
             $validated['photo'] = \App\Helpers\StorageHelper::savePublicFile($request->file('photo'), 'obituaries/photos');
@@ -229,7 +259,7 @@ class ObituaryController extends Controller
         $validated['biography'] = \App\Helpers\StorageHelper::sanitizeHtml($validated['biography']);
 
         $user = Auth::guard('admin')->user();
-        if ($user->isEditor() && $validated['status'] === 'published') {
+        if ($user->isEditor() && in_array($validated['status'], ['published', 'scheduled'])) {
             $error = $this->verifyEditorMpesaPayment($request, $obituary, $user);
             if ($error) {
                 return back()->withInput()->withErrors(['mpesa_transaction_code' => $error]);
@@ -257,10 +287,12 @@ class ObituaryController extends Controller
         $request->validate([
             'action' => ['required', 'in:approve,reject'],
             'verification_notes' => ['nullable', 'string', 'max:1000'],
+            'published_at' => ['nullable', 'date'],
         ]);
 
         $action = $request->input('action');
         $notes = $request->input('verification_notes');
+        $publishedAt = $this->parseScheduledPublishAt($request);
         $user = Auth::guard('admin')->user();
 
         if ($action === 'approve') {
@@ -275,8 +307,14 @@ class ObituaryController extends Controller
                 }
             }
 
+            $status = 'published';
+            if ($publishedAt && $publishedAt->isFuture()) {
+                $status = 'scheduled';
+            }
+
             $obituary->update([
-                'status' => 'published',
+                'status' => $status,
+                'published_at' => $publishedAt ?: ($obituary->published_at ?? now()),
                 'verification_status' => 'verified',
                 'verification_notes' => $notes,
                 'verified_by' => $user->id,
@@ -346,6 +384,46 @@ class ObituaryController extends Controller
 
         return redirect()->route('admin.obituaries.index')
             ->with('success', "Obituary for '{$name}' has been deleted.");
+    }
+
+    private function parseScheduledPublishAt(Request $request): ?\Carbon\Carbon
+    {
+        if ($request->filled('published_date')) {
+            $dateStr = trim($request->input('published_date'));
+            $timeStr = trim($request->input('published_time', '12:00'));
+            $period = strtoupper(trim($request->input('published_period', 'AM')));
+            if (!in_array($period, ['AM', 'PM'])) {
+                $period = 'AM';
+            }
+
+            if (preg_match('/^(\d{1,2}):(\d{2})$/', $timeStr, $m)) {
+                $h = sprintf('%02d', (int)$m[1]);
+                $min = $m[2];
+                $timeStr = "{$h}:{$min}";
+            } else {
+                $timeStr = '12:00';
+            }
+
+            try {
+                return \Carbon\Carbon::createFromFormat('Y-m-d h:i A', "{$dateStr} {$timeStr} {$period}");
+            } catch (\Throwable $e) {
+                try {
+                    return \Carbon\Carbon::parse("{$dateStr} {$timeStr} {$period}");
+                } catch (\Throwable $ex) {
+                    return null;
+                }
+            }
+        }
+
+        if ($request->filled('published_at')) {
+            try {
+                return \Carbon\Carbon::parse($request->input('published_at'));
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 
     private function parseFlexibleDate(?string $input): ?string

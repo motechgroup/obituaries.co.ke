@@ -76,6 +76,9 @@
             <a href="{{ route('admin.obituaries.index', ['status' => 'pending_verification']) }}" class="px-4 py-2 rounded-xl transition-all {{ $status === 'pending_verification' ? 'bg-amber-600 text-white font-bold shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                 Pending Verification
             </a>
+            <a href="{{ route('admin.obituaries.index', ['status' => 'scheduled']) }}" class="px-4 py-2 rounded-xl transition-all {{ $status === 'scheduled' ? 'bg-amber-600 text-white font-bold shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                Scheduled
+            </a>
             <a href="{{ route('admin.obituaries.index', ['status' => 'published']) }}" class="px-4 py-2 rounded-xl transition-all {{ $status === 'published' ? 'bg-amber-600 text-white font-bold shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                 Published
             </a>
@@ -136,25 +139,31 @@
                                     </div>
 
                                     <div>
-                                        <a href="{{ route('admin.obituaries.show', $ob->id) }}" class="font-serif font-bold text-slate-900 text-sm group-hover:text-amber-900 hover:underline block leading-tight">
-                                            {{ $ob->full_name }}
-                                        </a>
-                                        <span class="text-[10px] text-slate-500 block mt-0.5">
-                                            @if($ob->date_of_death)
-                                                Passed: {{ $ob->date_of_death->format('M d, Y') }}
-                                            @else
-                                                Date of Passing: Not specified
-                                            @endif
-                                            @if($ob->age) &bull; {{ $ob->age }} Yrs @endif
-                                        </span>
+                                        <div class="flex items-center space-x-1.5 mb-0.5">
+                                            <a href="{{ route('admin.obituaries.show', $ob->id) }}" class="font-serif font-bold text-slate-900 text-sm group-hover:text-amber-900 hover:underline leading-tight">
+                                                {{ $ob->full_name }}
+                                            </a>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                {{ $ob->category ?? 'Death Announcement' }}
+                                            </span>
+                                            <span class="text-[10px] text-slate-500">
+                                                @if($ob->date_of_death)
+                                                    Passed: {{ $ob->date_of_death->format('M d, Y') }}
+                                                @else
+                                                    Date of Passing: Not specified
+                                                @endif
+                                                @if($ob->age) &bull; {{ $ob->age }} Yrs @endif
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Location Column -->
                             <td class="px-6 py-4 text-slate-700">
-                                <span class="font-bold text-slate-900 block text-xs">{{ $ob->county }}</span>
-                                <span class="text-[10px] text-slate-500 block">{{ $ob->town }}</span>
+                                <span class="font-bold text-slate-900 block text-xs">{{ $ob->location }}</span>
                             </td>
 
                             <!-- Submitter & Contact Column -->
@@ -165,7 +174,14 @@
 
                             <!-- Publication Status Column -->
                             <td class="px-6 py-4">
-                                @if($ob->status === 'published')
+                                @if($ob->status === 'scheduled' || $ob->is_scheduled)
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 inline-block mb-0.5">
+                                        📅 Scheduled
+                                    </span>
+                                    @if($ob->published_at)
+                                        <span class="text-[9px] font-mono text-purple-700 block">{{ $ob->published_at->format('M d, Y g:i A') }}</span>
+                                    @endif
+                                @elseif($ob->status === 'published')
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                                         Published
                                     </span>

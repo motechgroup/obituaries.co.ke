@@ -10,8 +10,16 @@ class Obituary extends Model
 {
     use HasFactory;
 
+    public const CATEGORIES = [
+        'Death Announcement',
+        'Anniversary',
+        'Memorial',
+        'Life Celebration',
+    ];
+
     protected $fillable = [
         'slug',
+        'category',
         'full_name',
         'photo',
         'gallery_images',
@@ -30,6 +38,7 @@ class Obituary extends Model
         'relationship',
         'family_permission_confirmed',
         'status',
+        'published_at',
         'verification_status',
         'verification_notes',
         'verified_by',
@@ -49,6 +58,7 @@ class Obituary extends Model
         'date_of_birth' => 'date',
         'date_of_death' => 'date',
         'funeral_date' => 'date',
+        'published_at' => 'datetime',
         'verified_at' => 'datetime',
         'family_permission_confirmed' => 'boolean',
         'gallery_images' => 'array',
@@ -57,6 +67,9 @@ class Obituary extends Model
     protected static function booted(): void
     {
         static::saving(function (Obituary $obituary) {
+            if (empty($obituary->category)) {
+                $obituary->category = 'Death Announcement';
+            }
             if (empty($obituary->seo_keywords)) {
                 $obituary->seo_keywords = $obituary->generateSeoKeywords();
             } else {
@@ -64,14 +77,14 @@ class Obituary extends Model
             }
             if (empty($obituary->meta_title)) {
                 $cleanName = strip_tags($obituary->full_name);
-                $obituary->meta_title = Str::limit("{$cleanName} Obituary & Death Notice | Obituaries.co.ke", 250, '');
+                $categoryLabel = $obituary->category ?: 'Obituary';
+                $obituary->meta_title = Str::limit("{$cleanName} {$categoryLabel} | Obituaries.co.ke", 250, '');
             }
             if (empty($obituary->meta_description)) {
                 $cleanName = strip_tags($obituary->full_name);
-                $cleanTown = strip_tags($obituary->town);
-                $cleanCounty = strip_tags($obituary->county);
+                $location = $obituary->location;
                 $deathDate = $obituary->date_of_death ? $obituary->date_of_death->format('M j, Y') : '';
-                $obituary->meta_description = Str::limit("In loving memory of {$cleanName} from {$cleanTown}, {$cleanCounty} Kenya. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.", 480, '');
+                $obituary->meta_description = Str::limit("In loving memory of {$cleanName} from {$location}. Passed away on {$deathDate}. Read biography, funeral service details, and leave tribute messages.", 480, '');
             }
         });
 
@@ -271,15 +284,43 @@ class Obituary extends Model
         return $this->system_candles_count + $this->visitor_candles_count;
     }
 
+    public function getLocationAttribute(): string
+    {
+        $parts = array_filter([$this->town, $this->county]);
+        return !empty($parts) ? implode(', ', $parts) : 'Kenya';
+    }
+
+    public function getIsScheduledAttribute(): bool
+    {
+        if ($this->status === 'scheduled') {
+            return true;
+        }
+        return $this->published_at !== null && $this->published_at->isFuture();
+    }
+
     public function scopePublished($query)
     {
-        return $query->where('status', 'published');
+        return $query->whereIn('status', ['published', 'scheduled'])
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                  ->orWhere('published_at', '<=', now());
+            });
+    }
+
+    public function scopeScheduled($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('status', 'scheduled')
+              ->orWhere(function ($sub) {
+                  $sub->whereNotNull('published_at')->where('published_at', '>', now());
+              });
+        });
     }
 
     public function scopeTodayAnniversaries($query)
     {
         $today = now();
-        return $query->where('status', 'published')
+        return $query->published()
             ->whereMonth('date_of_death', $today->month)
             ->whereDay('date_of_death', $today->day)
             ->whereYear('date_of_death', '<', $today->year);

@@ -460,7 +460,7 @@ class ObituaryTest extends TestCase
         $this->assertStringContainsString('Uasin Gishu', $obituary->seo_keywords);
         $this->assertStringContainsString('Eldoret', $obituary->seo_keywords);
         $this->assertStringContainsString('father', $obituary->seo_keywords);
-        $this->assertStringContainsString('Mzee Daniel Kipruto Obituary & Death Notice | Obituaries.co.ke', $obituary->meta_title);
+        $this->assertStringContainsString('Mzee Daniel Kipruto Death Announcement | Obituaries.co.ke', $obituary->meta_title);
     }
 
     public function test_visitor_cannot_format_biography_but_admin_and_editor_can()
@@ -838,4 +838,133 @@ class ObituaryTest extends TestCase
         // Total = 15 system + 2 visitor = 17 candles
         $this->assertEquals(17, $obituary->total_candles_count);
     }
+
+    public function test_obituary_submission_with_optional_location_and_category()
+    {
+        $response = $this->post('/submit', [
+            'full_name' => 'Optional Location Test',
+            'date_of_death' => '2026-05-10',
+            'category' => 'Memorial',
+            'county' => null,
+            'town' => null,
+            'biography' => 'Bio without county or town required for testing.',
+            'submitter_name' => 'Family Member',
+            'submitter_phone' => '0712345678',
+            'relationship' => 'Child',
+            'family_permission_confirmed' => '1',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('obituaries', [
+            'full_name' => 'Optional Location Test',
+            'category' => 'Memorial',
+        ]);
+
+        $obituary = Obituary::where('full_name', 'Optional Location Test')->first();
+        $this->assertNull($obituary->county);
+        $this->assertNull($obituary->town);
+        $this->assertEquals('Kenya', $obituary->location);
+    }
+
+    public function test_admin_scheduled_obituary_and_artisan_publishing_command()
+    {
+        $admin = Admin::create([
+            'name' => 'Scheduler Admin',
+            'email' => 'scheduler@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $futureDate = now()->addDays(2)->format('Y-m-d\TH:i');
+
+        $response = $this->actingAs($admin, 'admin')->post('/admin/obituaries', [
+            'full_name' => 'Scheduled Notice Person',
+            'category' => 'Anniversary',
+            'status' => 'scheduled',
+            'published_at' => $futureDate,
+            'biography' => 'Scheduled bio text.',
+            'submitter_name' => 'Admin Submitter',
+            'submitter_phone' => '0722000111',
+            'relationship' => 'Friend',
+        ]);
+
+        $obituary = Obituary::where('full_name', 'Scheduled Notice Person')->first();
+        $this->assertNotNull($obituary);
+        $response->assertRedirect(route('admin.obituaries.show', $obituary->id));
+        $this->assertEquals('scheduled', $obituary->status);
+        $this->assertTrue($obituary->is_scheduled);
+
+        // Future scheduled notice should NOT be visible publicly via scopePublished
+        $this->assertCount(0, Obituary::published()->where('id', $obituary->id)->get());
+
+        // Fast-forward published_at to the past
+        $obituary->update(['published_at' => now()->subMinute()]);
+
+        // Run artisan command obituaries:publish-scheduled
+        $this->artisan('obituaries:publish-scheduled')->assertExitCode(0);
+
+        $obituary->refresh();
+        $this->assertEquals('published', $obituary->status);
+        $this->assertCount(1, Obituary::published()->where('id', $obituary->id)->get());
+    }
+
+    public function test_admin_scheduled_obituary_with_12_hour_am_pm_format()
+    {
+        $admin = Admin::create([
+            'name' => '12Hr Admin',
+            'email' => '12hr@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+        ]);
+
+        $futureDate = now()->addDays(3)->format('Y-m-d');
+
+        $response = $this->actingAs($admin, 'admin')->post('/admin/obituaries', [
+            'full_name' => 'PM Scheduled Person',
+            'category' => 'Memorial',
+            'status' => 'scheduled',
+            'published_date' => $futureDate,
+            'published_time' => '02:30',
+            'published_period' => 'PM',
+            'biography' => '12 hour scheduled bio text.',
+            'submitter_name' => 'Admin Submitter',
+            'submitter_phone' => '0722000111',
+            'relationship' => 'Friend',
+        ]);
+
+        $obituary = Obituary::where('full_name', 'PM Scheduled Person')->first();
+        $this->assertNotNull($obituary);
+        $this->assertEquals('scheduled', $obituary->status);
+        $this->assertEquals('14:30', $obituary->published_at->format('H:i'));
+        $this->assertEquals('02:30 PM', $obituary->published_at->format('h:i A'));
+    }
+
+    public function test_category_filter_in_public_search()
+    {
+        Obituary::create([
+            'slug' => 'cat-test-1',
+            'full_name' => 'Life Celebration Person',
+            'category' => 'Life Celebration',
+            'biography' => 'Bio for life celebration.',
+            'submitter_name' => 'Tester',
+            'submitter_phone' => '0711111111',
+            'relationship' => 'Friend',
+            'status' => 'published',
+        ]);
+
+        Obituary::create([
+            'slug' => 'cat-test-2',
+            'full_name' => 'Death Announcement Person',
+            'category' => 'Death Announcement',
+            'biography' => 'Bio for death announcement.',
+            'submitter_name' => 'Tester',
+            'submitter_phone' => '0711111111',
+            'relationship' => 'Friend',
+            'status' => 'published',
+        ]);
+
+        $response = $this->get('/search?category=Life+Celebration');
+        $response->assertStatus(200);
+        $response->assertSee('Life Celebration Person');
+        $response->assertDontSee('Death Announcement Person');
+    }
 }
+

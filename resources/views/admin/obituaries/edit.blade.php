@@ -28,13 +28,50 @@
             @method('PUT')
 
             <!-- Notice Status -->
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                <label for="status" class="block text-xs font-bold uppercase text-slate-800 tracking-wider">Notice Publication Status</label>
-                <select name="status" id="status" required class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900">
-                    @foreach($statuses as $value => $label)
-                        <option value="{{ $value }}" {{ old('status', $obituary->status) == $value ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                <div>
+                    <label for="status" class="block text-xs font-bold uppercase text-slate-800 tracking-wider mb-1">Notice Publication Status</label>
+                    <select name="status" id="status" required class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900">
+                        @foreach($statuses as $value => $label)
+                            <option value="{{ $value }}" {{ old('status', $obituary->status) == $value ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-800 tracking-wider mb-1.5">
+                        Scheduled Publish Date & Time <span class="text-amber-700 font-semibold">(12-Hour System with AM/PM)</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                        <div class="sm:col-span-5">
+                            <input type="date" name="published_date" id="published_date" value="{{ old('published_date', $obituary->published_at ? $obituary->published_at->format('Y-m-d') : '') }}" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
+                        </div>
+                        <div class="sm:col-span-4">
+                            <select name="published_time" id="published_time" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900">
+                                <option value="">Time (12-Hr)...</option>
+                                @for($h = 1; $h <= 12; $h++)
+                                    @foreach(['00', '15', '30', '45'] as $m)
+                                        @php
+                                            $val = sprintf('%02d:%s', $h, $m);
+                                            $currTime = $obituary->published_at ? sprintf('%02d:%s', (int)$obituary->published_at->format('g'), $obituary->published_at->format('i')) : '';
+                                        @endphp
+                                        <option value="{{ $val }}" {{ old('published_time', $currTime) === $val ? 'selected' : '' }}>{{ sprintf('%02d:%s', $h, $m) }}</option>
+                                    @endforeach
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <select name="published_period" id="published_period" class="w-full px-3 py-2 bg-amber-100 border border-amber-300 rounded-xl text-xs font-extrabold text-amber-950">
+                                @php $currPeriod = $obituary->published_at ? $obituary->published_at->format('A') : 'AM'; @endphp
+                                <option value="AM" {{ old('published_period', $currPeriod) === 'AM' ? 'selected' : '' }}>AM (Morning)</option>
+                                <option value="PM" {{ old('published_period', $currPeriod) === 'PM' ? 'selected' : '' }}>PM (Afternoon / Evening)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-1.5 flex items-center space-x-1">
+                        <span class="font-bold text-amber-800">📌 12-Hour System:</span>
+                        <span>Select Date, Time, and AM or PM to avoid schedule time confusion.</span>
+                    </p>
+                </div>
             </div>
 
             <!-- Deceased Personal Info -->
@@ -45,6 +82,15 @@
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Deceased Full Name <span class="text-rose-500">*</span></label>
                         <input type="text" name="full_name" value="{{ old('full_name', $obituary->full_name) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Notice Category</label>
+                        <select name="category" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold">
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat }}" {{ old('category', $obituary->category ?? 'Death Announcement') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div>
@@ -60,8 +106,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">County <span class="text-rose-500">*</span></label>
-                        <select name="county" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">County <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                        <select name="county" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                            <option value="">Select County (Optional)...</option>
                             @foreach($counties as $c)
                                 <option value="{{ $c }}" {{ old('county', $obituary->county) == $c ? 'selected' : '' }}>{{ $c }}</option>
                             @endforeach
@@ -69,8 +116,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Town / Sub-County <span class="text-rose-500">*</span></label>
-                        <input type="text" name="town" value="{{ old('town', $obituary->town) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Town / Sub-County <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                        <input type="text" name="town" value="{{ old('town', $obituary->town) }}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                     </div>
 
                     <div class="sm:col-span-2">

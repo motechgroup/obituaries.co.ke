@@ -28,16 +28,17 @@
     // Force HTTPS scheme on URLs for Facebook Open Graph scraper
     $ogPhotoUrl = preg_replace('/^http:/i', 'https:', $ogPhotoUrl);
     $canonicalUrl = preg_replace('/^http:/i', 'https:', $obituary->canonical_url ?: route('obituaries.show', $obituary->slug));
+    $noticeCategory = $obituary->category ?: 'Obituary';
 @endphp
 
 @extends('layouts.app')
 
-@section('title', $obituary->meta_title ?: $obituary->full_name . ' Obituary | Death Notice & Funeral Details | Obituaries.co.ke')
-@section('meta_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . ' from ' . $obituary->town . ', ' . $obituary->county . ' County. Share condolences.')
-@section('seo_keywords', $obituary->seo_keywords ?: $obituary->full_name . ' obituary, ' . $obituary->county . ' obituaries, ' . $obituary->full_name . ' funeral details, death notice Kenya')
+@section('title', $obituary->meta_title ?: $obituary->full_name . ' ' . $noticeCategory . ' & Death Notice | Obituaries.co.ke')
+@section('meta_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . ' from ' . $obituary->location . '. Share condolences.')
+@section('seo_keywords', $obituary->seo_keywords ?: $obituary->full_name . ' obituary, ' . $obituary->location . ' obituaries, ' . $obituary->full_name . ' funeral details, death notice Kenya')
 @section('canonical_url', $canonicalUrl)
 
-@section('og_title', $obituary->meta_title ?: $obituary->full_name . ' Obituary | Obituaries.co.ke')
+@section('og_title', $obituary->meta_title ?: $obituary->full_name . ' ' . $noticeCategory . ' | Obituaries.co.ke')
 @section('og_description', $obituary->meta_description ?: 'Read the obituary, life story, funeral service details, and memories of ' . $obituary->full_name . '.')
 @section('og_image', $ogPhotoUrl)
 @section('og_image_secure', $ogPhotoUrl)
@@ -62,7 +63,7 @@
       "description": "{{ Str::limit(strip_tags($obituary->biography), 200) }}",
       "homeLocation": {
         "@type": "Place",
-        "name": "{{ $obituary->town }}, {{ $obituary->county }} County, Kenya"
+        "name": "{{ $obituary->location }}, Kenya"
       }
     },
     {
@@ -84,8 +85,8 @@
         {
           "@type": "ListItem",
           "position": 3,
-          "name": "{{ $obituary->county }} Obituaries",
-          "item": "{{ url('/county/' . \Illuminate\Support\Str::slug($obituary->county) . '-obituaries') }}"
+          "name": "{{ $obituary->county ? $obituary->county . ' Obituaries' : 'Kenya Obituaries' }}",
+          "item": "{{ $obituary->county ? url('/county/' . \Illuminate\Support\Str::slug($obituary->county) . '-obituaries') : url('/search') }}"
         },
         {
           "@type": "ListItem",
@@ -135,7 +136,12 @@
 
         <!-- Vital Info Text -->
         <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
-            <span class="text-[11px] sm:text-xs font-bold text-secondary tracking-[0.2em] uppercase mb-1.5 sm:mb-2">In Loving Memory</span>
+            <div class="flex items-center space-x-2 mb-1.5 sm:mb-2">
+                <span class="text-[11px] sm:text-xs font-bold text-secondary tracking-[0.2em] uppercase">In Loving Memory</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                    {{ $obituary->category ?? 'Death Announcement' }}
+                </span>
+            </div>
             <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-primary mb-2 sm:mb-3 leading-tight">{{ $obituary->full_name }}</h1>
             
             <div class="flex items-center gap-3 text-on-surface-variant mb-3 font-semibold text-sm sm:text-base">
@@ -446,7 +452,7 @@
                         <p class="font-semibold text-on-surface text-sm">
                             {{ $obituary->church_service_location ?? $obituary->burial_location ?? 'St. Peter\'s Cathedral' }}
                         </p>
-                        <p class="text-on-surface-variant text-xs">{{ $obituary->town }}, {{ $obituary->county }}</p>
+                        <p class="text-on-surface-variant text-xs">{{ $obituary->location }}</p>
                     </div>
                 </div>
             </div>
