@@ -9,7 +9,7 @@
             <h1 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Advertising Financial Revenue</h1>
             <p class="text-xs sm:text-sm font-medium text-slate-600">Track M-Pesa campaign sales, daily/weekly/monthly revenue breakdowns, and placement performance.</p>
         </div>
-        <a href="{{ route('admin.advertising.finance.export') }}" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-5 py-3 rounded-xl text-xs flex items-center space-x-2 shadow-sm transition-all">
+        <a href="{{ route('admin.advertising.finance.export') }}" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-3 rounded-xl text-xs flex items-center space-x-2 shadow-md transition-all">
             <span class="material-symbols-outlined text-[18px]">download</span>
             <span>Export Revenue Statement (CSV)</span>
         </a>
