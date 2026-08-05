@@ -52,16 +52,20 @@ class MailService
 
     public static function sendHtmlEmail(string $toEmail, string $subject, string $bodyContent, ?string $actionUrl = null, ?string $actionText = null): void
     {
-        self::configure();
+        try {
+            self::configure();
 
-        Mail::send('emails.branded', [
-            'subject' => $subject,
-            'bodyContent' => $bodyContent,
-            'actionUrl' => $actionUrl,
-            'actionText' => $actionText,
-        ], function ($msg) use ($toEmail, $subject) {
-            $msg->to($toEmail)->subject($subject);
-        });
+            Mail::send('emails.branded', [
+                'subject' => $subject,
+                'bodyContent' => $bodyContent,
+                'actionUrl' => $actionUrl,
+                'actionText' => $actionText,
+            ], function ($msg) use ($toEmail, $subject) {
+                $msg->to($toEmail)->subject($subject);
+            });
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Mail dispatch failed to {$toEmail}: " . $e->getMessage());
+        }
     }
 
     public static function sendEmail(string $toEmail, string $subject, string $bodyContent, ?string $actionUrl = null, ?string $actionText = null): void
