@@ -78,8 +78,8 @@
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="py-3.5 px-4">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-900 flex items-center justify-center flex-shrink-0">
-                                        <span class="material-symbols-outlined text-[18px]">{{ $cat->icon ?: 'storefront' }}</span>
+                                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-900 flex items-center justify-center flex-shrink-0 overflow-hidden select-none">
+                                        <span class="material-symbols-outlined text-[18px] select-none block overflow-hidden leading-none">{{ $cat->icon ?: 'storefront' }}</span>
                                     </div>
                                     <div>
                                         <div class="font-bold text-slate-900 text-xs sm:text-sm">{{ $cat->name }}</div>

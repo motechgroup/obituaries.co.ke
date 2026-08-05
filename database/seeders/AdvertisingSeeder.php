@@ -31,14 +31,14 @@ class AdvertisingSeeder extends Seeder
             ['name' => 'Public Address Systems', 'icon' => 'campaign', 'description' => 'Quality PA sound systems, microphones, and audio visual setups.'],
             ['name' => 'Transport', 'icon' => 'directions_bus', 'description' => 'Family bus transport, guest shuttles, and inter-county travel coordination.'],
             ['name' => 'Funeral Programme Printing', 'icon' => 'print', 'description' => 'Custom funeral booklets, eulogy booklets, and memorial cards.'],
-            ['name' => 'Mourning Attire', 'icon' => 'styler', 'description' => 'Family uniforms, black mourning attire, and custom printed t-shirts.'],
-            ['name' => 'Monument & Tombstones', 'icon' => 'monument', 'description' => 'Marble tombstones, granite grave markers, and headstone carving.'],
+            ['name' => 'Mourning Attire', 'icon' => 'checkroom', 'description' => 'Family uniforms, black mourning attire, and custom printed t-shirts.'],
+            ['name' => 'Monument & Tombstones', 'icon' => 'landscape', 'description' => 'Marble tombstones, granite grave markers, and headstone carving.'],
             ['name' => 'Funeral Insurance', 'icon' => 'security', 'description' => 'Last expense insurance covers and family funeral protection plans.'],
             ['name' => 'Other Funeral Services', 'icon' => 'more_horiz', 'description' => 'General funeral support, legal paperwork, and specialized services.'],
         ];
 
         foreach ($categories as $index => $cat) {
-            BusinessCategory::firstOrCreate(
+            BusinessCategory::updateOrCreate(
                 ['slug' => Str::slug($cat['name'])],
                 [
                     'name' => $cat['name'],
