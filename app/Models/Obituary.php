@@ -290,31 +290,58 @@ class Obituary extends Model
         return !empty($parts) ? implode(', ', $parts) : 'Kenya';
     }
 
+    public static function ensurePublishedAtSchema(): void
+    {
+        static $checked = false;
+        if ($checked) {
+            return;
+        }
+        $checked = true;
+
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('obituaries', 'published_at')) {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            }
+        } catch (\Throwable $e) {}
+    }
+
     public function getIsScheduledAttribute(): bool
     {
         if ($this->status === 'scheduled') {
             return true;
         }
-        return $this->published_at !== null && $this->published_at->isFuture();
+        return !empty($this->published_at) && $this->published_at->isFuture();
     }
 
     public function scopePublished($query)
     {
-        return $query->whereIn('status', ['published', 'scheduled'])
-            ->where(function ($q) {
-                $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
-            });
+        static::ensurePublishedAtSchema();
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('obituaries', 'published_at')) {
+            return $query->whereIn('status', ['published', 'scheduled'])
+                ->where(function ($q) {
+                    $q->whereNull('published_at')
+                      ->orWhere('published_at', '<=', now());
+                });
+        }
+
+        return $query->where('status', 'published');
     }
 
     public function scopeScheduled($query)
     {
-        return $query->where(function ($q) {
-            $q->where('status', 'scheduled')
-              ->orWhere(function ($sub) {
-                  $sub->whereNotNull('published_at')->where('published_at', '>', now());
-              });
-        });
+        static::ensurePublishedAtSchema();
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('obituaries', 'published_at')) {
+            return $query->where(function ($q) {
+                $q->where('status', 'scheduled')
+                  ->orWhere(function ($sub) {
+                      $sub->whereNotNull('published_at')->where('published_at', '>', now());
+                  });
+            });
+        }
+
+        return $query->where('status', 'scheduled');
     }
 
     public function scopeTodayAnniversaries($query)

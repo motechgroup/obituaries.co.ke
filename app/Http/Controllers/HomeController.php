@@ -102,18 +102,25 @@ class HomeController extends Controller
             ],
         ];
 
+        $hasCategoryColumn = \Illuminate\Support\Facades\Schema::hasColumn('obituaries', 'category');
         $categoryObituaries = [];
         foreach (array_keys($noticeCategories) as $catKey) {
-            $categoryObituaries[$catKey] = Obituary::published()
-                ->where(function($q) use ($catKey) {
-                    $q->where('category', $catKey);
-                    if ($catKey === 'Death Announcement') {
-                        $q->orWhereNull('category');
-                    }
-                })
-                ->latest('id')
-                ->take(4)
-                ->get();
+            if ($hasCategoryColumn) {
+                $categoryObituaries[$catKey] = Obituary::published()
+                    ->where(function($q) use ($catKey) {
+                        $q->where('category', $catKey);
+                        if ($catKey === 'Death Announcement') {
+                            $q->orWhereNull('category');
+                        }
+                    })
+                    ->latest('id')
+                    ->take(4)
+                    ->get();
+            } else {
+                $categoryObituaries[$catKey] = ($catKey === 'Death Announcement')
+                    ? Obituary::published()->latest('id')->take(4)->get()
+                    : collect();
+            }
         }
 
         $counties = [
