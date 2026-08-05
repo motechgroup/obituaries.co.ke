@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Models\Setting;
+use App\Models\SecurityLog;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -25,19 +25,25 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // 1. Sanitize input
+        $email = strtolower(trim((string) $request->input('email')));
+
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'password' => ['required', 'string'],
         ]);
 
+        $credentials['email'] = $email;
+
+        // 2. Attempt authentication
         if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            \App\Models\SecurityLog::log('admin_login', 'info', null, "Admin user " . Auth::guard('admin')->user()->name . " logged in successfully.");
+            SecurityLog::log('admin_login', 'info', null, "Admin user " . Auth::guard('admin')->user()->name . " logged in successfully.");
             return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'Welcome back, Administrator!');
         }
 
-        \App\Models\SecurityLog::log('admin_login_failed', 'warning', null, "Failed login attempt for email: {$credentials['email']}");
+        SecurityLog::log('admin_login_failed', 'warning', null, "Failed login attempt for admin email: {$email}");
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our administrative records.',
@@ -61,13 +67,16 @@ class AuthController extends Controller
 
     public function sendResetLink(Request $request)
     {
+        // Sanitize
+        $email = strtolower(trim((string) $request->input('email')));
+        $request->merge(['email' => $email]);
+
         $request->validate([
-            'email' => ['required', 'email', 'exists:admins,email'],
+            'email' => ['required', 'string', 'email', 'max:255', 'exists:admins,email'],
         ], [
             'email.exists' => 'No administrative account found with that email address.',
         ]);
 
-        $email = $request->input('email');
         $token = Str::random(64);
 
         DB::table('password_reset_tokens')->updateOrInsert(
@@ -77,14 +86,21 @@ class AuthController extends Controller
 
         $resetUrl = route('admin.password.reset', ['token' => $token, 'email' => $email]);
 
-        // Send Email
+        // Send Branded SMTP Email
         try {
-            \App\Services\MailService::configure();
-            Mail::raw("Hello,\n\nYou requested a password reset for your Obituaries.co.ke admin account.\n\nClick the link below to reset your password:\n{$resetUrl}\n\nThis link will expire in 60 minutes. If you did not request a password reset, please ignore this email.", function ($message) use ($email) {
-                $message->to($email)->subject('Obituaries.co.ke Admin Password Reset Request');
-            });
+            $bodyContent = "<p>Hello,</p>
+            <p>You requested a password reset for your Obituaries.co.ke Administrative Account.</p>
+            <p>Click the button below to set a new secure password for your account:</p>";
+
+            MailService::sendEmail(
+                $email,
+                'Obituaries.co.ke Admin Password Reset Request',
+                $bodyContent,
+                $resetUrl,
+                'Reset Admin Password'
+            );
         } catch (\Throwable $e) {
-            // Log or fallback
+            \Illuminate\Support\Facades\Log::error("Admin Password Reset Mail Error: " . $e->getMessage());
         }
 
         return back()->with('success', "A password reset link has been sent to {$email}. Please check your inbox (and spam folder).");
@@ -98,23 +114,30 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
+        $email = strtolower(trim((string) $request->input('email')));
+        $request->merge(['email' => $email]);
+
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email', 'exists:admins,email'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'token' => ['required', 'string'],
+            'email' => ['required', 'string', 'email', 'max:255', 'exists:admins,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
+        $record = DB::table('password_reset_tokens')->where('email', $email)->first();
 
         if (!$record || !Hash::check($request->token, $record->token)) {
             return back()->withErrors(['email' => 'Invalid or expired password reset token.']);
         }
 
-        $admin = Admin::where('email', $request->email)->first();
-        $admin->password = Hash::make($request->password);
-        $admin->save();
+        $admin = Admin::where('email', $email)->first();
+        if ($admin) {
+            $admin->password = Hash::make($request->password);
+            $admin->save();
+        }
 
-        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
+
+        SecurityLog::log('admin_password_reset', 'info', null, "Admin password reset successfully for: {$email}");
 
         return redirect()->route('admin.login')->with('success', 'Your password has been reset successfully! You can now log in.');
     }

@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdClickController;
 use App\Http\Controllers\Advertiser\Auth\RegisterController as AdvertiserRegisterController;
 use App\Http\Controllers\Advertiser\Auth\LoginController as AdvertiserLoginController;
+use App\Http\Controllers\Advertiser\Auth\ForgotPasswordController as AdvertiserForgotPasswordController;
 use App\Http\Controllers\Advertiser\DashboardController as AdvertiserDashboardController;
 use App\Http\Controllers\Advertiser\BusinessProfileController as AdvertiserBusinessProfileController;
 use App\Http\Controllers\Advertiser\CampaignController as AdvertiserCampaignController;
@@ -47,7 +48,7 @@ Route::get('/advertise', function () {
 })->name('advertise');
 
 // Ad Click Tracking & Redirect
-Route::get('/ad/click/{campaign}', [AdClickController::class, 'redirect'])->name('ad.click');
+Route::get('/ad/click/{campaign}', [AdClickController::class, 'redirect'])->middleware('throttle:30,1')->name('ad.click');
 
 use App\Http\Controllers\BlogController;
 
@@ -232,11 +233,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // Advertiser Portal Auth & Management Routes
 Route::prefix('advertiser')->name('advertiser.')->group(function () {
     Route::get('/register', [AdvertiserRegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [AdvertiserRegisterController::class, 'register'])->middleware('throttle:6,1')->name('register.post');
+    Route::post('/register', [AdvertiserRegisterController::class, 'register'])->middleware('throttle:3,1')->name('register.post');
 
     Route::get('/login', [AdvertiserLoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdvertiserLoginController::class, 'login'])->middleware('throttle:6,1')->name('login.post');
+    Route::post('/login', [AdvertiserLoginController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
     Route::post('/logout', [AdvertiserLoginController::class, 'logout'])->name('logout');
+
+    // Password Reset Routes
+    Route::get('/forgot-password', [AdvertiserForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AdvertiserForgotPasswordController::class, 'sendResetLink'])->middleware('throttle:3,1')->name('password.email');
+    Route::get('/reset-password/{token}', [AdvertiserForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [AdvertiserForgotPasswordController::class, 'resetPassword'])->middleware('throttle:5,1')->name('password.update');
 
     Route::middleware('auth:advertiser')->group(function () {
         Route::get('/dashboard', [AdvertiserDashboardController::class, 'index'])->name('dashboard');
@@ -246,7 +253,7 @@ Route::prefix('advertiser')->name('advertiser.')->group(function () {
 
         Route::get('/campaigns', [AdvertiserCampaignController::class, 'index'])->name('campaigns.index');
         Route::get('/campaigns/create', [AdvertiserCampaignController::class, 'create'])->name('campaigns.create');
-        Route::post('/campaigns/pricing-calculator', [AdvertiserCampaignController::class, 'calculatePricing'])->name('campaigns.pricing-calculator');
+        Route::post('/campaigns/pricing-calculator', [AdvertiserCampaignController::class, 'calculatePricing'])->middleware('throttle:30,1')->name('campaigns.pricing-calculator');
         Route::post('/campaigns', [AdvertiserCampaignController::class, 'store'])->name('campaigns.store');
         Route::get('/campaigns/{campaign}/checkout', [AdvertiserCampaignController::class, 'checkout'])->name('campaigns.checkout');
         Route::post('/campaigns/{campaign}/stkpush', [AdvertiserCampaignController::class, 'initiateStkPush'])->middleware('throttle:10,1')->name('campaigns.stkpush');

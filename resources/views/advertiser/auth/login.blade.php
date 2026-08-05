@@ -39,6 +39,7 @@
                     <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500">
                     <span>Remember Me</span>
                 </label>
+                <a href="{{ route('advertiser.password.request') }}" class="text-amber-900 font-bold hover:underline">Forgot Password?</a>
             </div>
 
             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Advertiser\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Advertiser;
 use App\Models\BusinessProfile;
+use App\Models\SecurityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,14 +22,24 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
+        // 1. Sanitize all incoming input parameters
+        $request->merge([
+            'email' => strtolower(trim((string) $request->input('email'))),
+            'business_name' => strip_tags(trim((string) $request->input('business_name'))),
+            'contact_person' => strip_tags(trim((string) $request->input('contact_person'))),
+            'phone_number' => strip_tags(trim((string) $request->input('phone_number'))),
+        ]);
+
+        // 2. Strict Input Validation
         $validated = $request->validate([
             'business_name' => ['required', 'string', 'max:255'],
             'contact_person' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:50'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:advertisers'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:advertisers,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
+        // 3. Create Advertiser Account
         $advertiser = Advertiser::create([
             'business_name' => $validated['business_name'],
             'contact_person' => $validated['contact_person'],
@@ -39,7 +50,7 @@ class RegisterController extends Controller
             'status' => 'active',
         ]);
 
-        // Create initial default business profile
+        // 4. Create initial default business profile
         BusinessProfile::create([
             'advertiser_id' => $advertiser->id,
             'business_name' => $validated['business_name'],
@@ -47,6 +58,8 @@ class RegisterController extends Controller
             'email' => $validated['email'],
             'status' => 'active',
         ]);
+
+        SecurityLog::log('advertiser_registered', 'info', null, "New advertiser registered: {$validated['business_name']} ({$validated['email']})");
 
         Auth::guard('advertiser')->login($advertiser);
 
