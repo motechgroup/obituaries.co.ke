@@ -77,4 +77,9 @@ class SmsService
             return false;
         }
     }
+
+    public static function sendSms(string $phone, string $message): bool
+    {
+        return static::send($phone, $message);
+    }
 }

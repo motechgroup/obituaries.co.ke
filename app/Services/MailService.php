@@ -63,4 +63,9 @@ class MailService
             $msg->to($toEmail)->subject($subject);
         });
     }
+
+    public static function sendEmail(string $toEmail, string $subject, string $bodyContent, ?string $actionUrl = null, ?string $actionText = null): void
+    {
+        self::sendHtmlEmail($toEmail, $subject, $bodyContent, $actionUrl, $actionText);
+    }
 }
