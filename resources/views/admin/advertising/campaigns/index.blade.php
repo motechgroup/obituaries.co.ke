@@ -10,11 +10,11 @@
             <p class="text-xs sm:text-sm font-medium text-slate-600">Review submitted banner campaigns, verify M-Pesa payments, or manually create and place ad banners.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('admin.advertising.campaigns.create') }}" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition-all">
+            <a href="{{ route('admin.advertising.campaigns.create') }}" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-xs flex items-center space-x-1.5 shadow-md transition-all">
                 <span class="material-symbols-outlined text-[18px]">add_circle</span>
                 <span>+ Create & Place Ad</span>
             </a>
-            <a href="{{ route('admin.advertising.finance.index') }}" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition-all">
+            <a href="{{ route('admin.advertising.finance.index') }}" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center space-x-1.5 shadow-md transition-all">
                 <span class="material-symbols-outlined text-[18px]">payments</span>
                 <span>Revenue & Financials</span>
             </a>
@@ -23,27 +23,31 @@
 
     <!-- Status Tabs -->
     <div class="flex items-center space-x-2 overflow-x-auto pb-2 text-xs font-semibold">
-        <a href="{{ route('admin.advertising.campaigns.index') }}" class="px-3.5 py-2 rounded-xl transition-all border {{ empty($status) ? 'bg-amber-500/20 text-amber-900 border-amber-500/40 font-bold' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+        <a href="{{ route('admin.advertising.campaigns.index') }}" class="px-3.5 py-2 rounded-xl transition-all border {{ empty($status) ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
             All Campaigns ({{ $counts['all'] }})
         </a>
-        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'pending_approval']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'pending_approval' ? 'bg-amber-500/20 text-amber-900 border-amber-500/40 font-bold' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'pending_approval']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'pending_approval' ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
             Pending Approval ({{ $counts['pending_approval'] }})
         </a>
-        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'running']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'running' ? 'bg-emerald-500/20 text-emerald-900 border-emerald-500/40 font-bold' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'running']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'running' ? 'bg-emerald-600 text-white border-emerald-600 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
             Running ({{ $counts['running'] }})
         </a>
-        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'payment_pending']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'payment_pending' ? 'bg-rose-500/20 text-rose-900 border-rose-500/40 font-bold' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'payment_pending']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'payment_pending' ? 'bg-rose-600 text-white border-rose-600 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
             Payment Pending ({{ $counts['payment_pending'] }})
         </a>
-        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'rejected']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'rejected' ? 'bg-slate-200 text-slate-800 border-slate-300' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+        <a href="{{ route('admin.advertising.campaigns.index', ['status' => 'rejected']) }}" class="px-3.5 py-2 rounded-xl transition-all border {{ $status === 'rejected' ? 'bg-slate-800 text-white border-slate-800 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
             Rejected ({{ $counts['rejected'] }})
         </a>
     </div>
 
     <!-- Campaigns Table -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
         @if($campaigns->isEmpty())
-            <div class="text-center py-10 text-xs text-slate-500 italic">No campaign records found matching this status.</div>
+            <div class="text-center py-12 space-y-3 bg-slate-50 rounded-2xl border border-slate-200">
+                <span class="material-symbols-outlined text-[48px] text-slate-400">campaign</span>
+                <p class="text-base font-bold text-slate-900">No Campaigns Found</p>
+                <p class="text-xs text-slate-600 font-medium max-w-sm mx-auto">No advertising campaigns match the selected filter criteria.</p>
+            </div>
         @else
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-700">
@@ -59,17 +63,17 @@
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         @foreach($campaigns as $c)
-                            <tr class="hover:bg-slate-50/80 transition-colors">
+                            <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="py-3.5 px-4">
-                                    <div class="font-bold text-slate-900">{{ $c->advertiser->business_name ?? 'N/A' }}</div>
-                                    <div class="text-[11px] text-slate-500 font-medium">{{ $c->advertiser->contact_person ?? '' }} &bull; {{ $c->advertiser->phone_number ?? '' }}</div>
+                                    <div class="font-bold text-slate-900 text-sm">{{ $c->advertiser->business_name ?? 'System Direct' }}</div>
+                                    <div class="text-[11px] text-slate-500 font-medium">{{ $c->advertiser->contact_person ?? 'Admin Direct' }} &bull; {{ $c->advertiser->phone_number ?? '' }}</div>
                                 </td>
                                 <td class="py-3.5 px-4 font-bold text-slate-900">
                                     {{ $c->name }}
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    <div class="font-semibold text-slate-900">{{ $c->placement->name ?? 'N/A' }}</div>
-                                    <div class="font-mono text-[10px] text-slate-500">{{ $c->bannerSize->dimensions ?? '' }}</div>
+                                    <div class="font-semibold text-slate-800">{{ $c->placement->name ?? 'N/A' }}</div>
+                                    <div class="text-[10px] text-slate-500 font-mono">{{ $c->bannerSize->dimensions ?? 'N/A' }}</div>
                                 </td>
                                 <td class="py-3.5 px-4 font-extrabold text-amber-900 font-mono">
                                     KES {{ number_format($c->calculated_price) }}
@@ -78,10 +82,10 @@
                                     @php
                                         $badgeClasses = match($c->status) {
                                             'running' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
-                                            'pending_approval' => 'bg-amber-100 text-amber-900 border-amber-300 font-bold animate-pulse',
+                                            'pending_approval' => 'bg-amber-100 text-amber-900 border-amber-300',
                                             'payment_pending' => 'bg-rose-100 text-rose-800 border-rose-300',
                                             'approved' => 'bg-sky-100 text-sky-800 border-sky-300',
-                                            'expired' => 'bg-slate-100 text-slate-600 border-slate-300',
+                                            'rejected' => 'bg-slate-100 text-slate-700 border-slate-300',
                                             default => 'bg-slate-100 text-slate-700 border-slate-300',
                                         };
                                     @endphp
@@ -90,10 +94,10 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-right space-x-2">
-                                    <a href="{{ route('admin.advertising.campaigns.edit', $c->id) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold transition-all inline-block">
+                                    <a href="{{ route('admin.advertising.campaigns.edit', $c->id) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold transition-all inline-block shadow-xs">
                                         Edit
                                     </a>
-                                    <a href="{{ route('admin.advertising.campaigns.show', $c->id) }}" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all inline-block">
+                                    <a href="{{ route('admin.advertising.campaigns.show', $c->id) }}" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all inline-block shadow-xs">
                                         Review Details &rarr;
                                     </a>
                                 </td>
