@@ -215,6 +215,10 @@
                 <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Directory</a>
                 <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Counties</a>
                 <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">About</a>
+                <a href="{{ route('advertise') }}" class="text-xs font-bold text-amber-900 hover:text-amber-700 transition-colors py-2 px-3 min-h-[44px] inline-flex items-center space-x-1">
+                    <span class="material-symbols-outlined text-[16px]">campaign</span>
+                    <span>Advertise</span>
+                </a>
                 
                 <a href="{{ route('obituaries.submit') }}" class="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-xs font-semibold hover:bg-primary-container transition-all shadow-sm flex items-center space-x-1.5 min-h-[44px]">
                     <span class="material-symbols-outlined text-[16px]">add</span>
@@ -271,6 +275,10 @@
                     <span class="material-symbols-outlined text-[18px]">mail</span>
                     <span>Contact Us</span>
                 </a>
+                <a href="{{ route('advertise') }}" class="px-3.5 py-3 rounded-lg text-amber-900 bg-amber-50 hover:bg-amber-100 font-bold flex items-center space-x-2 min-h-[48px]">
+                    <span class="material-symbols-outlined text-[18px]">campaign</span>
+                    <span>Advertise With Us</span>
+                </a>
             </nav>
         </div>
     </header>
@@ -316,6 +324,7 @@
                 <a href="{{ route('obituaries.search') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Search Directory</a>
                 <a href="{{ route('pages.about') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">About</a>
                 <a href="{{ route('pages.contact') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Contact</a>
+                <a href="{{ route('advertise') }}" class="text-amber-900 font-bold hover:text-amber-700 transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Advertise With Us</a>
                 <a href="{{ route('pages.privacy') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Privacy</a>
                 <a href="{{ route('pages.terms') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Terms</a>
                 <a href="{{ route('obituaries.submit') }}" class="text-slate-800 hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Submit Obituary</a>

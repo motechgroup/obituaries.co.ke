@@ -38,6 +38,14 @@ use App\Http\Controllers\Admin\Advertising\AdminCategoryController;
 // Public Front Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Advertise With Us Redirect Route
+Route::get('/advertise', function () {
+    if (auth()->guard('advertiser')->check()) {
+        return redirect()->route('advertiser.dashboard');
+    }
+    return redirect()->route('advertiser.login');
+})->name('advertise');
+
 // Ad Click Tracking & Redirect
 Route::get('/ad/click/{campaign}', [AdClickController::class, 'redirect'])->name('ad.click');
 

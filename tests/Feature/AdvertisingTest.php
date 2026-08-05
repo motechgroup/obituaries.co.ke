@@ -180,4 +180,17 @@ class AdvertisingTest extends TestCase
             'landing_url' => null,
         ]);
     }
+
+    public function test_advertise_link_redirects_unauthenticated_user_to_advertiser_login_page()
+    {
+        $response = $this->get(route('advertise'));
+        $response->assertRedirect(route('advertiser.login'));
+    }
+
+    public function test_advertise_link_redirects_authenticated_advertiser_to_dashboard()
+    {
+        $advertiser = Advertiser::first();
+        $response = $this->actingAs($advertiser, 'advertiser')->get(route('advertise'));
+        $response->assertRedirect(route('advertiser.dashboard'));
+    }
 }
