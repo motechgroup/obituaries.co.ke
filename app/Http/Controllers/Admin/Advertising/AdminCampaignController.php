@@ -135,7 +135,7 @@ class AdminCampaignController extends Controller
         // 2. Process image
         $processedImages = AdImageService::processAndSaveBanner($request->file('banner_image'), $bannerSize);
 
-        // 3. Price calculation
+        // 3. Price calculation (System Advertiser direct house ads are free KES 0.00)
         $isNational = (bool) ($validated['is_national'] ?? false);
         $isFeatured = (bool) ($validated['is_featured'] ?? false);
         $counties = $validated['counties'] ?? [];
@@ -150,7 +150,10 @@ class AdminCampaignController extends Controller
             $isFeatured
         );
 
-        $price = $validated['calculated_price'] ?? $pricingResult['total_price'];
+        $systemAdvertiser = Advertiser::where('email', 'admin@obituaries.co.ke')->first();
+        $isSystemAccount = ($systemAdvertiser && $advertiser->id === $systemAdvertiser->id) || $advertiser->email === 'admin@obituaries.co.ke' || str_contains(strtolower($advertiser->business_name), 'system');
+
+        $price = $isSystemAccount ? 0.00 : ($validated['calculated_price'] ?? $pricingResult['total_price']);
 
         // 4. Create campaign
         $campaign = AdCampaign::create([
@@ -277,7 +280,12 @@ class AdminCampaignController extends Controller
             'status' => $validated['status'],
         ];
 
-        if (isset($validated['calculated_price'])) {
+        $systemAdvertiser = Advertiser::where('email', 'admin@obituaries.co.ke')->first();
+        $isSystemAccount = ($systemAdvertiser && $advertiser->id === $systemAdvertiser->id) || $advertiser->email === 'admin@obituaries.co.ke' || str_contains(strtolower($advertiser->business_name), 'system');
+
+        if ($isSystemAccount) {
+            $updateData['calculated_price'] = 0.00;
+        } elseif (isset($validated['calculated_price'])) {
             $updateData['calculated_price'] = $validated['calculated_price'];
         }
 
