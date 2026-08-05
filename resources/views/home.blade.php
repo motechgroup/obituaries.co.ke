@@ -37,9 +37,6 @@
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div class="flex flex-row justify-between items-end mb-6 sm:mb-10">
             <div>
-                <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-500/10 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border border-amber-300/30">
-                    <span>✨ Today's Notices</span>
-                </div>
                 <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-1">Latest Obituaries</h2>
                 <p class="text-xs sm:text-sm text-slate-700 font-medium">Honoring those whose memorial notices were published today.</p>
             </div>
