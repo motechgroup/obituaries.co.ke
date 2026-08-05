@@ -120,6 +120,13 @@ class AdCampaign extends Model
 
     public function getBannerUrlAttribute(): string
     {
-        return asset('storage/' . ($this->banner_webp_path ?: $this->banner_path));
+        $path = $this->banner_webp_path ?: $this->banner_path;
+        if ($path) {
+            \App\Helpers\StorageHelper::ensurePublicCopy($path);
+        }
+        if ($this->banner_path) {
+            \App\Helpers\StorageHelper::ensurePublicCopy($this->banner_path);
+        }
+        return asset('storage/' . ($path ?: $this->banner_path));
     }
 }

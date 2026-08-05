@@ -43,13 +43,9 @@ class StorageHelper
             $source = storage_path('app/public/' . ltrim($relativePath, '/'));
             $destination = public_path('storage/' . ltrim($relativePath, '/'));
 
-            if (file_exists($source)) {
-                self::compressAndScaleImage($source, 800, 82);
-
-                if (!file_exists($destination)) {
-                    @mkdir(dirname($destination), 0755, true);
-                    @copy($source, $destination);
-                }
+            if (file_exists($source) && !file_exists($destination)) {
+                @mkdir(dirname($destination), 0755, true);
+                @copy($source, $destination);
             }
         } catch (\Throwable $e) {
             // Silently handle exceptions

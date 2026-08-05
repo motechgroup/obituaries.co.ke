@@ -118,6 +118,10 @@ class AdImageService
             @copy($fullPath, $thumbFullPath);
         }
 
+        // Mirror webp & thumb to public/storage/ for instant web access without symlinks
+        StorageHelper::ensurePublicCopy($webpPath);
+        StorageHelper::ensurePublicCopy($thumbPath);
+
         return [
             'banner_path' => $originalPath,
             'banner_webp_path' => file_exists($webpFullPath) ? $webpPath : $originalPath,
