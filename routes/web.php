@@ -19,8 +19,26 @@ use App\Http\Controllers\Admin\SecurityLogController as AdminSecurityLogControll
 use App\Http\Controllers\Admin\FraudController as AdminFraudController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\AdClickController;
+use App\Http\Controllers\Advertiser\Auth\RegisterController as AdvertiserRegisterController;
+use App\Http\Controllers\Advertiser\Auth\LoginController as AdvertiserLoginController;
+use App\Http\Controllers\Advertiser\DashboardController as AdvertiserDashboardController;
+use App\Http\Controllers\Advertiser\BusinessProfileController as AdvertiserBusinessProfileController;
+use App\Http\Controllers\Advertiser\CampaignController as AdvertiserCampaignController;
+use App\Http\Controllers\Advertiser\AnalyticsController as AdvertiserAnalyticsController;
+
+use App\Http\Controllers\Admin\Advertising\AdminCampaignController;
+use App\Http\Controllers\Admin\Advertising\AdminFinanceController;
+use App\Http\Controllers\Admin\Advertising\AdminAdvertiserController;
+use App\Http\Controllers\Admin\Advertising\AdminPricingController;
+use App\Http\Controllers\Admin\Advertising\AdminPlacementController;
+use App\Http\Controllers\Admin\Advertising\AdminCategoryController;
+
 // Public Front Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Ad Click Tracking & Redirect
+Route::get('/ad/click/{campaign}', [AdClickController::class, 'redirect'])->name('ad.click');
 
 use App\Http\Controllers\BlogController;
 
@@ -155,7 +173,64 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/database/seed', [AdminSettingController::class, 'runSeeders'])->name('database.seed');
             Route::post('/database/purge', [AdminSettingController::class, 'purgeDatabase'])->name('database.purge');
         });
+        // Admin Advertising System Management
+        Route::prefix('advertising')->name('advertising.')->group(function () {
+            Route::get('/campaigns', [AdminCampaignController::class, 'index'])->name('campaigns.index');
+            Route::get('/campaigns/{campaign}', [AdminCampaignController::class, 'show'])->name('campaigns.show');
+            Route::post('/campaigns/{campaign}/approve', [AdminCampaignController::class, 'approve'])->name('campaigns.approve');
+            Route::post('/campaigns/{campaign}/reject', [AdminCampaignController::class, 'reject'])->name('campaigns.reject');
+            Route::post('/campaigns/{campaign}/pause', [AdminCampaignController::class, 'pause'])->name('campaigns.pause');
+            Route::post('/campaigns/{campaign}/resume', [AdminCampaignController::class, 'resume'])->name('campaigns.resume');
+            Route::delete('/campaigns/{campaign}', [AdminCampaignController::class, 'destroy'])->name('campaigns.destroy');
+
+            Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
+            Route::get('/finance/export', [AdminFinanceController::class, 'exportCsv'])->name('finance.export');
+
+            Route::get('/advertisers', [AdminAdvertiserController::class, 'index'])->name('advertisers.index');
+            Route::get('/advertisers/{advertiser}', [AdminAdvertiserController::class, 'show'])->name('advertisers.show');
+            Route::post('/advertisers/{advertiser}/toggle-status', [AdminAdvertiserController::class, 'toggleStatus'])->name('advertisers.toggle-status');
+
+            Route::get('/pricing', [AdminPricingController::class, 'index'])->name('pricing.index');
+            Route::post('/pricing', [AdminPricingController::class, 'store'])->name('pricing.store');
+            Route::put('/pricing/{pricing}', [AdminPricingController::class, 'update'])->name('pricing.update');
+
+            Route::get('/placements', [AdminPlacementController::class, 'index'])->name('placements.index');
+            Route::post('/placements', [AdminPlacementController::class, 'store'])->name('placements.store');
+
+            Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+            Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+        });
+
         Route::post('/system/git-pull', [AdminSettingController::class, 'gitPull'])->name('system.git-pull');
         Route::post('/system/fix-storage', [AdminSettingController::class, 'fixStorage'])->name('system.fix-storage');
+    });
+});
+
+// Advertiser Portal Auth & Management Routes
+Route::prefix('advertiser')->name('advertiser.')->group(function () {
+    Route::get('/register', [AdvertiserRegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [AdvertiserRegisterController::class, 'register'])->middleware('throttle:6,1')->name('register.post');
+
+    Route::get('/login', [AdvertiserLoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AdvertiserLoginController::class, 'login'])->middleware('throttle:6,1')->name('login.post');
+    Route::post('/logout', [AdvertiserLoginController::class, 'logout'])->name('logout');
+
+    Route::middleware('auth:advertiser')->group(function () {
+        Route::get('/dashboard', [AdvertiserDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/profile', [AdvertiserBusinessProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [AdvertiserBusinessProfileController::class, 'update'])->name('profile.update');
+
+        Route::get('/campaigns', [AdvertiserCampaignController::class, 'index'])->name('campaigns.index');
+        Route::get('/campaigns/create', [AdvertiserCampaignController::class, 'create'])->name('campaigns.create');
+        Route::post('/campaigns/pricing-calculator', [AdvertiserCampaignController::class, 'calculatePricing'])->name('campaigns.pricing-calculator');
+        Route::post('/campaigns', [AdvertiserCampaignController::class, 'store'])->name('campaigns.store');
+        Route::get('/campaigns/{campaign}/checkout', [AdvertiserCampaignController::class, 'checkout'])->name('campaigns.checkout');
+        Route::post('/campaigns/{campaign}/stkpush', [AdvertiserCampaignController::class, 'initiateStkPush'])->middleware('throttle:10,1')->name('campaigns.stkpush');
+        Route::get('/campaigns/{campaign}/check-status', [AdvertiserCampaignController::class, 'checkStatus'])->name('campaigns.check-status');
+        Route::get('/campaigns/{campaign}', [AdvertiserCampaignController::class, 'show'])->name('campaigns.show');
+
+        Route::get('/analytics', [AdvertiserAnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('/analytics/export', [AdvertiserAnalyticsController::class, 'exportCsv'])->name('analytics.export');
     });
 });

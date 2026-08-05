@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             SettingSeeder::class,
             ObituarySeeder::class,
+            AdvertisingSeeder::class,
         ]);
     }
 }

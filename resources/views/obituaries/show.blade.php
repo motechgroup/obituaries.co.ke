@@ -222,7 +222,11 @@
             </section>
         @endif
 
+        <!-- Obituary Middle Ad Banner -->
+        <x-ad-banner placement="obituary_middle" :county="$obituary->county" />
+
         <!-- Light a Virtual Candle Section -->
+        <x-ad-banner placement="obituary_bottom" :county="$obituary->county" />
         <section id="candles" class="pt-8 border-t border-surface-container-high space-y-6" x-data="{ candleModal: false }">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>

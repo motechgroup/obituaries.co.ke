@@ -32,6 +32,11 @@
     </div>
 </section>
 
+<!-- Homepage After Hero Ad Banner Slot -->
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+    <x-ad-banner placement="homepage_after_hero" />
+</div>
+
 <!-- Latest Obituaries (Today's Notices - Editorial Grid matching Stitch Design) -->
 <section class="w-full py-10 sm:py-16 bg-surface-container-lowest border-b border-outline-variant/20">
     <div class="max-w-[1200px] mx-auto px-4 sm:px-6">

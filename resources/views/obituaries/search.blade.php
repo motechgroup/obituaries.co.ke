@@ -15,6 +15,8 @@
 
 <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-12">
     
+    <x-ad-banner placement="search_between" :county="request('county')" />
+    
     <!-- Filter Card from Stitch Design -->
     <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl border border-outline-variant/30 shadow-md">
         <form action="{{ route('obituaries.search') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4 items-end">

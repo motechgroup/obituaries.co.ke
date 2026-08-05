@@ -39,6 +39,10 @@
     </div>
 </div>
 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <x-ad-banner placement="county_banner" :county="$county" />
+</div>
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     @if($obituaries->isEmpty())
         <div class="bg-surface-container-lowest rounded-2xl p-12 text-center border border-dashed border-outline-variant max-w-xl mx-auto my-8">

@@ -185,6 +185,53 @@
                         @endif
                     </a>
 
+                    <!-- Advertising Management Module Dropdown -->
+                    <div x-data="{ open: {{ request()->routeIs('admin.advertising.*') ? 'true' : 'false' }} }">
+                        <div class="flex items-center justify-between px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.advertising.*') ? 'bg-slate-800 text-white font-semibold border border-slate-700' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <a href="{{ route('admin.advertising.campaigns.index') }}" class="flex items-center space-x-3 flex-grow">
+                                <span class="material-symbols-outlined text-[20px] {{ request()->routeIs('admin.advertising.*') ? 'text-amber-400' : 'text-slate-400' }}">campaign</span>
+                                <span>Advertising System</span>
+                            </a>
+                            <div class="flex items-center space-x-2">
+                                @php
+                                    $pendingAdCount = \App\Models\AdCampaign::where('status', 'pending_approval')->count();
+                                @endphp
+                                @if($pendingAdCount > 0)
+                                    <span class="text-xs bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+                                        {{ $pendingAdCount }}
+                                    </span>
+                                @endif
+                                <button type="button" @click="open = !open" class="text-slate-400 hover:text-white p-1 focus:outline-none">
+                                    <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Advertising Submenu Links -->
+                        <div x-show="open" class="pl-9 pr-2 py-1.5 space-y-1 text-xs font-normal">
+                            <a href="{{ route('admin.advertising.campaigns.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.campaigns.*') ? 'text-amber-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Ad Campaigns</span>
+                            </a>
+                            <a href="{{ route('admin.advertising.finance.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.finance.*') ? 'text-emerald-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Financial Revenue</span>
+                            </a>
+                            <a href="{{ route('admin.advertising.advertisers.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.advertisers.*') ? 'text-sky-400 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Advertisers Directory</span>
+                            </a>
+                            <a href="{{ route('admin.advertising.pricing.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.pricing.*') ? 'text-slate-200 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Pricing Matrix</span>
+                            </a>
+                            <a href="{{ route('admin.advertising.placements.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.placements.*') ? 'text-slate-200 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Ad Placements</span>
+                            </a>
+                            <a href="{{ route('admin.advertising.categories.index') }}" class="flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors {{ request()->routeIs('admin.advertising.categories.*') ? 'text-slate-200 font-bold bg-slate-800/80' : 'text-slate-400 hover:text-slate-200' }}">
+                                <span>&bull; Business Categories</span>
+                            </a>
+                        </div>
+                    </div>
+
                     @if(Auth::guard('admin')->user()->isSuperAdmin())
                         <!-- Public Contributors Directory -->
                         <a href="{{ route('admin.contributors.index') }}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all duration-150 {{ request()->routeIs('admin.contributors.*') ? 'bg-amber-600 text-white font-semibold shadow-md shadow-amber-600/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
