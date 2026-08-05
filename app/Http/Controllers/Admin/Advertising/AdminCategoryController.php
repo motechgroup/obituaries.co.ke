@@ -34,4 +34,17 @@ class AdminCategoryController extends Controller
 
         return back()->with('success', "Business category '{$validated['name']}' created successfully.");
     }
+
+    public function toggleStatus(BusinessCategory $category)
+    {
+        $category->update(['status' => !$category->status]);
+        $statusText = $category->status ? 'activated' : 'deactivated';
+        return back()->with('success', "Category '{$category->name}' has been {$statusText}.");
+    }
+
+    public function destroy(BusinessCategory $category)
+    {
+        $category->delete();
+        return back()->with('success', "Category '{$category->name}' deleted successfully.");
+    }
 }

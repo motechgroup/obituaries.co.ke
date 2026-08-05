@@ -201,6 +201,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
             Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+            Route::post('/categories/{category}/toggle', [AdminCategoryController::class, 'toggleStatus'])->name('categories.toggle');
+            Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
         });
 
         Route::post('/system/git-pull', [AdminSettingController::class, 'gitPull'])->name('system.git-pull');
