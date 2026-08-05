@@ -45,7 +45,21 @@ class AdServingService
             $baseQuery->whereNotIn('id', $excludeCampaignIds);
         }
 
-        $allEligible = $baseQuery->get();
+        $allEligible = $baseQuery->get()->filter(function (AdCampaign $c) {
+            $path = $c->banner_webp_path ?: $c->banner_path;
+            if (empty($path)) {
+                return false;
+            }
+            $storageFile = storage_path('app/public/' . ltrim($path, '/'));
+            $publicFile = public_path('storage/' . ltrim($path, '/'));
+
+            if (file_exists($storageFile)) {
+                \App\Helpers\StorageHelper::ensurePublicCopy($path);
+                return true;
+            }
+
+            return file_exists($publicFile);
+        });
 
         if ($allEligible->isEmpty()) {
             return null;

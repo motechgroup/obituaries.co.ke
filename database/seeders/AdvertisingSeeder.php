@@ -199,6 +199,27 @@ class AdvertisingSeeder extends Seeder
         $bannerSize770x195 = BannerSize::where('slug', 'horizontal-770x195')->first();
 
         if ($afterHeroPlacement && $bannerSize770x195) {
+            // Ensure demo banner image file exists on disk
+            $demoPath = storage_path('app/public/advertising/demo-banner.jpg');
+            $demoWebpPath = storage_path('app/public/advertising/demo-banner.webp');
+            if (!file_exists($demoPath)) {
+                @mkdir(dirname($demoPath), 0755, true);
+                if (function_exists('imagecreatetruecolor')) {
+                    $img = imagecreatetruecolor(770, 195);
+                    $bg = imagecolorallocate($img, 15, 23, 42);
+                    $text = imagecolorallocate($img, 245, 158, 11);
+                    imagefill($img, 0, 0, $bg);
+                    imagestring($img, 5, 200, 85, 'Lee Funeral Home & Hearse Services', $text);
+                    imagejpeg($img, $demoPath, 90);
+                    if (function_exists('imagewebp')) {
+                        imagewebp($img, $demoWebpPath, 90);
+                    }
+                    imagedestroy($img);
+                }
+                \App\Helpers\StorageHelper::ensurePublicCopy('advertising/demo-banner.jpg');
+                \App\Helpers\StorageHelper::ensurePublicCopy('advertising/demo-banner.webp');
+            }
+
             $campaign = AdCampaign::firstOrCreate(
                 ['name' => 'Lee Funeral Home Premier Care Campaign'],
                 [

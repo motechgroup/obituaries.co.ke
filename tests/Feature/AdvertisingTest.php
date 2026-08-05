@@ -90,6 +90,9 @@ class AdvertisingTest extends TestCase
 
         $campaign->counties()->create(['county' => 'Kisumu']);
 
+        @mkdir(storage_path('app/public/advertising/banners'), 0755, true);
+        file_put_contents(storage_path('app/public/advertising/banners/test.jpg'), 'test');
+
         $servedAd = AdServingService::getAdForPlacement('homepage_after_hero', 'Kisumu');
         $this->assertNotNull($servedAd);
         $this->assertEquals($campaign->id, $servedAd->id);
