@@ -125,8 +125,9 @@ try {
     // Clean up temporary ZIP
     @unlink($tempZipPath);
 
-    // 6. Clear Laravel Cache & Purge Stale File Cache
+    // 6. Clear Laravel Cache, Purge Stale File Cache & Run Database Migrations
     try {
+        Artisan::call('migrate', ['--force' => true]);
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
         Artisan::call('config:clear');
