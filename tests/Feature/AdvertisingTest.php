@@ -121,4 +121,21 @@ class AdvertisingTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Create & Place Ad Campaign');
     }
+
+    public function test_admin_can_edit_any_campaign()
+    {
+        $admin = \App\Models\Admin::create([
+            'name' => 'Admin Editor',
+            'email' => 'admin_editor@obituaries.co.ke',
+            'password' => bcrypt('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        $campaign = AdCampaign::first();
+        $this->assertNotNull($campaign);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.advertising.campaigns.edit', $campaign->id));
+        $response->assertStatus(200);
+        $response->assertSee('Edit Campaign');
+    }
 }

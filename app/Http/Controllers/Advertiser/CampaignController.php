@@ -335,4 +335,102 @@ class CampaignController extends Controller
 
         return view('advertiser.campaigns.show', compact('advertiser', 'campaign'));
     }
+
+    public function edit(AdCampaign $campaign)
+    {
+        $advertiser = Auth::guard('advertiser')->user();
+        if ($campaign->advertiser_id !== $advertiser->id) {
+            abort(403);
+        }
+
+        $campaign->load(['placement', 'bannerSize', 'category', 'counties']);
+        $profile = BusinessProfile::firstOrCreate(['advertiser_id' => $advertiser->id]);
+        $placements = AdPlacement::with('bannerSizes')->where('status', true)->get();
+        $bannerSizes = BannerSize::where('status', true)->get();
+        $categories = BusinessCategory::where('status', true)->orderBy('name')->get();
+
+        $counties = [
+            'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
+            'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
+            'Kisumu', 'Kitui', 'Kwale', 'Laikipia', 'Lamu', 'Machakos', 'Makueni', 'Mandera',
+            'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi', 'Nakuru', 'Nandi',
+            'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
+            'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
+        ];
+
+        return view('advertiser.campaigns.edit', compact(
+            'advertiser',
+            'profile',
+            'campaign',
+            'placements',
+            'bannerSizes',
+            'categories',
+            'counties'
+        ));
+    }
+
+    public function update(Request $request, AdCampaign $campaign)
+    {
+        $advertiser = Auth::guard('advertiser')->user();
+        if ($campaign->advertiser_id !== $advertiser->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'ad_placement_id' => ['required', 'exists:ad_placements,id'],
+            'banner_size_id' => ['required', 'exists:banner_sizes,id'],
+            'business_category_id' => ['nullable', 'exists:business_categories,id'],
+            'landing_url' => ['nullable', 'url', 'max:1000'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'is_national' => ['nullable', 'boolean'],
+            'is_featured' => ['nullable', 'boolean'],
+            'counties' => ['nullable', 'array'],
+            'counties.*' => ['string'],
+            'banner_image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
+        ]);
+
+        $bannerSize = BannerSize::findOrFail($validated['banner_size_id']);
+
+        $updateData = [
+            'ad_placement_id' => $validated['ad_placement_id'],
+            'banner_size_id' => $validated['banner_size_id'],
+            'business_category_id' => $validated['business_category_id'] ?? $campaign->business_category_id,
+            'name' => $validated['name'],
+            'landing_url' => $validated['landing_url'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'is_national' => (bool) ($validated['is_national'] ?? false),
+            'is_featured' => (bool) ($validated['is_featured'] ?? false),
+        ];
+
+        // Process new banner image if uploaded
+        if ($request->hasFile('banner_image')) {
+            $validationResult = AdImageService::validateBanner($request->file('banner_image'), $bannerSize);
+            if (!$validationResult['valid']) {
+                return back()->withInput()->withErrors(['banner_image' => implode(' ', $validationResult['errors'])]);
+            }
+            $processedImages = AdImageService::processAndSaveBanner($request->file('banner_image'), $bannerSize);
+            $updateData['banner_path'] = $processedImages['banner_path'];
+            $updateData['banner_webp_path'] = $processedImages['banner_webp_path'];
+            $updateData['thumbnail_path'] = $processedImages['thumbnail_path'];
+        }
+
+        $campaign->update($updateData);
+
+        // Sync counties
+        $campaign->counties()->delete();
+        if (!$updateData['is_national'] && !empty($validated['counties'])) {
+            foreach ($validated['counties'] as $c) {
+                AdCampaignCounty::create([
+                    'ad_campaign_id' => $campaign->id,
+                    'county' => $c,
+                ]);
+            }
+        }
+
+        return redirect()->route('advertiser.campaigns.show', $campaign->id)
+            ->with('success', "Campaign '{$campaign->name}' updated successfully!");
+    }
 }

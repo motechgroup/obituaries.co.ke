@@ -9,7 +9,13 @@
             <h1 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Campaign Moderation Review</h1>
             <p class="text-xs sm:text-sm font-medium text-slate-600">Review advertisement parameters, banner dimensions, landing URL, and approve live display.</p>
         </div>
-        <a href="{{ route('admin.advertising.campaigns.index') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900">&larr; Back to Campaigns List</a>
+        <div class="flex items-center space-x-3">
+            <a href="{{ route('admin.advertising.campaigns.edit', $campaign->id) }}" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition-all">
+                <span class="material-symbols-outlined text-[16px]">edit</span>
+                <span>Edit Campaign</span>
+            </a>
+            <a href="{{ route('admin.advertising.campaigns.index') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900">&larr; Back to Campaigns List</a>
+        </div>
     </div>
 
     <!-- Moderation Actions Card -->

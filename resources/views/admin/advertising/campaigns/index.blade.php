@@ -90,6 +90,9 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-right space-x-2">
+                                    <a href="{{ route('admin.advertising.campaigns.edit', $c->id) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold transition-all inline-block">
+                                        Edit
+                                    </a>
                                     <a href="{{ route('admin.advertising.campaigns.show', $c->id) }}" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all inline-block">
                                         Review Details &rarr;
                                     </a>

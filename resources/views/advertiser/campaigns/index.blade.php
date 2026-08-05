@@ -81,6 +81,9 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-right space-x-2">
+                                    <a href="{{ route('advertiser.campaigns.edit', $c->id) }}" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-all inline-block">
+                                        Edit
+                                    </a>
                                     @if($c->status === 'payment_pending')
                                         <a href="{{ route('advertiser.campaigns.checkout', $c->id) }}" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition-all inline-block">
                                             Pay & Submit &rarr;

@@ -9,7 +9,12 @@
             <h1 class="font-serif text-2xl sm:text-3xl font-bold text-white">{{ $campaign->name }}</h1>
             <p class="text-xs text-slate-400">Campaign ID #AD-{{ $campaign->id }} &bull; {{ $campaign->placement->name }}</p>
         </div>
-        <a href="{{ route('advertiser.campaigns.index') }}" class="text-xs font-bold text-slate-400 hover:text-white">&larr; Back to Campaigns</a>
+        <div class="flex items-center space-x-3">
+            <a href="{{ route('advertiser.campaigns.edit', $campaign->id) }}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1.5 shadow-md transition-all">
+                <span>Edit Campaign</span>
+            </a>
+            <a href="{{ route('advertiser.campaigns.index') }}" class="text-xs font-bold text-slate-400 hover:text-white">&larr; Back to Campaigns</a>
+        </div>
     </div>
 
     <!-- Status & Overview -->

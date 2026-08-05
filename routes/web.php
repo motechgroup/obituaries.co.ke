@@ -180,6 +180,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/campaigns/create', [AdminCampaignController::class, 'create'])->name('campaigns.create');
             Route::post('/campaigns', [AdminCampaignController::class, 'store'])->name('campaigns.store');
             Route::get('/campaigns/{campaign}', [AdminCampaignController::class, 'show'])->name('campaigns.show');
+            Route::get('/campaigns/{campaign}/edit', [AdminCampaignController::class, 'edit'])->name('campaigns.edit');
+            Route::put('/campaigns/{campaign}', [AdminCampaignController::class, 'update'])->name('campaigns.update');
             Route::post('/campaigns/{campaign}/approve', [AdminCampaignController::class, 'approve'])->name('campaigns.approve');
             Route::post('/campaigns/{campaign}/reject', [AdminCampaignController::class, 'reject'])->name('campaigns.reject');
             Route::post('/campaigns/{campaign}/pause', [AdminCampaignController::class, 'pause'])->name('campaigns.pause');
@@ -237,6 +239,8 @@ Route::prefix('advertiser')->name('advertiser.')->group(function () {
         Route::post('/campaigns/{campaign}/stkpush', [AdvertiserCampaignController::class, 'initiateStkPush'])->middleware('throttle:10,1')->name('campaigns.stkpush');
         Route::get('/campaigns/{campaign}/check-status', [AdvertiserCampaignController::class, 'checkStatus'])->name('campaigns.check-status');
         Route::get('/campaigns/{campaign}', [AdvertiserCampaignController::class, 'show'])->name('campaigns.show');
+        Route::get('/campaigns/{campaign}/edit', [AdvertiserCampaignController::class, 'edit'])->name('campaigns.edit');
+        Route::put('/campaigns/{campaign}', [AdvertiserCampaignController::class, 'update'])->name('campaigns.update');
 
         Route::get('/analytics', [AdvertiserAnalyticsController::class, 'index'])->name('analytics.index');
         Route::get('/analytics/export', [AdvertiserAnalyticsController::class, 'exportCsv'])->name('analytics.export');

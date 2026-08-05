@@ -188,6 +188,128 @@ class AdminCampaignController extends Controller
             ->with('success', "Ad campaign '{$campaign->name}' created and placed successfully!");
     }
 
+    public function edit(AdCampaign $campaign)
+    {
+        $campaign->load(['advertiser', 'businessProfile', 'placement', 'bannerSize', 'category', 'counties']);
+
+        $systemAdvertiser = Advertiser::firstOrCreate(
+            ['email' => 'admin@obituaries.co.ke'],
+            [
+                'business_name' => 'System (Obituaries.co.ke Admin Direct Ads)',
+                'contact_person' => 'System Administrator',
+                'phone_number' => '0700000000',
+                'password' => bcrypt('password123'),
+                'status' => 'active',
+            ]
+        );
+
+        $otherAdvertisers = Advertiser::with('businessProfile')
+            ->where('id', '!=', $systemAdvertiser->id)
+            ->orderBy('business_name')
+            ->get();
+
+        $advertisers = collect([$systemAdvertiser])->concat($otherAdvertisers);
+
+        $placements = AdPlacement::with('bannerSizes')->where('status', true)->get();
+        $bannerSizes = BannerSize::where('status', true)->get();
+        $categories = BusinessCategory::where('status', true)->orderBy('name')->get();
+
+        $counties = [
+            'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay',
+            'Isiolo', 'Kajiado', 'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii',
+            'Kisumu', 'Kitui', 'Kwale', 'Laikipia', 'Lamu', 'Machakos', 'Makueni', 'Mandera',
+            'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi', 'Nakuru', 'Nandi',
+            'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
+            'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
+        ];
+
+        return view('admin.advertising.campaigns.edit', compact(
+            'campaign',
+            'advertisers',
+            'placements',
+            'bannerSizes',
+            'categories',
+            'counties'
+        ));
+    }
+
+    public function update(Request $request, AdCampaign $campaign)
+    {
+        $validated = $request->validate([
+            'advertiser_id' => ['required', 'exists:advertisers,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'ad_placement_id' => ['required', 'exists:ad_placements,id'],
+            'banner_size_id' => ['required', 'exists:banner_sizes,id'],
+            'business_category_id' => ['nullable', 'exists:business_categories,id'],
+            'landing_url' => ['nullable', 'url', 'max:1000'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'is_national' => ['nullable', 'boolean'],
+            'is_featured' => ['nullable', 'boolean'],
+            'counties' => ['nullable', 'array'],
+            'counties.*' => ['string'],
+            'banner_image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
+            'status' => ['required', 'string', 'in:running,pending_approval,approved,payment_pending,rejected,expired,draft'],
+            'calculated_price' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $advertiser = Advertiser::findOrFail($validated['advertiser_id']);
+        $profile = BusinessProfile::firstOrCreate(['advertiser_id' => $advertiser->id], [
+            'business_name' => $advertiser->business_name,
+            'phone' => $advertiser->phone_number,
+            'email' => $advertiser->email,
+        ]);
+
+        $bannerSize = BannerSize::findOrFail($validated['banner_size_id']);
+
+        $updateData = [
+            'advertiser_id' => $advertiser->id,
+            'business_profile_id' => $profile->id,
+            'ad_placement_id' => $validated['ad_placement_id'],
+            'banner_size_id' => $validated['banner_size_id'],
+            'business_category_id' => $validated['business_category_id'] ?? $profile->business_category_id,
+            'name' => $validated['name'],
+            'landing_url' => $validated['landing_url'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'is_national' => (bool) ($validated['is_national'] ?? false),
+            'is_featured' => (bool) ($validated['is_featured'] ?? false),
+            'status' => $validated['status'],
+        ];
+
+        if (isset($validated['calculated_price'])) {
+            $updateData['calculated_price'] = $validated['calculated_price'];
+        }
+
+        // Process new banner image if uploaded
+        if ($request->hasFile('banner_image')) {
+            $validationResult = AdImageService::validateBanner($request->file('banner_image'), $bannerSize);
+            if (!$validationResult['valid']) {
+                return back()->withInput()->withErrors(['banner_image' => implode(' ', $validationResult['errors'])]);
+            }
+            $processedImages = AdImageService::processAndSaveBanner($request->file('banner_image'), $bannerSize);
+            $updateData['banner_path'] = $processedImages['banner_path'];
+            $updateData['banner_webp_path'] = $processedImages['banner_webp_path'];
+            $updateData['thumbnail_path'] = $processedImages['thumbnail_path'];
+        }
+
+        $campaign->update($updateData);
+
+        // Sync counties
+        $campaign->counties()->delete();
+        if (!$updateData['is_national'] && !empty($validated['counties'])) {
+            foreach ($validated['counties'] as $c) {
+                AdCampaignCounty::create([
+                    'ad_campaign_id' => $campaign->id,
+                    'county' => $c,
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.advertising.campaigns.show', $campaign->id)
+            ->with('success', "Campaign '{$campaign->name}' updated successfully!");
+    }
+
     public function show(AdCampaign $campaign)
     {
         $campaign->load(['advertiser', 'businessProfile', 'placement', 'bannerSize', 'category', 'counties', 'payments']);
