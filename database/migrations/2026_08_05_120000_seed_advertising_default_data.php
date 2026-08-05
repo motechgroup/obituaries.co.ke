@@ -9,9 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         try {
-            if (BusinessCategory::count() === 0) {
-                (new AdvertisingSeeder())->run();
-            }
+            (new AdvertisingSeeder())->run();
         } catch (\Throwable $e) {
             // Silently log or handle exceptions
         }

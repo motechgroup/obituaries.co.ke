@@ -64,7 +64,7 @@ class AdvertisingSeeder extends Seeder
 
         $createdSizes = [];
         foreach ($bannerSizesData as $size) {
-            $createdSizes[$size['slug']] = BannerSize::firstOrCreate(
+            $createdSizes[$size['slug']] = BannerSize::updateOrCreate(
                 ['slug' => $size['slug']],
                 [
                     'name' => $size['name'],
@@ -93,7 +93,7 @@ class AdvertisingSeeder extends Seeder
         ];
 
         foreach ($placementsData as $p) {
-            $placement = AdPlacement::firstOrCreate(
+            $placement = AdPlacement::updateOrCreate(
                 ['slug' => $p['slug']],
                 [
                     'name' => $p['name'],
@@ -125,7 +125,7 @@ class AdvertisingSeeder extends Seeder
         $allPlacements = AdPlacement::with('bannerSizes')->get();
         foreach ($allPlacements as $placement) {
             foreach ($placement->bannerSizes as $size) {
-                AdPricing::firstOrCreate(
+                AdPricing::updateOrCreate(
                     [
                         'ad_placement_id' => $placement->id,
                         'banner_size_id' => $size->id,
