@@ -125,37 +125,33 @@ try {
     // Clean up temporary ZIP
     @unlink($tempZipPath);
 
-    // 6. Clear Laravel Cache, Purge Stale File Cache, Run Database Migrations & Seed Advertising Tables
+    // 6. Robustly Purge Stale File Cache & Compiled Blade Views
+    $purgeDir = function ($dirPath) use (&$purgeDir) {
+        if (!file_exists($dirPath)) return;
+        $items = @scandir($dirPath);
+        if (!$items) return;
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $path = $dirPath . '/' . $item;
+            if (is_dir($path)) {
+                $purgeDir($path);
+                @rmdir($path);
+            } else {
+                @unlink($path);
+            }
+        }
+    };
+
+    $purgeDir(storage_path('framework/cache/data'));
+    $purgeDir(storage_path('framework/views'));
+
     try {
-        Artisan::call('migrate', ['--force' => true]);
-        Artisan::call('db:seed', ['--class' => 'AdvertisingSeeder', '--force' => true]);
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
         Artisan::call('config:clear');
-
-        // Delete any leftover file cache items in storage/framework/cache/data
-        $cacheDataDir = storage_path('framework/cache/data');
-        if (file_exists($cacheDataDir)) {
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($cacheDataDir, \RecursiveDirectoryIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::CHILD_FIRST
-            );
-            foreach ($files as $fileinfo) {
-                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-                @$todo($fileinfo->getRealPath());
-            }
-        }
-
-        // Delete compiled Blade views in storage/framework/views
-        $viewsDir = storage_path('framework/views');
-        if (file_exists($viewsDir)) {
-            $viewFiles = glob($viewsDir . '/*.php');
-            if (is_array($viewFiles)) {
-                foreach ($viewFiles as $vfile) {
-                    @unlink($vfile);
-                }
-            }
-        }
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('db:seed', ['--class' => 'AdvertisingSeeder', '--force' => true]);
+    } catch (\Throwable $e) {}
 
         // Auto-compress existing live storage photos using ImageOptimizerEngine
         try {
