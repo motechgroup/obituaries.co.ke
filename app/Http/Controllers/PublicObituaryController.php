@@ -62,7 +62,7 @@ class PublicObituaryController extends Controller
             $query->whereYear('date_of_death', $year);
         }
 
-        $obituaries = $query->latest('date_of_death')->paginate(12)->withQueryString();
+        $obituaries = $query->latest('date_of_death')->paginate(50)->withQueryString();
         $counties = static::getCountiesList();
         $categories = Obituary::CATEGORIES;
 

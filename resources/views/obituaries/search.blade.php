@@ -98,17 +98,6 @@
         </div>
     </div>
 
-    <!-- Results Count -->
-    <div class="mb-6 flex items-center justify-between">
-        <p class="text-xs sm:text-sm text-on-surface-variant">
-            @if(request('filter') === 'anniversaries')
-                Showing <strong class="text-primary font-bold">{{ $obituaries->total() }}</strong> obituaries with anniversaries of passing today.
-            @else
-                Showing <strong class="text-primary font-bold">{{ $obituaries->total() }}</strong> published obituaries.
-            @endif
-        </p>
-    </div>
-
     @if($obituaries->isEmpty())
         <div class="bg-surface-container-lowest rounded-2xl p-12 text-center border border-outline-variant/30 max-w-xl mx-auto">
             <span class="material-symbols-outlined text-[48px] text-on-surface-variant/40 mb-3">search_off</span>
