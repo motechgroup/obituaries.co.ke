@@ -217,6 +217,11 @@ class Obituary extends Model
         return $this->hasMany(ObituaryReport::class);
     }
 
+    public function getCleanBiographyAttribute(): string
+    {
+        return trim(preg_replace('/\s+/', ' ', strip_tags($this->biography ?? '')));
+    }
+
     public function getAgeAttribute(): ?int
     {
         if ($this->date_of_birth && $this->date_of_death) {

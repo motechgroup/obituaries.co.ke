@@ -84,7 +84,7 @@
                                 {{ $obituary->full_name }}
                             </h2>
                             <p class="text-xs text-on-surface-variant line-clamp-3 leading-relaxed mb-4">
-                                {{ $obituary->biography }}
+                                {{ $obituary->clean_biography }}
                             </p>
                         </div>
                     </div>
