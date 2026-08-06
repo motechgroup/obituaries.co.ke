@@ -184,7 +184,7 @@ function adminCampaignWizard() {
         sizeId: '',
         isNational: false,
         isFeatured: false,
-        selectedCounties: ['Nairobi'],
+        selectedCounties: [],
         startDate: '{{ date("Y-m-d") }}',
         endDate: '{{ date("Y-m-d", strtotime("+30 days")) }}',
         availableSizes: [],

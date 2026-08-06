@@ -29,12 +29,6 @@
                     Explore recent obituary notices, funeral service schedules, and memorial tributes for loved ones from {{ $county }} County, Kenya. Share condolences and light virtual candles in remembrance.
                 </p>
             </div>
-
-            <div class="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30 shadow-2xs flex-shrink-0 text-center sm:text-right">
-                <span class="text-xs uppercase tracking-wider font-bold text-on-surface-variant block mb-0.5">Published Records</span>
-                <span class="font-serif text-2xl sm:text-3xl font-bold text-primary">{{ number_format($totalCount) }}</span>
-                <span class="text-xs text-on-surface-variant/80 block">Notices in {{ $county }}</span>
-            </div>
         </div>
     </div>
 </div>
