@@ -129,7 +129,10 @@
         }
     </style>
 
-    <!-- Preconnect Resource Hints for Fonts & CDNs -->
+    <!-- Performance DNS Prefetch & Preconnect Hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//unpkg.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">

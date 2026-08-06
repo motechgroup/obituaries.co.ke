@@ -5,122 +5,145 @@ namespace App\Http\Controllers;
 use App\Models\Obituary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Today's Obituaries (Latest Obituaries section directly under Hero): Show obituaries posted TODAY
-        $todayObituaries = Obituary::published()
-            ->where('created_at', '>=', now()->startOfDay())
-            ->latest('id')
-            ->take(8)
-            ->get();
-
-        // Fallback: If no obituaries posted today yet, show latest published obituaries
-        if ($todayObituaries->isEmpty()) {
+        $buildPayload = function () {
+            // 1. Today's Obituaries (Latest Obituaries section directly under Hero): Show obituaries posted TODAY
             $todayObituaries = Obituary::published()
+                ->where('created_at', '>=', now()->startOfDay())
                 ->latest('id')
                 ->take(8)
                 ->get();
-        }
 
-        // Obituaries Directory (Dark Section): Show obituaries posted YESTERDAY
-        $todayDirectoryObituaries = Obituary::published()
-            ->whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])
-            ->latest('id')
-            ->take(8)
-            ->get();
+            // Fallback: If no obituaries posted today yet, show latest published obituaries
+            if ($todayObituaries->isEmpty()) {
+                $todayObituaries = Obituary::published()
+                    ->latest('id')
+                    ->take(8)
+                    ->get();
+            }
 
-        // Fallback: If no obituaries posted yesterday, show latest published obituaries prior to today
-        if ($todayDirectoryObituaries->isEmpty()) {
+            // 2. Obituaries Directory (Dark Section): Show obituaries posted YESTERDAY
             $todayDirectoryObituaries = Obituary::published()
-                ->where('created_at', '<', now()->startOfDay())
+                ->whereBetween('created_at', [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()])
                 ->latest('id')
                 ->take(8)
                 ->get();
-        }
 
-        // Second fallback: If still empty, get any latest published obituaries
-        if ($todayDirectoryObituaries->isEmpty()) {
-            $todayDirectoryObituaries = Obituary::published()
-                ->latest('id')
-                ->take(8)
-                ->get();
-        }
+            // Fallback: If no obituaries posted yesterday, show latest published obituaries prior to today
+            if ($todayDirectoryObituaries->isEmpty()) {
+                $todayDirectoryObituaries = Obituary::published()
+                    ->where('created_at', '<', now()->startOfDay())
+                    ->latest('id')
+                    ->take(8)
+                    ->get();
+            }
 
-        // Recent Tributes Section: Show random notices from the same week (past 7 days)
-        $latestObituaries = Obituary::published()
-            ->where('created_at', '>=', now()->subDays(7)->startOfDay())
-            ->inRandomOrder()
-            ->take(8)
-            ->get();
+            // Second fallback: If still empty, get any latest published obituaries
+            if ($todayDirectoryObituaries->isEmpty()) {
+                $todayDirectoryObituaries = Obituary::published()
+                    ->latest('id')
+                    ->take(8)
+                    ->get();
+            }
 
-        // Fallback: If fewer than 8 notices from the week exist, show random published obituaries overall
-        if ($latestObituaries->count() < 8) {
+            // 3. Recent Tributes Section: Show random notices from the same week (past 7 days)
             $latestObituaries = Obituary::published()
+                ->where('created_at', '>=', now()->subDays(7)->startOfDay())
                 ->inRandomOrder()
                 ->take(8)
                 ->get();
-        }
 
-        // Today's Anniversaries: Strictly notices with date_of_death matching today's month & day
-        $todayAnniversaries = Obituary::todayAnniversaries()
-            ->latest('date_of_death')
-            ->take(6)
-            ->get();
-
-        $todayCandlesObituaries = Obituary::published()
-            ->withCount('candles')
-            ->orderByDesc('candles_count')
-            ->latest('id')
-            ->take(4)
-            ->get();
-
-        $totalCount = Obituary::published()->count();
-
-        $noticeCategories = [
-            'Death Announcement' => [
-                'title' => 'Death Announcements',
-                'subtitle' => 'Official death announcements and passing notices across Kenya.',
-                'icon' => 'campaign',
-            ],
-            'Anniversary' => [
-                'title' => 'Anniversaries & Remembrances',
-                'subtitle' => 'Honoring loved ones whose anniversaries of passing are remembered.',
-                'icon' => 'event_repeat',
-            ],
-            'Memorial' => [
-                'title' => 'Memorial Tributes',
-                'subtitle' => 'Preserving everlasting memories and tributes for departed loved ones.',
-                'icon' => 'auto_stories',
-            ],
-            'Life Celebration' => [
-                'title' => 'Life Celebrations',
-                'subtitle' => 'Celebrating rich lives, joyful memories, and timeless legacies.',
-                'icon' => 'celebration',
-            ],
-        ];
-
-        $hasCategoryColumn = \Illuminate\Support\Facades\Schema::hasColumn('obituaries', 'category');
-        $categoryObituaries = [];
-        foreach (array_keys($noticeCategories) as $catKey) {
-            if ($hasCategoryColumn) {
-                $categoryObituaries[$catKey] = Obituary::published()
-                    ->where(function($q) use ($catKey) {
-                        $q->where('category', $catKey);
-                        if ($catKey === 'Death Announcement') {
-                            $q->orWhereNull('category');
-                        }
-                    })
-                    ->latest('id')
-                    ->take(4)
+            // Fallback: If fewer than 8 notices from the week exist, show random published obituaries overall
+            if ($latestObituaries->count() < 8) {
+                $latestObituaries = Obituary::published()
+                    ->inRandomOrder()
+                    ->take(8)
                     ->get();
-            } else {
-                $categoryObituaries[$catKey] = ($catKey === 'Death Announcement')
-                    ? Obituary::published()->latest('id')->take(4)->get()
-                    : collect();
             }
+
+            // 4. Today's Anniversaries: Strictly notices with date_of_death matching today's month & day
+            $todayAnniversaries = Obituary::todayAnniversaries()
+                ->latest('date_of_death')
+                ->take(6)
+                ->get();
+
+            // 5. Most Lit Candles Obituaries
+            $todayCandlesObituaries = Obituary::published()
+                ->withCount('candles')
+                ->orderByDesc('candles_count')
+                ->latest('id')
+                ->take(4)
+                ->get();
+
+            // 6. Total Published Count
+            $totalCount = Obituary::published()->count();
+
+            // 7. Category Obituaries
+            $noticeCategories = [
+                'Death Announcement' => [
+                    'title' => 'Death Announcements',
+                    'subtitle' => 'Official death announcements and passing notices across Kenya.',
+                    'icon' => 'campaign',
+                ],
+                'Anniversary' => [
+                    'title' => 'Anniversaries & Remembrances',
+                    'subtitle' => 'Honoring loved ones whose anniversaries of passing are remembered.',
+                    'icon' => 'event_repeat',
+                ],
+                'Memorial' => [
+                    'title' => 'Memorial Tributes',
+                    'subtitle' => 'Preserving everlasting memories and tributes for departed loved ones.',
+                    'icon' => 'auto_stories',
+                ],
+                'Life Celebration' => [
+                    'title' => 'Life Celebrations',
+                    'subtitle' => 'Celebrating rich lives, joyful memories, and timeless legacies.',
+                    'icon' => 'celebration',
+                ],
+            ];
+
+            $hasCategoryColumn = Schema::hasColumn('obituaries', 'category');
+            $categoryObituaries = [];
+            foreach (array_keys($noticeCategories) as $catKey) {
+                if ($hasCategoryColumn) {
+                    $categoryObituaries[$catKey] = Obituary::published()
+                        ->where(function($q) use ($catKey) {
+                            $q->where('category', $catKey);
+                            if ($catKey === 'Death Announcement') {
+                                $q->orWhereNull('category');
+                            }
+                        })
+                        ->latest('id')
+                        ->take(4)
+                        ->get();
+                } else {
+                    $categoryObituaries[$catKey] = ($catKey === 'Death Announcement')
+                        ? Obituary::published()->latest('id')->take(4)->get()
+                        : collect();
+                }
+            }
+
+            return compact(
+                'todayObituaries',
+                'todayDirectoryObituaries',
+                'latestObituaries',
+                'todayAnniversaries',
+                'todayCandlesObituaries',
+                'noticeCategories',
+                'categoryObituaries',
+                'totalCount'
+            );
+        };
+
+        if (app()->environment('testing')) {
+            $cachedData = $buildPayload();
+        } else {
+            $cachedData = Cache::remember('homepage_payload_v4', 600, $buildPayload);
         }
 
         $counties = [
@@ -168,17 +191,11 @@ class HomeController extends Controller
         $dayIndex = (date('z') + date('Y')) % count($quotes);
         $dailyQuote = $quotes[$dayIndex];
 
-        return view('home', compact(
-            'todayObituaries',
-            'todayDirectoryObituaries',
-            'latestObituaries',
-            'todayAnniversaries',
-            'todayCandlesObituaries',
-            'noticeCategories',
-            'categoryObituaries',
-            'totalCount',
-            'counties',
-            'dailyQuote'
-        ));
+        return view('home', array_merge($cachedData, compact('counties', 'dailyQuote')));
+    }
+
+    public static function clearCache(): void
+    {
+        Cache::forget('homepage_payload_v4');
     }
 }

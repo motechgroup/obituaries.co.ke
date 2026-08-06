@@ -263,7 +263,7 @@
                                 <span>Fraud Threat Center</span>
                             </div>
                             @php
-                                $openFraudCount = \App\Models\FraudAlert::where('status', 'open')->count();
+                                $openFraudCount = \Illuminate\Support\Facades\Schema::hasTable('fraud_alerts') ? \App\Models\FraudAlert::where('status', 'open')->count() : 0;
                             @endphp
                             @if($openFraudCount > 0)
                                 <span class="text-xs bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full border border-amber-400">

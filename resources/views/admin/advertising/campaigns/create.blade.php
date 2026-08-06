@@ -14,8 +14,8 @@
         </a>
     </div>
 
-    @if ($errors->any())
-        <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 space-y-1">
+    @if (isset($errors) && $errors->any())
+        <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 space-y-1 font-bold">
             @foreach ($errors->all() as $error)
                 <p>• {{ $error }}</p>
             @endforeach
@@ -179,7 +179,7 @@ function adminCampaignWizard() {
     const allCounties = @json($counties);
 
     return {
-        advertiserId: '{{ $advertisers->first()->id ?? "" }}',
+        advertiserId: '{{ optional($advertisers->first())->id ?? "" }}',
         placementId: '',
         sizeId: '',
         isNational: false,

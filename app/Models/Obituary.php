@@ -90,10 +90,12 @@ class Obituary extends Model
 
         static::saved(function (Obituary $obituary) {
             \Illuminate\Support\Facades\Cache::forget('homepage_data');
+            \App\Http\Controllers\HomeController::clearCache();
         });
 
         static::deleted(function (Obituary $obituary) {
             \Illuminate\Support\Facades\Cache::forget('homepage_data');
+            \App\Http\Controllers\HomeController::clearCache();
         });
     }
 
