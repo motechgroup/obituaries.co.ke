@@ -2,36 +2,100 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 class StorageHelper
 {
     /**
-     * Permanently stores a file in storage/app/public AND copies it to public/storage/
-     * so that Apache serves static files directly on shared hosting without requiring symlinks.
+     * Get a public URL for a file stored in storage/app/public.
+     * Automatically ensures a copy exists in public/storage/ for shared hosting.
      */
-    public static function savePublicFile($file, string $folder): string
+    public static function url(?string $path): string
     {
-        // 1. Save using standard Laravel storage disk
-        $path = $file->store($folder, 'public');
-        $sourcePath = storage_path('app/public/' . $path);
+        if (empty($path)) {
+            return '';
+        }
 
-        // 2. Compress & scale image using PHP GD to save payload size
-        self::compressAndScaleImage($sourcePath, 800, 82);
+        // If it's already a full URL or data URI, return as-is
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, 'data:')) {
+            return $path;
+        }
 
-        // 3. Immediately mirror to public/storage/ for instant web access
+        // Ensure file is mirrored to public/storage/ if direct symlinks are unavailable
+        static::ensurePublicCopy($path);
+
+        return asset('storage/' . ltrim($path, '/'));
+    }
+
+    /**
+     * Get local storage path for a given relative path.
+     */
+    public static function path(?string $path): string
+    {
+        if (empty($path)) {
+            return '';
+        }
+
+        return storage_path('app/public/' . ltrim($path, '/'));
+    }
+
+    /**
+     * Check if a file exists in storage.
+     */
+    public static function exists(?string $path): bool
+    {
+        if (empty($path)) {
+            return false;
+        }
+
+        return file_exists(static::path($path)) || Storage::disk('public')->exists($path);
+    }
+
+    /**
+     * Deletes a file from both storage/app/public and public/storage/.
+     */
+    public static function delete(?string $path): bool
+    {
+        if (empty($path)) {
+            return false;
+        }
+
         try {
-            $destPath = public_path('storage/' . $path);
-            $destDir = dirname($destPath);
+            // Delete from storage/app/public
+            Storage::disk('public')->delete($path);
 
-            if (!file_exists($destDir)) {
-                @mkdir($destDir, 0755, true);
+            // Delete from public/storage
+            $publicCopy = public_path('storage/' . ltrim($path, '/'));
+            if (file_exists($publicCopy)) {
+                @unlink($publicCopy);
             }
 
-            @copy($sourcePath, $destPath);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Copies a file from temporary/uploaded location to public storage.
+     */
+    public static function copyToPublicStorage(string $sourcePath, string $destinationRelativePath): string
+    {
+        $destinationStorage = storage_path('app/public/' . ltrim($destinationRelativePath, '/'));
+        $destinationPublic = public_path('storage/' . ltrim($destinationRelativePath, '/'));
+
+        try {
+            @mkdir(dirname($destinationStorage), 0755, true);
+            @mkdir(dirname($destinationPublic), 0755, true);
+
+            @copy($sourcePath, $destinationStorage);
+            @copy($sourcePath, $destinationPublic);
         } catch (\Throwable $e) {
             // Silently handle exceptions
         }
 
-        return $path;
+        return $destinationRelativePath;
     }
 
     /**
@@ -98,34 +162,34 @@ class StorageHelper
 
         $cleaned = self::sanitizeHtml($biography);
 
-        // Check if string contains paragraph or block level HTML tags
-        $hasBlockTags = (bool)preg_match('/<(p|h[1-6]|ul|ol|blockquote|div)\b/i', $cleaned);
+        // Normalize carriage returns
+        $cleaned = str_replace(["\r\n", "\r"], "\n", $cleaned);
 
-        if (!$hasBlockTags) {
-            // Split by single or double newlines and wrap paragraphs in <p> tags
-            $lines = preg_split('/\r\n|\r|\n/', $cleaned);
+        // Convert multiple consecutive <br> tags into paragraph breaks
+        $cleaned = preg_replace('/(<br\s*\/?>\s*){2,}/i', "</p><p>", $cleaned);
+
+        // Check if string contains explicit paragraph tags <p>
+        $hasParagraphTags = (bool)preg_match('/<p\b/i', $cleaned);
+
+        if (!$hasParagraphTags) {
+            // Split text by 2 or more newlines to form separate paragraphs
+            $blocks = preg_split('/\n\s*\n/', $cleaned);
             $paragraphs = [];
-            $currentParagraph = [];
 
-            foreach ($lines as $line) {
-                $trimmed = trim($line);
-                if (empty($trimmed)) {
-                    if (!empty($currentParagraph)) {
-                        $paragraphs[] = '<p>' . implode('<br>', $currentParagraph) . '</p>';
-                        $currentParagraph = [];
-                    }
-                } else {
-                    $currentParagraph[] = $trimmed;
+            foreach ($blocks as $block) {
+                $trimmed = trim($block);
+                if ($trimmed !== '') {
+                    // Convert single newlines within a paragraph block to <br>
+                    $paragraphContent = str_replace("\n", '<br>', $trimmed);
+                    $paragraphs[] = '<p>' . $paragraphContent . '</p>';
                 }
             }
 
-            if (!empty($currentParagraph)) {
-                $paragraphs[] = '<p>' . implode('<br>', $currentParagraph) . '</p>';
-            }
-
             return implode("\n", $paragraphs);
+        } else {
+            // Clean up empty paragraphs
+            $cleaned = preg_replace('/<p>\s*(<br\s*\/?>)?\s*<\/p>/i', '', $cleaned);
+            return $cleaned;
         }
-
-        return $cleaned;
     }
 }
