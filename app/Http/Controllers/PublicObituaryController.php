@@ -69,6 +69,29 @@ class PublicObituaryController extends Controller
         return view('obituaries.search', compact('obituaries', 'counties', 'categories'));
     }
 
+    public function countiesIndex()
+    {
+        $countiesList = static::getCountiesList();
+        
+        $countsByCounty = Obituary::published()
+            ->whereNotNull('county')
+            ->selectRaw('county, count(*) as total')
+            ->groupBy('county')
+            ->pluck('total', 'county')
+            ->toArray();
+
+        $counties = [];
+        foreach ($countiesList as $c) {
+            $counties[] = [
+                'name' => $c,
+                'slug' => Str::slug($c) . '-obituaries',
+                'count' => $countsByCounty[$c] ?? 0,
+            ];
+        }
+
+        return view('obituaries.counties', compact('counties'));
+    }
+
     public function countyIndex($countySlug)
     {
         $cleanSlug = str_replace('-obituaries', '', Str::slug($countySlug));

@@ -64,6 +64,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Search & Directory & County Landing Pages
 Route::get('/search', [PublicObituaryController::class, 'search'])->name('obituaries.search');
+Route::get('/counties', [PublicObituaryController::class, 'countiesIndex'])->name('obituaries.counties');
 Route::get('/county/{county}', [PublicObituaryController::class, 'countyIndex'])->name('obituaries.county');
 Route::get('/obituary/{slug}', [PublicObituaryController::class, 'show'])->name('obituaries.show');
 Route::post('/obituary/{obituary}/candle', [CandleController::class, 'store'])->middleware('throttle:15,1')->name('obituaries.candle');

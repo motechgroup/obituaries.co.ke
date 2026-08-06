@@ -212,7 +212,7 @@
             <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center gap-2" aria-label="Main Navigation">
                 <a href="{{ route('obituaries.search') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Directory</a>
-                <a href="{{ url('/county/nairobi-obituaries') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Counties</a>
+                <a href="{{ route('obituaries.counties') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">Counties</a>
                 <a href="{{ route('pages.about') }}" class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors py-2 px-3 min-h-[44px] inline-flex items-center">About</a>
                 <a href="{{ route('advertise') }}" class="text-xs font-bold text-amber-900 hover:text-amber-700 transition-colors py-2 px-3 min-h-[44px] inline-flex items-center space-x-1">
                     <span class="material-symbols-outlined text-[16px]">campaign</span>
